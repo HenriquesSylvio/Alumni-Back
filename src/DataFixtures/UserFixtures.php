@@ -4,13 +4,48 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\User;
+use Faker;
 
-class AppFixtures extends Fixture
+class UserFixtures extends Fixture
 {
-    public function load(ObjectManager $manager): void
+    private UserPasswordHasherInterface  $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        $this->passwordHasher = $passwordHasher;
+    }
+
+    public function load(ObjectManager $manager) : void
+    {
+
+        $user = new User();
+        $user->setEmail("henriques.sylvio@outlook.fr");
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
+        $user->setLastName("Henriques");
+        $user->setFirstname("Sylvio");
+        $user->setBirthday(new \DateTime(1999-9-25));
+        $user->setPromo(new \DateTime(2021-9-01));
+        $manager->persist($user);
+
+
+        $faker = Faker\Factory::create('fr_FR');
+        for($nbUsers = 1; $nbUsers <= 30; $nbUsers++){
+            $user = new User();
+            $user->setEmail($faker->email);
+            if($nbUsers === 1)
+                $user->setRoles(['ROLE_ADMIN']);
+            else
+                $user->setRoles(['ROLE_USER']);
+            $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
+            $user->setLastName($faker->lastName);
+            $user->setFirstname($faker->firstName);
+            $user->setBirthday(new \DateTime(1999-9-25));
+            $user->setPromo(new \DateTime(2021-9-01));
+            $manager->persist($user);
+        }
 
         $manager->flush();
     }
