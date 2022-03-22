@@ -100,14 +100,47 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "friendsofsymfony/rest-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.2",
+            "ref": "fa845143b7e0a4c70aedd1a88c549e6d977e9ae5"
+        },
+        "files": [
+            "./config/packages/fos_rest.yaml"
+        ]
+    },
     "fzaninotto/faker": {
         "version": "v1.5.0"
     },
     "laminas/laminas-code": {
         "version": "4.5.0"
     },
+    "lcobucci/clock": {
+        "version": "2.1.0"
+    },
+    "lcobucci/jwt": {
+        "version": "4.0.4"
+    },
+    "lexik/jwt-authentication-bundle": {
+        "version": "2.14",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "5b2157bcd5778166a5696e42f552ad36529a07a6"
+        },
+        "files": [
+            "./config/packages/lexik_jwt_authentication.yaml"
+        ]
+    },
     "myclabs/deep-copy": {
         "version": "1.10.2"
+    },
+    "namshi/jose": {
+        "version": "7.2.3"
     },
     "nikic/php-parser": {
         "version": "v4.13.2"
@@ -129,6 +162,9 @@
     },
     "phpspec/prophecy": {
         "version": "v1.15.0"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "1.2.0"
     },
     "phpunit/php-code-coverage": {
         "version": "9.2.10"
@@ -349,6 +385,9 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.24.0"
     },
+    "symfony/polyfill-php56": {
+        "version": "v1.20.0"
+    },
     "symfony/polyfill-php81": {
         "version": "v1.24.0"
     },
@@ -398,6 +437,9 @@
     "symfony/security-http": {
         "version": "v6.0.1"
     },
+    "symfony/serializer": {
+        "version": "v6.0.6"
+    },
     "symfony/service-contracts": {
         "version": "v3.0.0"
     },
@@ -421,5 +463,11 @@
     },
     "webmozart/assert": {
         "version": "1.10.0"
+    },
+    "willdurand/jsonp-callback-validator": {
+        "version": "v2.0.0"
+    },
+    "willdurand/negotiation": {
+        "version": "3.1.0"
     }
 }
