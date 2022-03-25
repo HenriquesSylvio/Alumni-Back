@@ -8,10 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 /**
  * @Route("api")
  */
@@ -37,18 +40,28 @@ class RegistrationController extends AbstractFOSRestController
      * @param Request $request
      * @return
      */
-    public function registerUser(Request $request)
+    public function registerUser(Request $request, ValidatorInterface $validator)
     {
         $user = new User();
 
         $user->setEmail($request->get('email'));
-        $user->setPassword(
-            $this->passwordHasher->hashPassword($user, $request->get('password'))
-        );
+        $user->setPassword($request->get('password'));
         $user->setFirstName($request->get('first_name'));
         $user->setLastName($request->get('last_name'));
         $user->setBirthday(new \DateTime($request->get('birthday')));
         $user->setPromo(new \DateTime($request->get('promo')));
+
+        $errors = $validator->validate($user);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new JsonResponse(array('erreur' => $errorsString));
+        }
+        $user->setPassword(
+            $this->passwordHasher->hashPassword($user, $request->get('password'))
+        );
+
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
