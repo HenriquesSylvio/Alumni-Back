@@ -52,17 +52,17 @@ class RegistrationController extends AbstractFOSRestController
         $user->setPromo(new \DateTime($request->get('promo')));
 
         $errors = $validator->validate($user);
-
         if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-
-            return new JsonResponse(array('erreur' => $errorsString));
+            foreach($errors as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], JsonResponse::HTTP_BAD_REQUEST);
         }
         $user->setPassword(
             $this->passwordHasher->hashPassword($user, $request->get('password'))
         );
-
-
+        
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return new Response("", Response::HTTP_CREATED);

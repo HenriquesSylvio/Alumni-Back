@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity("email", message="Cette email est déjà utilisé")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
