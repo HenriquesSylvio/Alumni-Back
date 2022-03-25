@@ -62,7 +62,7 @@ class RegistrationController extends AbstractFOSRestController
         $user->setPassword(
             $this->passwordHasher->hashPassword($user, $request->get('password'))
         );
-        
+
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return new Response("", Response::HTTP_CREATED);

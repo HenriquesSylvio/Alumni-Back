@@ -27,8 +27,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="L'email est obligatoire")
+     * @Assert\Email(message="Email format invalide")
      */
-
     private $email;
 
     /**
@@ -39,22 +40,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      * @Assert\Length(
      *     min=8,
      *     max=20,
      *     minMessage="Votre mot de passe doit être au moins de {{ limit }} caractères",
      *     maxMessage="Votre mot de passe ne peut pas dépasser les {{ limit }} caractères"
      * )
+     * @Assert\Regex(
+     *     pattern="#^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)#",
+     *     match=true,
+     *     message="Les mots de passe doivent contenir au moins 8 caractères et contenir au moins une des catégories suivantes : majuscules, minuscules, chiffres et symboles."
+     * )
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Votre prénom est obligatoire")
+     * @Assert\Regex(
+     *     pattern="/\d/",
+     *     match=false,
+     *     message="Votre prénom ne peut pas contenir de chiffre"
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Votre nom est obligatoire")
+     * @Assert\Regex(
+     *     pattern="/\d/",
+     *     match=false,
+     *     message="Votre nom ne peut pas contenir de chiffre"
+     * )
      */
     private $lastName;
 
