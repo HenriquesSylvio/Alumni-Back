@@ -65,6 +65,6 @@ class RegistrationController extends AbstractFOSRestController
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        return new Response("", Response::HTTP_CREATED);
+        return new Response($user->getEmail(), Response::HTTP_CREATED);
     }
 }
