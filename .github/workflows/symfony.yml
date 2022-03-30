@@ -31,6 +31,9 @@ jobs:
         postgresql user: 'postgres'
         postgresql password: '9499'
 
+    - name: instll composer require symfony/runtime
+      run: composer require symfony/runtime
+
     - name: Load Doctrine fixtures
       run: php bin/console doctrine:fixtures:load
 
