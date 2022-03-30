@@ -37,23 +37,23 @@ jobs:
     - name: Install Composer dependencies
       run: make install
     
-          - name: Check Symfony requirements
-        run: vendor/bin/requirements-checker
+    - name: Check Symfony requirements
+      run: vendor/bin/requirements-checker
 
-      - name: Check the Symfony console
-        run: |
-          bin/console about
-          bin/console strangebuzz:version
+    - name: Check the Symfony console
+      run: |
+        bin/console about
+        bin/console strangebuzz:version
 
-     - name: Load Doctrine fixtures and populate the Elasticsearch indexes
-        run: |
-          make load-fixtures
-          make populate
+    - name: Load Doctrine fixtures and populate the Elasticsearch indexes
+      run: |
+        make load-fixtures
+        make populate
 
     - name: Run functionnal and unit tests
-        run: |
-          cp phpunit.xml.ci phpunit.xml
-          ./vendor/bin/phpunit --testsuite='main'
+      run: |
+        cp phpunit.xml.ci phpunit.xml
+        ./vendor/bin/phpunit --testsuite='main'
 
     - uses: actions/checkout@v3
     - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
