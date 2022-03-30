@@ -33,9 +33,12 @@ jobs:
 
     - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
-      
+
     - name: Create the test database
       run: php bin/console --env=test doctrine:database:create
+
+    - name: Create schema for test database
+      run: php bin/console --env=test doctrine:schema:create
 
     - name: Load Doctrine fixtures
       run: php bin/console doctrine:fixtures:load
