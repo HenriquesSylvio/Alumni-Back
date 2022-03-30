@@ -31,11 +31,11 @@ jobs:
         postgresql user: 'postgres'
         postgresql password: '9499'
 
-    - name: Create the test database
-      run: php bin/console --env=test doctrine:database:create
-      
     - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
+      
+    - name: Create the test database
+      run: php bin/console --env=test doctrine:database:create
 
     - name: Load Doctrine fixtures
       run: php bin/console doctrine:fixtures:load
