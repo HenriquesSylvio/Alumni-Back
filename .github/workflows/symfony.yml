@@ -1,0 +1,68 @@
+name: Symfony
+
+on:
+  push:
+    branches:
+    - preprod
+
+jobs:
+  symfony-tests:
+    runs-on: ubuntu-latest
+    steps:
+    #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
+    # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
+    # uses: shivammathur/setup-php@v2
+    - uses: actions/checkout@v3
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'
+    - name: Check PHP Version
+      run: php -v
+
+    - name: Setup Redis with zhulik/redis-action
+      uses: zhulik/redis-action@1.1.0
+      with:
+        redis version: '5'
+        
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version: '13'
+        postgresql db: 'alumniNWS_test'
+        postgresql user: 'postgres'
+        postgresql password: '9499'
+    
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+      
+    - name: Install Composer dependencies
+      run: make install
+    
+          - name: Check Symfony requirements
+        run: vendor/bin/requirements-checker
+
+      - name: Check the Symfony console
+        run: |
+          bin/console about
+          bin/console strangebuzz:version
+
+     - name: Load Doctrine fixtures and populate the Elasticsearch indexes
+        run: |
+          make load-fixtures
+          make populate
+
+    - name: Run functionnal and unit tests
+        run: |
+          cp phpunit.xml.ci phpunit.xml
+          ./vendor/bin/phpunit --testsuite='main'
+
+    - uses: actions/checkout@v3
+    - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: "alumni-nws-api" #Must be unique in Heroku e
+        heroku_email: "AlumniNWS2022@gmail.com"
+        usedocker: true
+
+
+
+
