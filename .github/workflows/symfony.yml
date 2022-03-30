@@ -31,7 +31,10 @@ jobs:
         postgresql user: 'postgres'
         postgresql password: '9499'
 
-    - name: install composer require symfony/runtime
+    - name: Create the test database
+      run: php bin/console --env=test doctrine:database:create
+      
+    - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
 
     - name: Load Doctrine fixtures
