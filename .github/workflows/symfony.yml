@@ -27,11 +27,11 @@ jobs:
     - uses: harmon758/postgresql-action@v1
       with:
         postgresql version: '13'
-        postgresql db: 'alumniNWS_test'
+        postgresql db: 'alumniNWS'
         postgresql user: 'postgres'
         postgresql password: '9499'
 
-    - name: instll composer require symfony/runtime
+    - name: install composer require symfony/runtime
       run: composer require symfony/runtime
 
     - name: Load Doctrine fixtures
