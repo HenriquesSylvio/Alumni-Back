@@ -3,7 +3,7 @@ name: Symfony
 on:
   push:
     branches:
-    - preprod
+    - PipelineCiCd
 
 jobs:
   symfony-tests:
