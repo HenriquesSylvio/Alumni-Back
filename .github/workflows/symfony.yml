@@ -30,33 +30,15 @@ jobs:
         postgresql db: 'alumniNWS_test'
         postgresql user: 'postgres'
         postgresql password: '9499'
-    
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-      
-    - name: Install Composer dependencies
-      run: make install
-    
-    - name: Check Symfony requirements
-      run: vendor/bin/requirements-checker
 
-    - name: Check the Symfony console
-      run: |
-        bin/console about
-        bin/console strangebuzz:version
-
-    - name: Load Doctrine fixtures and populate the Elasticsearch indexes
-      run: |
-        make load-fixtures
-        make populate
+    - name: Load Doctrine fixtures
+      run: php bin/console doctrine:fixtures:load
 
     - name: Run functionnal and unit tests
-      run: |
-        cp phpunit.xml.ci phpunit.xml
-        ./vendor/bin/phpunit --testsuite='main'
+      run: php bin/phpunit
 
     - uses: actions/checkout@v3
-    - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+    - uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "alumni-nws-api" #Must be unique in Heroku e
