@@ -1,6 +1,8 @@
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
 fos_rest:
+  body_converter:
+    enabled: true
   view:
-    view_response_listener: 'force'
-    formats:
-      json: true
+    formats: { json: true, xml: false, rss: false }
+  serializer:
+    serialize_null: true
