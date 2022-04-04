@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * @Route("api")
@@ -21,7 +22,7 @@ class UserController extends AbstractFOSRestController
      *     name = "app_article_show",
      *     requirements = {"id"="\d+"}
      * )
-     * @View
+     * @Rest\View(serializerGroups={"getUser"})
      */
     public function getUserById(User $user)
     {
