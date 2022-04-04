@@ -23,7 +23,7 @@ class UserController extends AbstractFOSRestController
      * )
      * @View
      */
-    public function getUserId(User $user)
+    public function getUserById(User $user)
     {
         return $user;
     }
