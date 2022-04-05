@@ -71,7 +71,9 @@ class PostController extends AbstractFOSRestController
      */
     public function deletePost(Post $post)
     {
-        $this->doctrine->getManager()->remove($post);
+        $em = $this->doctrine->getManager();
+        $em->remove($post);
+        $em->flush();
         return ;
     }
 }
