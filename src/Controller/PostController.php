@@ -40,7 +40,8 @@ class PostController extends AbstractFOSRestController
     public function addPost(Post $post, ManagerRegistry $doctrine, ConstraintViolationList $violations)
     {
         $post->setAuthor($this->security->getUser());
-        
+        $post->setCreateAt(new \DateTime(date("d-m-Y")));
+
         if (count($violations)) {
             foreach($violations as $error)
             {

@@ -4,7 +4,7 @@ jms_serializer:
             format_output: '%kernel.debug%'
     handlers:
         datetime:
-            default_format: 'Y-m-d'
+            default_format: 'd-m-Y'
 #    metadata:
 #        auto_detection: false
 #        directories:
