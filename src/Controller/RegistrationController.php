@@ -3,16 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Context\Context;
+use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,50 +22,28 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class RegistrationController extends AbstractFOSRestController
 {
     /**
-     * @var UserPasswordHasherInterface
+     * @Rest\Post(
+     *     path = "/register",
+     *     name = "register"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("user", converter="fos_rest.request_body")
      */
-    private $passwordHasher;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager)
+    public function registerUser(User $user, ManagerRegistry $doctrine, ConstraintViolationList $violations)
     {
-        $this->passwordHasher = $passwordHasher;
-        $this->entityManager = $entityManager;
-    }
-
-    /**
-     * @Route("/register", name="register", methods={"POST"})
-     * @param Request $request
-     * @return
-     */
-    public function registerUser(Request $request, ValidatorInterface $validator)
-    {
-        $user = new User();
-
-        $user->setEmail($request->get('email'));
-        $user->setPassword($request->get('password'));
-        $user->setFirstName($request->get('first_name'));
-        $user->setLastName($request->get('last_name'));
-        $user->setBirthday(new \DateTime($request->get('birthday')));
-        $user->setPromo(new \DateTime($request->get('promo')));
-
-        $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            foreach($errors as $error)
+        if (count($violations)) {
+            foreach($violations as $error)
             {
                 $errorArray[$error->getPropertyPath()] = $error->getMessage();
             }
-            return new JsonResponse(['erreur' => $errorArray], JsonResponse::HTTP_BAD_REQUEST);
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
         }
-        $user->setPassword(
-            $this->passwordHasher->hashPassword($user, $request->get('password'))
-        );
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        return new Response($user->getEmail(), Response::HTTP_CREATED);
+        $em = $doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
+        return new JsonResponse($user->getEmail(), Response::HTTP_CREATED);
     }
 }
