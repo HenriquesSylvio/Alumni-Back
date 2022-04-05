@@ -25,9 +25,12 @@ class PostController extends AbstractFOSRestController
      */
     private $security;
 
-    public function __construct(Security $security)
+    private $doctrine;
+
+    public function __construct(Security $security, ManagerRegistry $doctrine)
     {
         $this->security = $security;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -37,7 +40,7 @@ class PostController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("post", converter="fos_rest.request_body")
      */
-    public function addPost(Post $post, ManagerRegistry $doctrine, ConstraintViolationList $violations)
+    public function addPost(Post $post, ConstraintViolationList $violations)
     {
         $post->setAuthor($this->security->getUser());
         $post->setCreateAt(new \DateTime(date("d-m-Y")));
@@ -50,11 +53,31 @@ class PostController extends AbstractFOSRestController
             return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
         }
 
-        $em = $doctrine->getManager();
+        $em = $this->doctrine->getManager();
 
         $em->persist($post);
         $em->flush();
 
         return new JsonResponse($post->getContent(), Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "post_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deletePost(Post $post)
+    {
+        if($post->getAuthor() != $this->security->getUser())
+        {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+        }
+        $em = $this->doctrine->getManager();
+        $em->remove($post);
+        $em->flush();
+        return ;
     }
 }
