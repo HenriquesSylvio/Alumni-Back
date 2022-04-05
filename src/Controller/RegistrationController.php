@@ -22,6 +22,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class RegistrationController extends AbstractFOSRestController
 {
     /**
+     * @var UserPasswordHasherInterface
+     */
+    private $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+    /**
      * @Rest\Post(
      *     path = "/register",
      *     name = "register"
@@ -40,6 +50,10 @@ class RegistrationController extends AbstractFOSRestController
         }
 
         $em = $doctrine->getManager();
+
+        $user->setPassword(
+            $this->passwordHasher->hashPassword($user, $user->getPassword())
+        );
 
         $em->persist($user);
         $em->flush();
