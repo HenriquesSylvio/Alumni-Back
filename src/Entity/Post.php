@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -19,6 +21,7 @@ class Post
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="Le contenu est obligatoire")
      */
     private $content;
 
@@ -67,7 +70,7 @@ class Post
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(?UserInterface $author): self
     {
         $this->author = $author;
 

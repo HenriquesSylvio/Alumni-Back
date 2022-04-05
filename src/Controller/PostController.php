@@ -25,8 +25,16 @@ class PostController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("post", converter="fos_rest.request_body")
      */
-    public function addPost(Post $post, ManagerRegistry $doctrine)
+    public function addPost(Post $post, ManagerRegistry $doctrine, ConstraintViolationList $violations)
     {
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
         $em = $doctrine->getManager();
 
         $em->persist($post);
