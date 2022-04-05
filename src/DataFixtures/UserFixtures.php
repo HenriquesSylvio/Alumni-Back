@@ -10,7 +10,7 @@ use Faker;
 
 class UserFixtures extends Fixture
 {
-    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'birthday' => '1999-09-25', 'promo' => '2021'];
+    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'birthday' => '25-09-1999', 'promo' => '25-09-1999'];
 
     private UserPasswordHasherInterface  $passwordHasher;
 
