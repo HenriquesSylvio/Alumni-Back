@@ -25,6 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups("list", "getUser")
      */
     private $id;
 
@@ -98,7 +99,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author")
-     * @Serializer\Groups("list", "getUser")
      */
     private $posts;
 
