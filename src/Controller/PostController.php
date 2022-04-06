@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +14,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
  * @Route("api/post")
@@ -62,6 +64,19 @@ class PostController extends AbstractFOSRestController
     }
 
     /**
+     * @Get(
+     *     path = "/{id}",
+     *     name = "post_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getPost"})
+     */
+    public function getPostById(Post $post)
+    {
+        return $post;
+    }
+
+    /**
      * @Rest\View(StatusCode = 204)
      * @Rest\Delete(
      *     path = "/{id}",
@@ -71,7 +86,7 @@ class PostController extends AbstractFOSRestController
      */
     public function deletePost(Post $post)
     {
-        if($post->getAuthor() != $this->security->getUser())
+        if($post->getAuthor() !== $this->security->getUser())
         {
             return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
         }

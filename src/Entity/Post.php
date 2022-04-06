@@ -6,6 +6,7 @@ use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -22,11 +23,13 @@ class Post
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le contenu est obligatoire")
+     * @Serializer\Groups("list", "getPost")
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\Groups("list", "getPost")
      */
     private $createAt;
 
