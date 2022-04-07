@@ -16,6 +16,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\Get;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("api/post")
@@ -111,9 +112,10 @@ class PostController extends AbstractFOSRestController
      * )
      * @Rest\View(serializerGroups={"getPost"})
      */
-    public function getPostsByUser()
+    public function getPostsByUser(Request $request)
     {
-        return $this->doctrine->getRepository('App:Post')->searchByUser(1);
+        $idAuthor = $request->attributes->get('_route_params')['id'];
+        return $this->doctrine->getRepository('App:Post')->searchByUser($idAuthor);
     }
 
     /**
