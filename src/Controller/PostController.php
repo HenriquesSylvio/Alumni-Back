@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,7 +67,7 @@ class PostController extends AbstractFOSRestController
     /**
      * @Get(
      *     path = "/{id}",
-     *     name = "post_show",
+     *     name = "post_show_id",
      *     requirements = {"id"="\d+"}
      * )
      * @Rest\View(serializerGroups={"getPost"})
@@ -78,13 +79,39 @@ class PostController extends AbstractFOSRestController
 
     /**
      * @Get(
+     *     name = "post_show",
+     * )
+     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\QueryParam(
+     *     name="keyword",
+     *     requirements="[a-zA-Z0-9]",
+     *     nullable=true,
+     *     description="The keyword to search for."
+     * )
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     */
+    public function getPosts(ParamFetcherInterface $paramFetcher)
+    {
+        return $this->doctrine->getRepository('App:Post')->search(
+            $paramFetcher->get('keyword'),
+            $paramFetcher->get('order'),
+        );
+    }
+
+    /**
+     * @Get(
      *     path = "/user/{id}",
      *     name = "post_user_show",
      *     requirements = {"id"="\d+"}
      * )
      * @Rest\View(serializerGroups={"getPost"})
      */
-    public function getPostByUser()
+    public function getPostsByUser()
     {
         return $this->doctrine->getRepository('App:Post')->searchByUser(1);
     }
