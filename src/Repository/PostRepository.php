@@ -45,6 +45,17 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
+    public function searchByUser(int $userId)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.author = ' . $userId);
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
     // /**
     //  * @return Post[] Returns an array of Post objects
     //  */

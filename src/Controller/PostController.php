@@ -77,6 +77,19 @@ class PostController extends AbstractFOSRestController
     }
 
     /**
+     * @Get(
+     *     path = "/user/{id}",
+     *     name = "post_user_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getPost"})
+     */
+    public function getPostByUser()
+    {
+        return $this->doctrine->getRepository('App:Post')->searchByUser(1);
+    }
+
+    /**
      * @Rest\View(StatusCode = 204)
      * @Rest\Delete(
      *     path = "/{id}",
