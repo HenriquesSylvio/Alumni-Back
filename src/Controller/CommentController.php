@@ -75,4 +75,20 @@ class CommentController extends AbstractFOSRestController
         return $comment;
     }
 
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "comment_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteComment(Comment $comment)
+    {
+        $em = $this->doctrine->getManager();
+        $em->remove($comment);
+        $em->flush();
+        return ;
+    }
+
 }
