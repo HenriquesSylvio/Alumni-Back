@@ -19,10 +19,16 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 class CommentController extends AbstractFOSRestController
 {
 
+    /**
+     * @var Security
+     */
+    private $security;
+
     private $doctrine;
 
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(Security $security, ManagerRegistry $doctrine)
     {
+        $this->security = $security;
         $this->doctrine = $doctrine;
     }
 
@@ -35,6 +41,9 @@ class CommentController extends AbstractFOSRestController
      */
     public function addComment(Comment $comment)
     {
+        $comment->setAuthor($this->security->getUser());
+        $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+
         $em = $this->doctrine->getManager();
 
         $em->persist($comment);
