@@ -39,10 +39,18 @@ class CommentController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("comment", converter="fos_rest.request_body")
      */
-    public function addComment(Comment $comment)
+    public function addComment(Comment $comment, ConstraintViolationList $violations)
     {
         $comment->setAuthor($this->security->getUser());
         $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
 
         $em = $this->doctrine->getManager();
 
