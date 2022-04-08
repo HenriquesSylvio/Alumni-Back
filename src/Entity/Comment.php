@@ -6,6 +6,7 @@ use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=CommentRepository::class)
@@ -22,11 +23,13 @@ class Comment
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le contenu est obligatoire")
+     * @Serializer\Groups("list", "getComment")
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\Groups("list", "getComment")
      */
     private $createAt;
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Comment;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\ConstraintViolationList;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
  * @Route("api/comment")
@@ -59,4 +61,18 @@ class CommentController extends AbstractFOSRestController
 
         return new JsonResponse($comment->getContent(), Response::HTTP_CREATED);
     }
+
+    /**
+     * @Get(
+     *     path = "/{id}",
+     *     name = "comment_show_id",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getComment"})
+     */
+    public function getCommentById(Comment $comment)
+    {
+        return $comment;
+    }
+
 }
