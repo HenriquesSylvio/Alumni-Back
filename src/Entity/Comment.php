@@ -2,18 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Entity(repositoryClass=PostRepository::class)
+ * @ORM\Entity(repositoryClass=CommentRepository::class)
  */
-class Post
+class Comment
 {
     /**
      * @ORM\Id
@@ -25,31 +23,28 @@ class Post
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Le contenu est obligatoire")
-     * @Serializer\Groups("list", "getPost")
+     * @Serializer\Groups("list", "getComment")
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Serializer\Groups("list", "getPost")
+     * @Serializer\Groups("list", "getComment")
      */
     private $createAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
+     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank(message="L'id du post est obligatoire'")
      */
-    private $comments;
-
-    public function __construct()
-    {
-        $this->comments = new ArrayCollection();
-    }
+    private $post;
 
     public function getId(): ?int
     {
@@ -92,32 +87,14 @@ class Post
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
-    public function getComments(): Collection
+    public function getPost(): ?Post
     {
-        return $this->comments;
+        return $this->post;
     }
 
-    public function addComment(Comment $comment): self
+    public function setPost(?Post $post): self
     {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setPost($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getPost() === $this) {
-                $comment->setPost(null);
-            }
-        }
+        $this->post = $post;
 
         return $this;
     }
