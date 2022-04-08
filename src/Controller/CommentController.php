@@ -85,6 +85,10 @@ class CommentController extends AbstractFOSRestController
      */
     public function deleteComment(Comment $comment)
     {
+        if($comment->getAuthor() !== $this->security->getUser())
+        {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+        }
         $em = $this->doctrine->getManager();
         $em->remove($comment);
         $em->flush();
