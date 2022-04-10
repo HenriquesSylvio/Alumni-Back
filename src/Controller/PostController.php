@@ -71,11 +71,18 @@ class PostController extends AbstractFOSRestController
      *     name = "post_show_id",
      *     requirements = {"id"="\d+"}
      * )
+     * @Rest\QueryParam(
+     *     name="id",
+     *     requirements="[0-9]",
+     *     nullable=false,
+     *     description="Id of the post."
+     * )
      * @Rest\View(serializerGroups={"getPost"})
      */
-    public function getPostById(Post $post)
+    public function getPostById(Request $request)
     {
-        return $post;
+        $id = $request->attributes->get('_route_params')['id'];
+        return $this->doctrine->getRepository('App:Post')->searchById($id);
     }
 
     /**

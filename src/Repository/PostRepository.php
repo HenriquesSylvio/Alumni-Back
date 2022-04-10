@@ -58,6 +58,19 @@ class PostRepository extends ServiceEntityRepository
 
         return $query->execute();
     }
+    public function searchById(string $id)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p, count(c) as numberComment')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->where('p.id = ' . $id)
+            ->groupBy('p.id');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
 
     public function search($term, $order = 'asc')
     {
