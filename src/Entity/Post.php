@@ -19,6 +19,7 @@ class Post
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups("list", "getPost")
      */
     private $id;
 
