@@ -176,10 +176,13 @@ class PostController extends AbstractFOSRestController
      */
     public function deleteLikePost(LikePost $likePost)
     {
+        if($likePost->getUsers() !== $this->security->getUser())
+        {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+        }
         $em = $this->doctrine->getManager();
 
         $em->remove($likePost);
-        dump($likePost);
         $em->flush();
         return ;
     }
