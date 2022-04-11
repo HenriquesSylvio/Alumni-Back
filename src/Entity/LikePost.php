@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\LikePostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=LikePostRepository::class)
@@ -41,7 +42,7 @@ class LikePost
         return $this->user;
     }
 
-    public function setUsers(?User $users): self
+    public function setUsers(?UserInterface $users): self
     {
         $this->user = $users;
 

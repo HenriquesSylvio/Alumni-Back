@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,6 +64,27 @@ class PostController extends AbstractFOSRestController
         $em->flush();
 
         return new JsonResponse($post->getContent(), Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\Post(
+     *     path = "/like",
+     *     name = "add_like_post"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("likePost", converter="fos_rest.request_body")
+     */
+    public function addLikePost(LikePost $likePost)
+    {
+        $likePost->setUsers($this->security->getUser());
+        dump($likePost);
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($likePost);
+        $em->flush();
+
+        return new JsonResponse($likePost, Response::HTTP_CREATED);
     }
 
     /**
