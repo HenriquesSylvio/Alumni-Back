@@ -77,7 +77,6 @@ class PostController extends AbstractFOSRestController
     public function addLikePost(LikePost $likePost)
     {
         $likePost->setUsers($this->security->getUser());
-        dump($likePost);
 
         $em = $this->doctrine->getManager();
 
@@ -163,6 +162,24 @@ class PostController extends AbstractFOSRestController
         }
         $em = $this->doctrine->getManager();
         $em->remove($post);
+        $em->flush();
+        return ;
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/like/{post}/{user}",
+     *     name = "like_post_delete",
+     *     requirements = {"post"="\d+", "user"="\d+"}
+     * )
+     */
+    public function deleteLikePost(LikePost $likePost)
+    {
+        $em = $this->doctrine->getManager();
+
+        $em->remove($likePost);
+        dump($likePost);
         $em->flush();
         return ;
     }

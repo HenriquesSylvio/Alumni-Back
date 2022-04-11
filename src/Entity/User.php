@@ -108,7 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="users")
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="users", cascade={"remove"})
      */
     private $likePosts;
 

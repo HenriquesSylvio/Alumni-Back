@@ -14,14 +14,14 @@ class LikePost
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="likePosts")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $post;
 
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="likePosts")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $user;
 
