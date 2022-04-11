@@ -49,8 +49,9 @@ class PostRepository extends ServiceEntityRepository
     public function searchByUser(int $userId)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment')
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.author = ' . $userId)
             ->groupBy('p.id');
 
@@ -61,8 +62,9 @@ class PostRepository extends ServiceEntityRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment')
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.id = ' . $id)
             ->groupBy('p.id');
 
@@ -75,8 +77,9 @@ class PostRepository extends ServiceEntityRepository
     public function search($term, $order = 'asc')
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment')
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.content LIKE ?1')
             ->orderBy('p.createAt', $order)
             ->groupBy('p.id')
