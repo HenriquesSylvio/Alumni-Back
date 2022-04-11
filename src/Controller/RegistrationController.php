@@ -54,6 +54,7 @@ class RegistrationController extends AbstractFOSRestController
         $user->setPassword(
             $this->passwordHasher->hashPassword($user, $user->getPassword())
         );
+        $user->setAcceptAccount(false);
 
         $em->persist($user);
         $em->flush();
