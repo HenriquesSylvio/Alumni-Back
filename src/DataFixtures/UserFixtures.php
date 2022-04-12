@@ -30,17 +30,22 @@ class UserFixtures extends Fixture
         $user->setFirstname("Sylvio");
         $user->setBirthday(new \DateTime(1999-9-25));
         $user->setPromo(new \DateTime(2021-9-01));
+        $user->setAcceptAccount(true);
         $manager->persist($user);
-
+        $user->setAcceptAccount(true);
 
         $faker = Faker\Factory::create('fr_FR');
         for($nbUsers = 1; $nbUsers <= 30; $nbUsers++){
             $user = new User();
             $user->setEmail($faker->email);
             if($nbUsers === 1)
+            {
                 $user->setRoles(['ROLE_ADMIN']);
-            else
+                $user->setAcceptAccount(true);
+            } else {
                 $user->setRoles(['ROLE_USER']);
+                $user->setAcceptAccount(false);
+            }
             $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
             $user->setLastName($faker->lastName);
             $user->setFirstname($faker->firstName);

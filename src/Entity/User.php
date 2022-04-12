@@ -112,6 +112,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $likePosts;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $acceptAccount;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -328,6 +333,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $likePost->setUsers(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAcceptAccount(): ?bool
+    {
+        return $this->acceptAccount;
+    }
+
+    public function setAcceptAccount(bool $acceptAccount): self
+    {
+        $this->acceptAccount = $acceptAccount;
 
         return $this;
     }
