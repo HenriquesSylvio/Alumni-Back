@@ -46,9 +46,11 @@ class AuthController extends AbstractFOSRestController
             'email'=>$request->get('email'),
         ]);
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $request->get('password'))) {
-            return $this->json([
-                'erreur' => 'Email ou mot passe incorrect(s)',
-            ]);
+            return new JsonResponse(['erreur' => 'Email ou mot passe incorrect(s)']);
+        }
+
+        if ($user->getAcceptAccount() == false) {
+            return new JsonResponse(['erreur' => 'Votre compte n\'a pas été encore accepté par un admin']);
         }
 
         return new JsonResponse(['token' => $JWTManager->create($user)]);
