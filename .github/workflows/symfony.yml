@@ -31,6 +31,9 @@ jobs:
         postgresql user: 'postgres'
         postgresql password: '9499'
 
+    - name : Go to app folder
+      run : cd app
+      
     - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
 
