@@ -30,24 +30,21 @@ jobs:
         postgresql db: 'alumniNWS'
         postgresql user: 'postgres'
         postgresql password: '9499'
-
-    - name : Go to app folder
-      run : cd app
       
     - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
 
     - name: Create the test database
-      run: php bin/console --env=test doctrine:database:create
+      run: cd app && php bin/console --env=test doctrine:database:create
 
     - name: Create schema for test database
-      run: php bin/console --env=test doctrine:schema:create
+      run: cd app && php bin/console --env=test doctrine:schema:create
 
     - name: Load Doctrine fixtures
-      run: php bin/console doctrine:fixtures:load
+      run: cd app && php bin/console doctrine:fixtures:load
 
     - name: Run functionnal and unit tests
-      run: php bin/phpunit
+      run: cd app && php bin/phpunit
 
     - uses: actions/checkout@v3
     - uses: akhileshns/heroku-deploy@v3.12.12
