@@ -32,7 +32,7 @@ jobs:
         postgresql password: '9499'
       
     - name: Install composer require symfony/runtime
-      run: composer require symfony/runtime
+      run: cd app && composer require symfony/runtime
 
     - name: Create the test database
       run: cd app && php bin/console --env=test doctrine:database:create
