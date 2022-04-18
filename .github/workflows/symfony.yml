@@ -52,7 +52,7 @@ jobs:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "alumni-nws-api" #Must be unique in Heroku e
         heroku_email: "AlumniNWS2022@gmail.com"
-        usedocker: true
+        usedocker: false
 
 
 
