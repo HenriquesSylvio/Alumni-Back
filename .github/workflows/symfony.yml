@@ -30,7 +30,7 @@ jobs:
         postgresql db: 'alumniNWS'
         postgresql user: 'postgres'
         postgresql password: '9499'
-
+      
     - name: Install composer require symfony/runtime
       run: composer require symfony/runtime
 
@@ -41,7 +41,7 @@ jobs:
       run: php bin/console --env=test doctrine:schema:create
 
     - name: Load Doctrine fixtures
-      run: php bin/console doctrine:fixtures:load
+      run: php bin/console --env=test doctrine:fixtures:load
 
     - name: Run functionnal and unit tests
       run: php bin/phpunit
