@@ -19,6 +19,7 @@ class Post
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups("list", "getPost")
      */
     private $id;
 
@@ -46,9 +47,15 @@ class Post
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", cascade={"remove"})
+     */
+    private $likePosts;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->likePosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +123,36 @@ class Post
             // set the owning side to null (unless already changed)
             if ($comment->getPost() === $this) {
                 $comment->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LikePost>
+     */
+    public function getLikePosts(): Collection
+    {
+        return $this->likePosts;
+    }
+
+    public function addLikePost(LikePost $likePost): self
+    {
+        if (!$this->likePosts->contains($likePost)) {
+            $this->likePosts[] = $likePost;
+            $likePost->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikePost(LikePost $likePost): self
+    {
+        if ($this->likePosts->removeElement($likePost)) {
+            // set the owning side to null (unless already changed)
+            if ($likePost->getPost() === $this) {
+                $likePost->setPost(null);
             }
         }
 

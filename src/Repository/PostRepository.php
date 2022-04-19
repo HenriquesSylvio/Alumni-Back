@@ -6,6 +6,7 @@ use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -48,21 +49,41 @@ class PostRepository extends ServiceEntityRepository
     public function searchByUser(int $userId)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p')
-            ->where('p.author = ' . $userId);
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->where('p.author = ' . $userId)
+            ->groupBy('p.id');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+    public function searchById(string $id)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->where('p.id = ' . $id)
+            ->groupBy('p.id');
 
         $query = $qb->getQuery();
 
         return $query->execute();
     }
 
+
     public function search($term, $order = 'asc')
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p')
+            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.content LIKE ?1')
-            ->setParameter(1, '%'.$term.'%')
-            ->orderBy('p.createAt', $order);
+            ->orderBy('p.createAt', $order)
+            ->groupBy('p.id')
+            ->setParameter(1, '%'.$term.'%');
 
         $query = $qb->getQuery();
 

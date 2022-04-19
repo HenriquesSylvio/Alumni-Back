@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -66,16 +67,43 @@ class PostController extends AbstractFOSRestController
     }
 
     /**
+     * @Rest\Post(
+     *     path = "/like",
+     *     name = "add_like_post"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("likePost", converter="fos_rest.request_body")
+     */
+    public function addLikePost(LikePost $likePost)
+    {
+        $likePost->setUsers($this->security->getUser());
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($likePost);
+        $em->flush();
+
+        return new JsonResponse($likePost, Response::HTTP_CREATED);
+    }
+
+    /**
      * @Get(
      *     path = "/{id}",
      *     name = "post_show_id",
      *     requirements = {"id"="\d+"}
      * )
+     * @Rest\QueryParam(
+     *     name="id",
+     *     requirements="[0-9]",
+     *     nullable=false,
+     *     description="Id of the post."
+     * )
      * @Rest\View(serializerGroups={"getPost"})
      */
-    public function getPostById(Post $post)
+    public function getPostById(Request $request)
     {
-        return $post;
+        $id = $request->attributes->get('_route_params')['id'];
+        return $this->doctrine->getRepository('App:Post')->searchById($id);
     }
 
     /**
@@ -134,6 +162,27 @@ class PostController extends AbstractFOSRestController
         }
         $em = $this->doctrine->getManager();
         $em->remove($post);
+        $em->flush();
+        return ;
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/like/{post}/{user}",
+     *     name = "like_post_delete",
+     *     requirements = {"post"="\d+", "user"="\d+"}
+     * )
+     */
+    public function deleteLikePost(LikePost $likePost)
+    {
+        if($likePost->getUsers() !== $this->security->getUser())
+        {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+        }
+        $em = $this->doctrine->getManager();
+
+        $em->remove($likePost);
         $em->flush();
         return ;
     }
