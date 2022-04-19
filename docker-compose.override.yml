@@ -1,4 +1,4 @@
-composer install --ignore-platform-reqsversion: '3.8'
+version: '3.8'
 
 services:
 ###> doctrine/doctrine-bundle ###
