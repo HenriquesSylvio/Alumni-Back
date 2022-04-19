@@ -32,19 +32,19 @@ jobs:
         postgresql password: '9499'
       
     - name: Install composer require symfony/runtime
-      run: cd app && composer require symfony/runtime
+      run: composer require symfony/runtime
 
     - name: Create the test database
-      run: cd app && php bin/console --env=test doctrine:database:create
+      run: php bin/console --env=test doctrine:database:create
 
     - name: Create schema for test database
-      run: cd app && php bin/console --env=test doctrine:schema:create
+      run: php bin/console --env=test doctrine:schema:create
 
     - name: Load Doctrine fixtures
-      run: cd app && php bin/console doctrine:fixtures:load
+      run: php bin/console doctrine:fixtures:load
 
     - name: Run functionnal and unit tests
-      run: cd app && php bin/phpunit
+      run: php bin/phpunit
 
     - uses: actions/checkout@v3
     - uses: akhileshns/heroku-deploy@v3.12.12
