@@ -2,7 +2,7 @@
 
 namespace App\Tests\Func;
 
-use App\DataFixtures\UserFixtures;
+use App\DataFixtures\AppFixtures;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

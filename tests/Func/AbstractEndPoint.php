@@ -2,7 +2,7 @@
 
 namespace App\Tests\Func;
 
-use App\DataFixtures\UserFixtures;
+use App\DataFixtures\AppFixtures;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,8 +54,8 @@ abstract class AbstractEndPoint extends WebTestCase
             $this->serverInformations,
             sprintf(
                 $loginPayload,
-                UserFixtures::DEFAULT_USER['email'], UserFixtures::DEFAULT_USER['password'], UserFixtures::DEFAULT_USER['first_name'],
-                UserFixtures::DEFAULT_USER['last_name'], UserFixtures::DEFAULT_USER['birthday'], UserFixtures::DEFAULT_USER['promo']
+                AppFixtures::DEFAULT_USER['email'], AppFixtures::DEFAULT_USER['password'], AppFixtures::DEFAULT_USER['first_name'],
+                AppFixtures::DEFAULT_USER['last_name'], AppFixtures::DEFAULT_USER['birthday'], AppFixtures::DEFAULT_USER['promo']
             )
         );
         $data = json_decode($client->getResponse()->getContent(), true);

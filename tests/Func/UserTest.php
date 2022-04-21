@@ -2,7 +2,7 @@
 
 namespace App\Tests\Func;
 
-use App\DataFixtures\UserFixtures;
+use App\DataFixtures\AppFixtures;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
