@@ -32,6 +32,28 @@ class UserFixtures extends Fixture
         $user->setPromo(new \DateTime(2021-9-01));
         $user->setAcceptAccount(true);
         $manager->persist($user);
+
+        $user = new User();
+        $user->setEmail("admin@outlook.fr");
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
+        $user->setLastName("admin");
+        $user->setFirstname("admin");
+        $user->setBirthday(new \DateTime(1999-9-25));
+        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setAcceptAccount(true);
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setEmail("user@outlook.fr");
+        $user->setRoles(['ROLE_USER']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
+        $user->setLastName("Henriques");
+        $user->setFirstname("Sylvio");
+        $user->setBirthday(new \DateTime(1999-9-25));
+        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setAcceptAccount(true);
+        $manager->persist($user);
         $user->setAcceptAccount(true);
 
         $faker = Faker\Factory::create('fr_FR');

@@ -11,17 +11,17 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractEndPoint extends WebTestCase
 {
     protected array $serverInformations = ['ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json'];
-    protected string $loginPayload = '{"username": "%s", "password": "%s"}';
-
+    protected string $admin = '{"email": "admin@outlook.fr", "password": "54875487"}';
+    protected string $user = '{"email": "user@outlook.fr", "password": "54875487"}';
     public function getResponseFromRequest(
         string $method,
         string $uri,
         string $payload = '',
         array $parameter = [],
-        bool $withAuthentification = true
+        bool $withAuthentification = true,
+        bool $admin = true
     ): Response {
-        $client = $this->createAuthentificationClient($withAuthentification);
-
+        $client = $this->createAuthentificationClient($withAuthentification, $admin);
         $client->request(
             $method,
             $uri,
@@ -30,18 +30,22 @@ abstract class AbstractEndPoint extends WebTestCase
             $this->serverInformations,
             $payload
         );
-
         return $client->getResponse();
     }
 
-    protected function createAuthentificationClient(bool $withAuthentification): KernelBrowser
+    protected function createAuthentificationClient(bool $withAuthentification, bool $admin): KernelBrowser
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         if (!$withAuthentification) {
             return $client;
         }
-
+        if ($admin){
+            $loginPayload = $this->admin;
+        }else{
+            $loginPayload = $this->user;
+        }
         $client->request(
             Request::METHOD_POST,
             '/api/login_check',
@@ -49,14 +53,12 @@ abstract class AbstractEndPoint extends WebTestCase
             [],
             $this->serverInformations,
             sprintf(
-                $this->loginPayload,
+                $loginPayload,
                 UserFixtures::DEFAULT_USER['email'], UserFixtures::DEFAULT_USER['password'], UserFixtures::DEFAULT_USER['first_name'],
                 UserFixtures::DEFAULT_USER['last_name'], UserFixtures::DEFAULT_USER['birthday'], UserFixtures::DEFAULT_USER['promo']
             )
         );
-
         $data = json_decode($client->getResponse()->getContent(), true);
-
         $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $data['token']));
 
         return $client;

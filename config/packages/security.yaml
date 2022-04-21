@@ -31,6 +31,12 @@ security:
             stateless: true
             jwt: ~
 
+        user:
+            pattern: ^/api/user
+            methods: [GET, PATCH]
+            stateless: true
+            jwt: ~
+
         main:
             lazy: true
             provider: app_user_provider
@@ -46,5 +52,7 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/user, roles: ROLE_ADMIN, methods: PATCH }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/profile, roles: ROLE_USER }
+
+          # - { path: ^/profile, roles: ROLE_USER }
