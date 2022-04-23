@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\LikePost;
 use App\Entity\Post;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -51,6 +52,20 @@ class AppFixtures extends Fixture
         $user->setAcceptAccount(true);
         $manager->persist($user);
 
+        $postPrincipal = new Post();
+        $postPrincipal->setContent("Ceci est un test");
+        $postPrincipal->setCreateAt(new \DateTime(2022-4-21));
+        $postPrincipal->setAuthor($user);
+        $manager->persist($postPrincipal);
+
+        for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
+            $post = new Post();
+            $post->setContent("Ceci est un test");
+            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setAuthor($user);
+            $manager->persist($post);
+        }
+
         $user = new User();
         $user->setEmail("user@outlook.fr");
         $user->setRoles(['ROLE_USER']);
@@ -61,6 +76,16 @@ class AppFixtures extends Fixture
         $user->setPromo(new \DateTime(2021-9-01));
         $user->setAcceptAccount(true);
         $manager->persist($user);
+
+
+        for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
+            $post = new Post();
+            $post->setContent("Ceci est un test");
+            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setAuthor($user);
+            $manager->persist($post);
+        }
+
         $user->setAcceptAccount(true);
 
         $faker = Faker\Factory::create('fr_FR');
@@ -86,6 +111,10 @@ class AppFixtures extends Fixture
             $post->setCreateAt(new \DateTime(2022-4-21));
             $post->setAuthor($user);
             $manager->persist($post);
+            $likePost = new LikePost();
+            $likePost->setUsers($user);
+            $likePost->setPost($postPrincipal);
+            $manager->persist($likePost);
         }
 
         $manager->flush();

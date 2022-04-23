@@ -20,7 +20,6 @@ class RegisterTest extends AbstractEndPoint
         [],
         false
     );
-
     self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 

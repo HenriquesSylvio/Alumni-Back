@@ -156,9 +156,10 @@ class PostController extends AbstractFOSRestController
      */
     public function deletePost(Post $post)
     {
-        if($post->getAuthor() !== $this->security->getUser())
-        {
-            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+            if($post->getAuthor() !== $this->security->getUser()) {
+                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+            }
         }
         $em = $this->doctrine->getManager();
         $em->remove($post);
@@ -178,7 +179,7 @@ class PostController extends AbstractFOSRestController
     {
         if($likePost->getUsers() !== $this->security->getUser())
         {
-            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
         }
         $em = $this->doctrine->getManager();
 

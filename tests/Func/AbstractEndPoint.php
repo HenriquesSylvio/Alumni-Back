@@ -46,6 +46,7 @@ abstract class AbstractEndPoint extends WebTestCase
         }else{
             $loginPayload = $this->user;
         }
+
         $client->request(
             Request::METHOD_POST,
             '/api/login_check',
