@@ -38,7 +38,7 @@ jobs:
       run: php bin/console --env=test doctrine:database:create
 
     - name: Create schema for test database
-      run: php bin/console --env=test doctrine:schema:create
+      run: php bin/console --env=test doctrine:schema:create --no-interaction
 
     - name: Load Doctrine fixtures
       run: php bin/console --env=test doctrine:fixtures:load
