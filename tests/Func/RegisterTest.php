@@ -2,7 +2,7 @@
 
 namespace App\Tests\Func;
 
-use App\DataFixtures\UserFixtures;
+use App\DataFixtures\AppFixtures;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +11,7 @@ class RegisterTest extends AbstractEndPoint
 {
     private string $userPayload = '{"email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "birthday": "25-09-1999", "promo": "25-09-2021"}';
 
-    public function testPostUser(): void
+    public function testcreateUser(): void
     {
     $response = $this->getResponseFromRequest(
         Request::METHOD_POST,
@@ -20,11 +20,6 @@ class RegisterTest extends AbstractEndPoint
         [],
         false
     );
-    $responseContent = $response->getContent();
-    $responseDecoded = json_decode($responseContent, true);
-
-    //dd($responseDecoded);
-
     self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
