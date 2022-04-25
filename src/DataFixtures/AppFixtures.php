@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Comment;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -66,6 +67,15 @@ class AppFixtures extends Fixture
             $manager->persist($post);
         }
 
+        for($nbComments = 1; $nbComments <= 30; $nbComments++){
+            $comment = new Comment();
+            $comment->setContent("Ceci est un test");
+            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setAuthor($user);
+            $comment->setPost($post);
+            $manager->persist($comment);
+        }
+
         $user = new User();
         $user->setEmail("user@outlook.fr");
         $user->setRoles(['ROLE_USER']);
@@ -85,6 +95,16 @@ class AppFixtures extends Fixture
             $post->setAuthor($user);
             $manager->persist($post);
         }
+
+        for($nbComments = 1; $nbComments <= 30; $nbComments++){
+            $comment = new Comment();
+            $comment->setContent("Ceci est un test");
+            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setAuthor($user);
+            $comment->setPost($post);
+            $manager->persist($comment);
+        }
+
 
         $user->setAcceptAccount(true);
 
@@ -115,6 +135,12 @@ class AppFixtures extends Fixture
             $likePost->setUsers($user);
             $likePost->setPost($postPrincipal);
             $manager->persist($likePost);
+            $comment = new Comment();
+            $comment->setContent("Ceci est un test");
+            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setAuthor($user);
+            $comment->setPost($postPrincipal);
+            $manager->persist($comment);
         }
 
         $manager->flush();
