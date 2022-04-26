@@ -177,4 +177,46 @@ class CommentTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
+
+    public function testpostReplyComment_NotIdenticate(): void
+    {
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/post/reply/' . $comment->getId(),
+            '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testpostReplyComment_CreatedResult(): void
+    {
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/post/reply/' . $comment->getId(),
+            '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
+            [],
+            true
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
 }
