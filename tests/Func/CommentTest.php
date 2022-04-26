@@ -155,7 +155,7 @@ class CommentTest extends AbstractEndPoint
 //        $comment->setPost($post);
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post',
+            '/api/comment',
             '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
             []
         );
@@ -170,7 +170,7 @@ class CommentTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post',
+            '/api/comment',
             '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
             [],
             false
@@ -185,14 +185,10 @@ class CommentTest extends AbstractEndPoint
             ->findOneBy(['content' => 'Ceci est un test'])
         ;
 
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test'])
-        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post/reply/' . $comment->getId(),
-            '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
+            '/api/comment/reply/' . $comment->getId(),
+            '{"content": "Ceci est un test"}',
             [],
             false
         );
@@ -206,14 +202,10 @@ class CommentTest extends AbstractEndPoint
             ->findOneBy(['content' => 'Ceci est un test'])
         ;
 
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test'])
-        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post/reply/' . $comment->getId(),
-            '{"content": "Ceci est un test", "post" : {"id" : ' . $post->getId() .' }}',
+            '/api/comment/reply/' . $comment->getId(),
+            '{"content": "Ceci est un test"}',
             [],
             true
         );

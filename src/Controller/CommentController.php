@@ -4,9 +4,11 @@ namespace App\Controller;
 
 
 use App\Entity\Comment;
+use App\Entity\ReplyComment;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -94,6 +96,45 @@ class CommentController extends AbstractFOSRestController
         $em->remove($comment);
         $em->flush();
         return ;
+    }
+
+    /**
+     * @Rest\Post(
+     *     name = "add_reply_comment",
+     *     path = "/reply/{id}",
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("comment", converter="fos_rest.request_body")
+     */
+    public function postReplyComment(Comment $comment, ConstraintViolationList $violations, Request $request)
+    {
+        $idAnswerComment = $request->attributes->get('_route_params')['id'];
+        $answerComment = $this->doctrine->getRepository('App:Comment')->find($idAnswerComment);
+
+        $comment->setAuthor($this->security->getUser());
+        $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+        $comment->setPost($answerComment->getPost());
+
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+        $em = $this->doctrine->getManager();
+
+        $em->persist($comment);
+        $em->flush();
+
+
+        $replyComment = new ReplyComment();
+        $replyComment->setAnswerComment($answerComment);
+        $replyComment->setReplyComment($comment);
+        $em->persist($comment);
+        $em->flush();
+
+        return new JsonResponse($comment->getContent(), Response::HTTP_CREATED);
     }
 
 }
