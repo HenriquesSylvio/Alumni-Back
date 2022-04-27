@@ -49,7 +49,7 @@ class CommentRepository extends ServiceEntityRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c, count(rc.answerComment) as numberComment')
+            ->select('c, count(rcanswerComment) as numberComment')
             ->leftJoin('App:ReplyComment', 'rc', JOIN::WITH, 'c.id = rc.answerComment')
             ->where('c.id = ' . $id)
             ->groupBy('c.id');
