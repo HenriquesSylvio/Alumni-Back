@@ -260,7 +260,7 @@ class CommentTest extends AbstractEndPoint
 
     public function testgetReplyByComment_NotIdenticate(): void
     {
-        $post = $this->entityManager
+        $comment = $this->entityManager
             ->getRepository(Post::class)
             ->findOneBy(['content' => 'Ceci est un test'])
         ;

@@ -150,4 +150,18 @@ class CommentController extends AbstractFOSRestController
         $idPost = $request->attributes->get('_route_params')['id'];
         return $this->doctrine->getRepository('App:Comment')->searchByPost($idPost);
     }
+
+    /**
+     * @Get(
+     *     path = "/reply/{id}",
+     *     name = "comment_reply_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getComment"})
+     */
+    public function getReplyByComment(Request $request)
+    {
+        $idComment = $request->attributes->get('_route_params')['id'];
+        return $this->doctrine->getRepository('App:Comment')->searchByComment($idComment);
+    }
 }
