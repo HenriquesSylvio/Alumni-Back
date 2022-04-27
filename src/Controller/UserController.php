@@ -77,4 +77,16 @@ class UserController extends AbstractFOSRestController
     {
         return $this->security->getUser();
     }
+
+    /**
+     * @Get(
+     *     path = "/waitingValidation",
+     *     name = "waiting_validation_show",
+     * )
+     * @Rest\View(serializerGroups={"getUser"})
+     */
+    public function getUserWaitingForValidation()
+    {
+        return $this->doctrine->getRepository('App:User')->searchUserWaitingValidation();
+    }
 }

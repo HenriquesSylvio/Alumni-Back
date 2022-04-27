@@ -53,6 +53,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/user, roles: ROLE_ADMIN, methods: PATCH }
+        - { path: ^/api/user/waitingValidation, roles: ROLE_ADMIN }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
 
           # - { path: ^/profile, roles: ROLE_USER }
