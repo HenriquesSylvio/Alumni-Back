@@ -72,9 +72,10 @@ class CommentController extends AbstractFOSRestController
      * )
      * @Rest\View(serializerGroups={"getComment"})
      */
-    public function getCommentById(Comment $comment)
+    public function getCommentById(Request $request)
     {
-        return $comment;
+        $id = $request->attributes->get('_route_params')['id'];
+        return $this->doctrine->getRepository('App:Comment')->searchById($id);
     }
 
     /**
@@ -127,11 +128,10 @@ class CommentController extends AbstractFOSRestController
         $em->persist($comment);
         $em->flush();
 
-
         $replyComment = new ReplyComment();
         $replyComment->setAnswerComment($answerComment);
         $replyComment->setReplyComment($comment);
-        $em->persist($comment);
+        $em->persist($replyComment);
         $em->flush();
 
         return new JsonResponse($comment->getContent(), Response::HTTP_CREATED);

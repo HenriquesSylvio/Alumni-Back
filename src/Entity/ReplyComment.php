@@ -12,27 +12,17 @@ class ReplyComment
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Comment::class, inversedBy="replyComments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $answerComment;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Comment::class, inversedBy="replyComments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $replyComment;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getAnswerComment(): ?Comment
     {
