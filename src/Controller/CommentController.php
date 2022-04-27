@@ -150,5 +150,4 @@ class CommentController extends AbstractFOSRestController
         $idPost = $request->attributes->get('_route_params')['id'];
         return $this->doctrine->getRepository('App:Comment')->searchByPost($idPost);
     }
-
 }

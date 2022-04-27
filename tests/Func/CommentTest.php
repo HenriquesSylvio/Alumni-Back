@@ -242,4 +242,35 @@ class CommentTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
+
+    public function testgetReplyByComment_OkObjectResult(): void
+    {
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/comment/reply/' . $comment->getId(),
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testgetReplyByComment_NotIdenticate(): void
+    {
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/comment/reply/' . $comment->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
 }
