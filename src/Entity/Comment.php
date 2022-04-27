@@ -19,6 +19,7 @@ class Comment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups("list", "getComment")
      */
     private $id;
 

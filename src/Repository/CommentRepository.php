@@ -49,7 +49,7 @@ class CommentRepository extends ServiceEntityRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c, count(rcanswerComment) as numberComment')
+            ->select('c, count(rc.answerComment) as numberComment')
             ->leftJoin('App:ReplyComment', 'rc', JOIN::WITH, 'c.id = rc.answerComment')
             ->where('c.id = ' . $id)
             ->groupBy('c.id');
@@ -58,6 +58,20 @@ class CommentRepository extends ServiceEntityRepository
 
         return $query->execute();
     }
+
+    public function searchByPost(int $postId)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('c, count(rc.answerComment) as numberComment')
+            ->leftJoin('App:ReplyComment', 'rc', JOIN::WITH, 'c.id = rc.answerComment')
+            ->where('c.post = ' . $postId)
+            ->groupBy('c.id');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
 
     // /**
     //  * @return Comment[] Returns an array of Comment objects
