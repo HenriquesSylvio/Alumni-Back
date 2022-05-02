@@ -65,7 +65,7 @@ class PostRepository extends ServiceEntityRepository
             ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
-            ->where('p.id = ' . $id)
+            ->Where('p.id = ' . $id)
             ->groupBy('p.id');
 
         $query = $qb->getQuery();
