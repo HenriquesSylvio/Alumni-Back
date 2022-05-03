@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Comment;
+use App\Entity\Event;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -42,6 +43,13 @@ class AppFixtures extends Fixture
         $post->setAuthor($user);
         $manager->persist($post);
 
+        $event = new Event();
+        $event->setTitle("Ceci est un test");
+        $event->setDescription("Ceci est un test");
+        $event->setDate(new \DateTime(2022-4-21));
+        $event->setAuthor($user);
+        $manager->persist($event);
+
         $user = new User();
         $user->setEmail("admin@outlook.fr");
         $user->setRoles(['ROLE_ADMIN']);
@@ -76,6 +84,15 @@ class AppFixtures extends Fixture
             $manager->persist($comment);
         }
 
+        for($nbEvent = 1; $nbEvent <= 30; $nbEvent++){
+            $event = new Event();
+            $event->setTitle("Ceci est un test");
+            $event->setDescription("Ceci est un test");
+            $event->setDate(new \DateTime(2022-4-21));
+            $event->setAuthor($user);
+            $manager->persist($event);
+        }
+
         $user = new User();
         $user->setEmail("user@outlook.fr");
         $user->setRoles(['ROLE_USER']);
@@ -105,6 +122,14 @@ class AppFixtures extends Fixture
             $manager->persist($comment);
         }
 
+        for($nbEvent = 1; $nbEvent <= 30; $nbEvent++){
+            $event = new Event();
+            $event->setTitle("Ceci est un test");
+            $event->setDescription("Ceci est un test");
+            $event->setDate(new \DateTime(2022-4-21));
+            $event->setAuthor($user);
+            $manager->persist($event);
+        }
 
         $user->setAcceptAccount(true);
 
@@ -141,6 +166,12 @@ class AppFixtures extends Fixture
             $comment->setAuthor($user);
             $comment->setPost($postPrincipal);
             $manager->persist($comment);
+            $event = new Event();
+            $event->setTitle("Ceci est un test");
+            $event->setDescription("Ceci est un test");
+            $event->setDate(new \DateTime(2022-4-21));
+            $event->setAuthor($user);
+            $manager->persist($event);
         }
 
         $manager->flush();
