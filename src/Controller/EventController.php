@@ -44,11 +44,19 @@ class EventController extends AbstractFOSRestController
     {
         $event->setAuthor($this->security->getUser());
 
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
         $em = $this->doctrine->getManager();
 
         $em->persist($event);
         $em->flush();
 
-        return new JsonResponse($event, Response::HTTP_CREATED);
+        return new JsonResponse($event->getTitle(), Response::HTTP_CREATED);
     }
 }
