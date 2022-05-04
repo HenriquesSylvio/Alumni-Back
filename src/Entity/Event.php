@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -84,7 +85,7 @@ class Event
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(?UserInterface $author): self
     {
         $this->author = $author;
 
