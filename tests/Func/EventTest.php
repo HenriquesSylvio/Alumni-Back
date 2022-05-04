@@ -3,15 +3,13 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
-use App\Entity\Comment;
-use App\Entity\Post;
+use App\Entity\Event;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\EventDispatcher\Event;
 
 class EventTest extends AbstractEndPoint
 {
@@ -35,7 +33,6 @@ class EventTest extends AbstractEndPoint
             ->getRepository(Event::class)
             ->findOneBy(['description' => 'Ceci est un test'])
         ;
-
         $response = $this->getResponseFromRequest(
             Request::METHOD_GET,
             '/api/event/' . $event->getId(),
@@ -150,7 +147,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event',
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : ' . date("d-m-Y") . '}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -161,7 +158,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event',
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : ' . date("d-m-Y") . '}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
             [],
             false
         );
@@ -227,7 +224,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_PUT,
             '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : ' . date("d-m-Y") . '}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
             [],
             true,
             false
@@ -248,7 +245,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_PUT,
             '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : ' . date("d-m-Y") . '}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
             [],
             true,
             false
@@ -269,7 +266,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_PUT,
             '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : ' . date("d-m-Y") . '}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
             [],
             false
         );

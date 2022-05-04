@@ -6,6 +6,7 @@ use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,6 +46,26 @@ class EventRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function search($term, $order = 'asc', $past = false)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('e')
+            ->where('e.title LIKE ?1')
+            ->orWhere('e.description LIKE ?1')
+            ->setParameter(1, '%'.$term.'%');
+        if ($past){
+            $qb->andWhere('e.date < :date')
+            ->setParameter('date', date("d-m-Y"));
+        }else{
+            $qb->andWhere('e.date >= :date')
+                ->setParameter('date', date("d-m-Y"));
+        }
+        $qb->orderBy('e.date', $order);
+        $query = $qb->getQuery();
+
+        return $query->execute();
     }
 
     // /**

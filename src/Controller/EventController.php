@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Event;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
@@ -58,5 +60,56 @@ class EventController extends AbstractFOSRestController
         $em->flush();
 
         return new JsonResponse($event->getTitle(), Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Get(
+     *     path = "/{id}",
+     *     name = "event_show_id",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\QueryParam(
+     *     name="id",
+     *     requirements="[0-9]",
+     *     nullable=false,
+     *     description="Id of the event."
+     * )
+     * @Rest\View(serializerGroups={"getEvent"})
+     */
+    public function getEventById(Event $event)
+    {
+        return $event;
+    }
+
+    /**
+     * @Get(
+     *     name = "event_show",
+     * )
+     * @Rest\View(serializerGroups={"getEvent"})
+     * @Rest\QueryParam(
+     *     name="keyword",
+     *     nullable=true,
+     *     description="The keyword to search for."
+     * )
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="past",
+     *     requirements="true|false",
+     *     default=false,
+     *     description="get event already past"
+     * )
+     */
+    public function getEvents(ParamFetcherInterface $paramFetcher)
+    {
+        return $this->doctrine->getRepository('App:Event')->search(
+            $paramFetcher->get('keyword'),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('past')
+        );
     }
 }
