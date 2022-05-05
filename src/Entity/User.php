@@ -122,12 +122,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $events;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Participate::class, mappedBy="participant")
+     */
+    private $participates;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likePosts = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->participates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -379,6 +385,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($event->getAuthor() === $this) {
                 $event->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participate>
+     */
+    public function getParticipates(): Collection
+    {
+        return $this->participates;
+    }
+
+    public function addParticipate(Participate $participate): self
+    {
+        if (!$this->participates->contains($participate)) {
+            $this->participates[] = $participate;
+            $participate->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipate(Participate $participate): self
+    {
+        if ($this->participates->removeElement($participate)) {
+            // set the owning side to null (unless already changed)
+            if ($participate->getParticipant() === $this) {
+                $participate->setParticipant(null);
             }
         }
 
