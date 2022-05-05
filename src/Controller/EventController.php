@@ -158,4 +158,26 @@ class EventController extends AbstractFOSRestController
 
         return new JsonResponse($participate, Response::HTTP_CREATED);
     }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/participate/{event}",
+     *     name = "participation_delete",
+     *     requirements = {"event"="\d+"}
+     * )
+     */
+    public function deleteLikePost(Participate $participate)
+    {
+        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez vous retirer des participants d\'un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
+        }
+        $participate->setParticipant($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->remove($participate);
+        $em->flush();
+        return ;
+    }
 }

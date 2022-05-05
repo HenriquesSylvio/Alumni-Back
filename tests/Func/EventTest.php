@@ -206,6 +206,14 @@ class EventTest extends AbstractEndPoint
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+
+        $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/participate/' . $event->getId(),
+            '',
+            [],
+            false
+        );
     }
 
     public function testaddParticipation_NotIdenticate(): void
@@ -259,13 +267,14 @@ class EventTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/event/participation/' . $event->getId(),
+            '/api/event/participate/' . $event->getId(),
             '',
             [],
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
+
 
     public function testdeleteParticipation_NoContentResult(): void
     {
@@ -279,30 +288,11 @@ class EventTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/event/participation/' . $event->getId(),
+            '/api/event/participate/' . $event->getId(),
             '',
             []
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeleteParticipation_EventAlreadyPast(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['author' => $user->getId()])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/participation/' . $event->getId(),
-            '',
-            []
-        );
-        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 //
 //
