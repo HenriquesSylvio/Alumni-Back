@@ -4,6 +4,7 @@ namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\Event;
+use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -186,6 +187,37 @@ class EventTest extends AbstractEndPoint
             []
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testaddParticipation_CreatedResult(): void
+    {
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/event/participate/' . $event->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function testaddParticipation_NotIdenticate(): void
+    {
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/event/participate/' . $event->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 //
 //
