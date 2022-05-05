@@ -7,10 +7,12 @@ use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -113,7 +115,6 @@ class PostController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"getPost"})
      * @Rest\QueryParam(
      *     name="keyword",
-     *     requirements="[a-zA-Z0-9]",
      *     nullable=true,
      *     description="The keyword to search for."
      * )

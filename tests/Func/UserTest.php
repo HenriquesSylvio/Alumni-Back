@@ -149,4 +149,41 @@ class UserTest extends AbstractEndPoint
         return sprintf($this->userPayload, $faker->email);
     }
 
+    public function testgetUserWaitingForValidation_NotIdenticate(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/waitingValidation',
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetUserWaitingForValidation_NotAdminConnect(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/waitingValidation',
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testgetUserWaitingForValidation_AdminConnect(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/waitingValidation',
+            "",
+            [],
+            true,
+            true
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
 }
