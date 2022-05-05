@@ -187,89 +187,67 @@ class EventTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
-
-    public function testgetEventPast_NotIdenticate(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/event/past',
-            "",
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testgetEventPast_OkObjectResult(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/event/past',
-            "",
-            []
-        );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
-    }
-
-    public function testupdateEvent_NoContentResult(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
-    }
-
-    public function testupdateEvent_WrongUserConnect(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testupdateEvent_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/event/' . $event->getId(),
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
+//
+//
+//    public function testupdateEvent_NoContentResult(): void
+//    {
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'user@outlook.fr'])
+//        ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+//        ;
+//        $response = $this->getResponseFromRequest(
+//            Request::METHOD_PUT,
+//            '/api/event/' . $event->getId(),
+//            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
+//            [],
+//            true,
+//            false
+//        );
+//        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+//    }
+//
+//    public function testupdateEvent_WrongUserConnect(): void
+//    {
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'admin@outlook.fr'])
+//        ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+//        ;
+//        $response = $this->getResponseFromRequest(
+//            Request::METHOD_PUT,
+//            '/api/event/' . $event->getId(),
+//            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
+//            [],
+//            true,
+//            false
+//        );
+//        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+//    }
+//
+//    public function testupdateEvent_NotIdenticate(): void
+//    {
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'admin@outlook.fr'])
+//        ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+//        ;
+//        $response = $this->getResponseFromRequest(
+//            Request::METHOD_PUT,
+//            '/api/event/' . $event->getId(),
+//            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
+//            [],
+//            false
+//        );
+//        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+//    }
 }
