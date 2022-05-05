@@ -112,4 +112,25 @@ class EventController extends AbstractFOSRestController
             $paramFetcher->get('past')
         );
     }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "event_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteEvent(Event $event)
+    {
+        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+            if($event->getAuthor() !== $this->security->getUser()) {
+                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+            }
+        }
+        $em = $this->doctrine->getManager();
+        $em->remove($event);
+        $em->flush();
+        return ;
+    }
 }
