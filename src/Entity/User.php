@@ -98,17 +98,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $promo;
 
     /**
-     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
      */
     private $posts;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
      */
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="users", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="users", orphanRemoval=true)
      */
     private $likePosts;
 
@@ -118,12 +118,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $acceptAccount;
 
     /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="author", orphanRemoval=true)
      */
     private $events;
 
     /**
-     * @ORM\OneToMany(targetEntity=Participate::class, mappedBy="participant")
+     * @ORM\OneToMany(targetEntity=Participate::class, mappedBy="participant", orphanRemoval=true)
      */
     private $participates;
 

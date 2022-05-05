@@ -88,7 +88,7 @@ class AppFixtures extends Fixture
             $event = new Event();
             $event->setTitle("Ceci est un test");
             $event->setDescription("Ceci est un test");
-            $event->setDate(new \DateTime(2022-4-21));
+            $event->setDate(new \DateTime(date("d-m-Y")));
             $event->setAuthor($user);
             $manager->persist($event);
         }

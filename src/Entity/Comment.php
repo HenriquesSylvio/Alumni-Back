@@ -49,7 +49,7 @@ class Comment
     private $post;
 
     /**
-     * @ORM\OneToMany(targetEntity=ReplyComment::class, mappedBy="answerComment")
+     * @ORM\OneToMany(targetEntity=ReplyComment::class, mappedBy="answerComment", orphanRemoval=true)
      */
     private $replyComments;
 

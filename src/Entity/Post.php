@@ -48,7 +48,7 @@ class Post
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", orphanRemoval=true)
      */
     private $likePosts;
 

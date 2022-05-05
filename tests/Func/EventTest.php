@@ -191,9 +191,13 @@ class EventTest extends AbstractEndPoint
 
     public function testaddParticipation_CreatedResult(): void
     {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
         $event = $this->entityManager
             ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test'])
+            ->findOneBy(['author' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
@@ -206,9 +210,13 @@ class EventTest extends AbstractEndPoint
 
     public function testaddParticipation_NotIdenticate(): void
     {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
         $event = $this->entityManager
             ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test'])
+            ->findOneBy(['author' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
