@@ -270,26 +270,26 @@ class PostTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testdeleteLikePost_NotTherightUser(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
-            '',
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
+//    public function testdeleteLikePost_NotTherightUser(): void
+//    {
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'admin@outlook.fr'])
+//        ;
+//        $post = $this->entityManager
+//            ->getRepository(Post::class)
+//            ->findOneBy(['author' => $user])
+//        ;
+//        $response = $this->getResponseFromRequest(
+//            Request::METHOD_DELETE,
+//            '/api/post/like/' . $post->getId(),
+//            '',
+//            [],
+//            true,
+//            false
+//        );
+//        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+//    }
 
     public function testdeleteLikePost_NoContentResult(): void
     {
@@ -303,7 +303,7 @@ class PostTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
+            '/api/post/like/' . $post->getId(),
             '',
             []
         );
@@ -322,7 +322,7 @@ class PostTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
+            '/api/post/like/' . $post->getId(),
             '',
             [],
             false

@@ -79,7 +79,6 @@ class PostController extends AbstractFOSRestController
     public function addLikePost(LikePost $likePost)
     {
         $likePost->setUsers($this->security->getUser());
-
         $em = $this->doctrine->getManager();
 
         $em->persist($likePost);
@@ -171,17 +170,14 @@ class PostController extends AbstractFOSRestController
     /**
      * @Rest\View(StatusCode = 204)
      * @Rest\Delete(
-     *     path = "/like/{post}/{user}",
+     *     path = "/like/{post}",
      *     name = "like_post_delete",
-     *     requirements = {"post"="\d+", "user"="\d+"}
+     *     requirements = {"post"="\d+"}
      * )
      */
     public function deleteLikePost(LikePost $likePost)
     {
-        if($likePost->getUsers() !== $this->security->getUser())
-        {
-            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
-        }
+        $likePost->setUsers($this->security->getUser());
         $em = $this->doctrine->getManager();
 
         $em->remove($likePost);
