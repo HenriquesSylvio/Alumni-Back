@@ -127,6 +127,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $participates;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Subscribe::class, mappedBy="subscription", orphanRemoval=true)
+     */
+    private $subscribes;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -134,6 +139,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->likePosts = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->participates = new ArrayCollection();
+        $this->subscribes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -415,6 +421,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($participate->getParticipant() === $this) {
                 $participate->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Subscribe>
+     */
+    public function getSubscribes(): Collection
+    {
+        return $this->subscribes;
+    }
+
+    public function addSubscribe(Subscribe $subscribe): self
+    {
+        if (!$this->subscribes->contains($subscribe)) {
+            $this->subscribes[] = $subscribe;
+            $subscribe->setSubscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscribe(Subscribe $subscribe): self
+    {
+        if ($this->subscribes->removeElement($subscribe)) {
+            // set the owning side to null (unless already changed)
+            if ($subscribe->getSubscription() === $this) {
+                $subscribe->setSubscription(null);
             }
         }
 
