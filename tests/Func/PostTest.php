@@ -249,6 +249,14 @@ class PostTest extends AbstractEndPoint
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+
+        $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $post->getId(),
+            '',
+            [],
+            false
+        );
     }
 
     public function testaddLikePost_NotIdenticate(): void

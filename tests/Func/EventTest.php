@@ -227,6 +227,83 @@ class EventTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
+
+    public function testaddParticipation_EventAlreadyPast(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['author' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/event/participate',
+            '{"event": {"id" : ' . $event->getId() . '}}',
+            [],
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteParticipation_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['author' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/participation/' . $event->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteParticipation_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['author' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/participation/' . $event->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeleteParticipation_EventAlreadyPast(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['author' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/participation/' . $event->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
 //
 //
 //    public function testupdateEvent_NoContentResult(): void
