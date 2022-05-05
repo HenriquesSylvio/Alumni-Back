@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\LikePost;
+use App\Entity\Participate;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -132,5 +134,28 @@ class EventController extends AbstractFOSRestController
         $em->remove($event);
         $em->flush();
         return ;
+    }
+
+    /**
+     * @Rest\Post(
+     *     path = "/participate",
+     *     name = "add_participation"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("participate", converter="fos_rest.request_body")
+     */
+    public function addParticipation(Participate $participate)
+    {
+        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas participer à un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
+        }
+        $participate->setParticipant($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->persist($participate);
+        $em->flush();
+
+        return new JsonResponse($participate, Response::HTTP_CREATED);
     }
 }

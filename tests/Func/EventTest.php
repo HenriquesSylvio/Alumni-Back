@@ -197,8 +197,8 @@ class EventTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/event/participate/' . $event->getId(),
-            '',
+            '/api/event/participate',
+            '{"event": {"id" : ' . $event->getId() . '}}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -212,8 +212,8 @@ class EventTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/event/participate/' . $event->getId(),
-            '',
+            '/api/event/participate',
+            '{"event": {"id" : ' . $event->getId() . '}}',
             [],
             false
         );

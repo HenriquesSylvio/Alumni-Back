@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ParticipateRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipateRepository::class)
@@ -46,7 +47,7 @@ class Participate
         return $this->participant;
     }
 
-    public function setParticipant(?User $participant): self
+    public function setParticipant(?UserInterface $participant): self
     {
         $this->participant = $participant;
 
