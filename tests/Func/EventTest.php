@@ -256,6 +256,55 @@ class EventTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
+    public function testgetParticipation_NotIdenticate(): void
+    {
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test'])
+//        ;
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $participant = $this->entityManager
+            ->getRepository(Participate::class)
+            ->findOneBy(['participant' => $user->getId()])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/event/participate/' . $participant->getEvent()->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetParticipation_OkObjectResult(): void
+    {
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test'])
+//        ;
+
+        $user = $this->entityManager
+        ->getRepository(User::class)
+        ->findOneBy(['email' => 'admin@outlook.fr'])
+    ;
+        $participant = $this->entityManager
+            ->getRepository(Participate::class)
+            ->findOneBy(['participant' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/event/participate/' . $participant->getEvent()->getId(),
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
     public function testdeleteParticipation_NotIdenticate(): void
     {
         $user = $this->entityManager
@@ -299,6 +348,7 @@ class EventTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
+
 //
 //
 //    public function testupdateEvent_NoContentResult(): void
