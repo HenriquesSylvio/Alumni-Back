@@ -4,6 +4,7 @@ namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\Event;
+use App\Entity\Participate;
 use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -207,13 +208,13 @@ class EventTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/participate/' . $event->getId(),
-            '',
-            [],
-            false
-        );
+//        $this->getResponseFromRequest(
+//            Request::METHOD_DELETE,
+//            '/api/event/participate/' . $event->getId(),
+//            '',
+//            [],
+//            false
+//        );
     }
 
     public function testaddParticipation_NotIdenticate(): void
@@ -261,13 +262,17 @@ class EventTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['author' => $user->getId()])
+        $participant = $this->entityManager
+            ->getRepository(Participate::class)
+            ->findOneBy(['participant' => $user->getId()])
         ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['author' => $user->getId()])
+//        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/event/participate/' . $event->getId(),
+            '/api/event/participate/' . $participant->getEvent()->getId(),
             '',
             [],
             false
@@ -282,13 +287,13 @@ class EventTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['author' => $user->getId()])
+        $participant = $this->entityManager
+            ->getRepository(Participate::class)
+            ->findOneBy(['participant' => $user])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/event/participate/' . $event->getId(),
+            '/api/event/participate/' . $participant->getEvent()->getId(),
             '',
             []
         );

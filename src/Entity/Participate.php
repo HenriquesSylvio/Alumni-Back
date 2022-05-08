@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ParticipateRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipateRepository::class)
@@ -22,6 +23,7 @@ class Participate
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="participates")
      * @ORM\JoinColumn(nullable=false)
      * @ORM\Id
+     * @Serializer\Groups("list", "getParticipation")
      */
     private $participant;
 

@@ -108,11 +108,12 @@ class EventController extends AbstractFOSRestController
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
-        return $this->doctrine->getRepository('App:Event')->search(
+        $events =  $this->doctrine->getRepository('App:Event')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('past')
         );
+        return ['events' => $events];
     }
 
     /**
@@ -167,7 +168,7 @@ class EventController extends AbstractFOSRestController
      *     requirements = {"event"="\d+"}
      * )
      */
-    public function deleteLikePost(Participate $participate)
+    public function deleteParticipation(Participate $participate)
     {
         if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
         {
@@ -179,5 +180,19 @@ class EventController extends AbstractFOSRestController
         $em->remove($participate);
         $em->flush();
         return ;
+    }
+
+    /**
+     * @Get(
+     *     path = "/participate/{id}",
+     *     name = "participation_show_id",
+     * )
+     * @Rest\View(serializerGroups={"getParticipation"})
+     */
+    public function getParticipation(Request $request)
+    {
+        $id = $request->attributes->get('_route_params')['id'];
+        $participant =  $this->doctrine->getRepository('App:Participate')->searchAllParticipant($id);
+        return ['participant' => $participant];
     }
 }
