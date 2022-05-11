@@ -223,7 +223,7 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testgetFollower_NotIdenticate(): void
+    public function testgetSubcriber_NotIdenticate(): void
     {
 //        $event = $this->entityManager
 //            ->getRepository(Event::class)
@@ -244,7 +244,7 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testgetFollower_OkObjectResult(): void
+    public function testgetSubcriber_OkObjectResult(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)

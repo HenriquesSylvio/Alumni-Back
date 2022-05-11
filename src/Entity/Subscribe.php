@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SubscribeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=SubscribeRepository::class)
@@ -15,6 +16,7 @@ class Subscribe
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="subscribes")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getSubscriber")
      */
     private $subscription;
 
@@ -22,6 +24,7 @@ class Subscribe
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="subscribes")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getSubscriber")
      */
     private $subscriber;
 

@@ -69,8 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser")
-     * @Serializer\Groups("list", "getParticipation")
+     * @Serializer\Groups("list", "getUser", "getParticipation", "getSubscriber")
      */
     private $firstName;
 
@@ -82,8 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser")
-     * @Serializer\Groups("list", "getParticipation")
+     * @Serializer\Groups("list", "getUser", "getParticipation", "getSubscriber")
      */
     private $lastName;
 

@@ -6,6 +6,7 @@ use App\Entity\Subscribe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,6 +46,19 @@ class SubscribeRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function searchAllSubscriber($idUser)
+    {
+
+        $qb = $this->createQueryBuilder('s')
+            ->select('u')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 's.subscriber = u.id')
+            ->where('s.subscriber = ' . $idUser);
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
     }
 
     // /**
