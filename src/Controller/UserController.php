@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\LikePost;
 use App\Entity\Subscribe;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -116,5 +117,23 @@ class UserController extends AbstractFOSRestController
         $em->flush();
 
         return new JsonResponse($subscribe, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/subscribe/{subscriber}",
+     *     name = "subscribe_delete",
+     *     requirements = {"subscriber"="\d+"}
+     * )
+     */
+    public function deleteSubscribe(Subscribe $subscribe)
+    {
+        $subscribe->setSubscription($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->remove($subscribe);
+        $em->flush();
+        return ;
     }
 }

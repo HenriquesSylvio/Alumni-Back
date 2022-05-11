@@ -318,7 +318,7 @@ class UserTest extends AbstractEndPoint
 
     public function testdeleteSubscribe_NoContentResult(): void
     {
-        $user = $this->entityManage
+        $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => 'user@outlook.fr'])
         ;
