@@ -186,4 +186,146 @@ class UserTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
+
+    public function testaddFollower_CreatedResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/user/follower',
+            '{"user": {"id" : ' . $user->getId() . '}}',
+            []
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function testaddFollower_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/user/follower',
+            '{"user": {"id" : ' . $user->getId() . '}}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetFollower_NotIdenticate(): void
+    {
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test'])
+//        ;
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/follower/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetFollower_OkObjectResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/follower/' . $user->getId(),
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testgetFollowing_NotIdenticate(): void
+    {
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['description' => 'Ceci est un test'])
+//        ;
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/following/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetFollowing_OkObjectResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/user/following/' . $user->getId(),
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testdeleteFollower_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['author' => $user->getId()])
+//        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/user/follower/' . $user->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+
+    public function testdeleteFollower_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/user/follower/' . $user->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
 }
