@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SubscribeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=SubscribeRepository::class)
@@ -29,7 +30,7 @@ class Subscribe
         return $this->subscription;
     }
 
-    public function setSubscription(?User $subscription): self
+    public function setSubscription(?UserInterface $subscription): self
     {
         $this->subscription = $subscription;
 
@@ -41,7 +42,7 @@ class Subscribe
         return $this->subscriber;
     }
 
-    public function setSubscriber(?User $subscriber): self
+    public function setSubscriber(?UserInterface $subscriber): self
     {
         $this->subscriber = $subscriber;
 

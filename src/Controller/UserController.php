@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Subscribe;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Patch;
@@ -14,6 +16,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Security\Core\Security;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * @Route("api/user")
@@ -88,5 +91,30 @@ class UserController extends AbstractFOSRestController
     public function getUserWaitingForValidation()
     {
         return $this->doctrine->getRepository('App:User')->searchUserWaitingValidation();
+    }
+
+
+    /**
+     * @Rest\Post(
+     *     path = "/subscribe",
+     *     name = "add_subscribe"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("subscribe", converter="fos_rest.request_body")
+     */
+    public function addSubscribe(Subscribe $subscribe)
+    {
+        if ($subscribe->getSubscriber() == $this->security->getUser()) {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez vous suivre'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $subscribe->setSubscription($this->security->getUser());
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($subscribe);
+        $em->flush();
+
+        return new JsonResponse($subscribe, Response::HTTP_CREATED);
     }
 }

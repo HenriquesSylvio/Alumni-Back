@@ -3,9 +3,12 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
+use App\Entity\Participate;
+use App\Entity\Subscribe;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Security;
@@ -187,7 +190,7 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testaddFollower_CreatedResult(): void
+    public function testaddSubscribe_CreatedResult(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
@@ -196,14 +199,14 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/user/follower',
-            '{"user": {"id" : ' . $user->getId() . '}}',
+            '/api/user/subscribe',
+            '{"subscriber": {"id" : ' . $user->getId() . '}}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
-    public function testaddFollower_NotIdenticate(): void
+    public function testaddSubscribe_NotIdenticate(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
@@ -212,8 +215,8 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/user/follower',
-            '{"user": {"id" : ' . $user->getId() . '}}',
+            '/api/user/subscribe',
+            '{"subscriber": {"id" : ' . $user->getId() . '}}',
             [],
             false
         );
@@ -292,7 +295,7 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testdeleteFollower_NotIdenticate(): void
+    public function testdeleteSubscribe_NotIdenticate(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
@@ -304,7 +307,7 @@ class UserTest extends AbstractEndPoint
 //        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/user/follower/' . $user->getId(),
+            '/api/user/subscribe/' . $user->getId(),
             '',
             [],
             false
@@ -313,16 +316,16 @@ class UserTest extends AbstractEndPoint
     }
 
 
-    public function testdeleteFollower_NoContentResult(): void
+    public function testdeleteSubscribe_NoContentResult(): void
     {
-        $user = $this->entityManager
+        $user = $this->entityManage
             ->getRepository(User::class)
             ->findOneBy(['email' => 'user@outlook.fr'])
         ;
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/user/follower/' . $user->getId(),
+            '/api/user/subscribe/' . $user->getId(),
             '',
             []
         );
