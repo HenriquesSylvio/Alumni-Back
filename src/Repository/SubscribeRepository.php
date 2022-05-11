@@ -50,11 +50,22 @@ class SubscribeRepository extends ServiceEntityRepository
 
     public function searchAllSubscriber($idUser)
     {
+        $qb = $this->createQueryBuilder('s')
+            ->select('u')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 's.subscription = u.id')
+            ->where('s.subscriber = ' . $idUser);
 
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
+    public function searchAllSubscription($idUser)
+    {
         $qb = $this->createQueryBuilder('s')
             ->select('u')
             ->innerJoin('App:User', 'u', JOIN::WITH, 's.subscriber = u.id')
-            ->where('s.subscriber = ' . $idUser);
+            ->where('s.subscription = ' . $idUser);
 
         $query = $qb->getQuery();
 

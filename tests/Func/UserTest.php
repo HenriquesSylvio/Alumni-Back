@@ -236,7 +236,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_GET,
-            '/api/user/follower/' . $user->getId(),
+            '/api/user/subscriber/' . $user->getId(),
             "",
             [],
             false
@@ -252,14 +252,14 @@ class UserTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_GET,
-            '/api/user/follower/' . $user->getId(),
+            '/api/user/subscriber/' . $user->getId(),
             "",
             []
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testgetFollowing_NotIdenticate(): void
+    public function testgetsubscription_NotIdenticate(): void
     {
 //        $event = $this->entityManager
 //            ->getRepository(Event::class)
@@ -272,7 +272,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_GET,
-            '/api/user/following/' . $user->getId(),
+            '/api/user/subscription/' . $user->getId(),
             "",
             [],
             false
@@ -280,7 +280,7 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testgetFollowing_OkObjectResult(): void
+    public function testgetsubscription_OkObjectResult(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
@@ -288,7 +288,7 @@ class UserTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_GET,
-            '/api/user/following/' . $user->getId(),
+            '/api/user/subscription/' . $user->getId(),
             "",
             []
         );

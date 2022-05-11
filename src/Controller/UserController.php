@@ -139,15 +139,29 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Get(
-     *     path = "/follower/{id}",
-     *     name = "follower_show_id",
+     *     path = "/subscriber/{id}",
+     *     name = "subcriber",
      * )
      * @Rest\View(serializerGroups={"getSubscriber"})
      */
     public function getSubcriber(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $follower =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscriber($id);
-        return ['users' => $follower];
+        $subscriber =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscriber($id);
+        return ['users' => $subscriber];
+    }
+
+    /**
+     * @Get(
+     *     path = "/subscription/{id}",
+     *     name = "subscription_show_id",
+     * )
+     * @Rest\View(serializerGroups={"getSubscriber"})
+     */
+    public function getSubscription(Request $request)
+    {
+        $id = $request->attributes->get('_route_params')['id'];
+        $subscription =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscription($id);
+        return ['users' => $subscription];
     }
 }
