@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Event;
 use App\Entity\LikePost;
 use App\Entity\Post;
+use App\Entity\Tag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -37,10 +38,15 @@ class AppFixtures extends Fixture
         $user->setAcceptAccount(true);
         $manager->persist($user);
 
+        $tag = new Tag();
+        $tag->setLabel("Offre d'emploi");
+        $manager->persist($tag);
+
         $post = new Post();
         $post->setContent("Ceci est un test");
         $post->setCreateAt(new \DateTime(2022-4-21));
         $post->setAuthor($user);
+        $post->setTag($tag);
         $manager->persist($post);
 
         $event = new Event();
@@ -65,6 +71,7 @@ class AppFixtures extends Fixture
         $postPrincipal->setContent("Ceci est un test");
         $postPrincipal->setCreateAt(new \DateTime(2022-4-21));
         $postPrincipal->setAuthor($user);
+        $postPrincipal->setTag($tag);
         $manager->persist($postPrincipal);
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
@@ -72,6 +79,7 @@ class AppFixtures extends Fixture
             $post->setContent("Ceci est un test");
             $post->setCreateAt(new \DateTime(2022-4-21));
             $post->setAuthor($user);
+            $post->setTag($tag);
             $manager->persist($post);
         }
 
@@ -110,6 +118,7 @@ class AppFixtures extends Fixture
             $post->setContent("Ceci est un test");
             $post->setCreateAt(new \DateTime(2022-4-21));
             $post->setAuthor($user);
+            $post->setTag($tag);
             $manager->persist($post);
         }
 
@@ -155,6 +164,7 @@ class AppFixtures extends Fixture
             $post->setContent("Ceci est un test");
             $post->setCreateAt(new \DateTime(2022-4-21));
             $post->setAuthor($user);
+            $post->setTag($tag);
             $manager->persist($post);
             $likePost = new LikePost();
             $likePost->setUsers($user);
