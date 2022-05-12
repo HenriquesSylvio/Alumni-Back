@@ -52,6 +52,12 @@ class Post
      */
     private $likePosts;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="posts")
+     * @ORM\JoinColumn(nullable=false ,name="tag", referencedColumnName="label")
+     */
+    private $tag;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -155,6 +161,18 @@ class Post
                 $likePost->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTag(): ?Tag
+    {
+        return $this->tag;
+    }
+
+    public function setTag(?Tag $tag): self
+    {
+        $this->tag = $tag;
 
         return $this;
     }
