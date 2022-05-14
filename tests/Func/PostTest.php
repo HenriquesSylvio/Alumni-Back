@@ -5,6 +5,7 @@ namespace App\Tests\Func;
 use App\DataFixtures\AppFixtures;
 use App\Entity\LikePost;
 use App\Entity\Post;
+use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -203,12 +204,15 @@ class PostTest extends AbstractEndPoint
 
     public function testaddPost_CreatedResult(): void
     {
-        $post = new Post();
-        $post->setContent("Ceci est un test");
+        $tag = $this->entityManager
+            ->getRepository(Tag::class)
+            ->findOneBy(['label' => 'Offre d\'emploi'])
+        ;
+
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test", "tag": { "label" : "Offre d\'emploi"}}',
+            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -220,10 +224,14 @@ class PostTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
+        $tag = $this->entityManager
+            ->getRepository(Tag::class)
+            ->findOneBy(['label' => 'Offre d\'emploi'])
+        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test", "tag": { "label" : "Offre d\'emploi"}}',
+            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             [],
             false
         );

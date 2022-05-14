@@ -54,7 +54,7 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="posts")
-     * @ORM\JoinColumn(nullable=false ,name="tag", referencedColumnName="label")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $tag;
 

@@ -6,15 +6,25 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
+ * @UniqueEntity("label", message="Ce label existe déjà")
  */
 class Tag
 {
     /**
-     * @ORM\Column(type="string", length=255)
      * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @Assert\NotBlank(message="Le label du tag est obligatoire")
+     * @ORM\Column(type="string", length=255)
      */
     private $label;
 
@@ -23,14 +33,14 @@ class Tag
      */
     private $posts;
 
-    public function __construct()
-    {
-        $this->posts = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
     }
 
     public function getLabel(): ?string
