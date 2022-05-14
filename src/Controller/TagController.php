@@ -51,4 +51,21 @@ class TagController extends AbstractFOSRestController
         return new JsonResponse($tag, Response::HTTP_CREATED);
     }
 
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "tag_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteTag(Tag $tag)
+    {
+        $em = $this->doctrine->getManager();
+        $em->remove($tag);
+        $em->flush();
+        return ;
+    }
+
+
 }

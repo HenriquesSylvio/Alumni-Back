@@ -58,7 +58,7 @@ class TagTest extends AbstractEndPoint
             '/api/tag',
             '{"label": "Test2"}',
             [],
-            false,
+            true,
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -68,12 +68,12 @@ class TagTest extends AbstractEndPoint
     {
         $tag = $this->entityManager
             ->getRepository(Tag::class)
-            ->findOneBy(['name’' => 'Test2'])
+            ->findOneBy(['label' => 'Test2'])
         ;
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/tag/' . $tag->getName(),
+            '/api/tag/' . $tag->getId(),
             '',
             [],
             false
@@ -86,34 +86,34 @@ class TagTest extends AbstractEndPoint
     {
         $tag = $this->entityManager
             ->getRepository(Tag::class)
-            ->findOneBy(['name’' => 'Test2'])
+            ->findOneBy(['label' => 'Test2'])
         ;
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/tag' .  $tag->getName(),
+            '/api/tag/' .  $tag->getId(),
             '',
             [],
-            false,
+            true,
             false
         );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 
     public function testdeleteTag_NoContentResult(): void
     {
         $tag = $this->entityManager
             ->getRepository(Tag::class)
-            ->findOneBy(['name’' => 'Test2'])
+            ->findOneBy(['label' => 'Test2'])
         ;
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/tag/' . $tag->getName(),
+            '/api/tag/' . $tag->getId(),
             '',
             []
         );
-        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     public function testgetTag_OkObjectResult(): void
