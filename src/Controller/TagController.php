@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\Security;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\ConstraintViolationList;
-
+use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
  * @Route("api/tag")
@@ -67,5 +67,15 @@ class TagController extends AbstractFOSRestController
         return ;
     }
 
-
+    /**
+     * @Get(
+     *     name = "tag_show"
+     * )
+     * @Rest\View(serializerGroups={"getTag"})
+     */
+    public function getTag()
+    {
+        $tags =  $this->doctrine->getRepository('App:Tag')->findAll();
+        return ['tags' => $tags];
+    }
 }

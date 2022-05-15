@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
@@ -19,12 +20,14 @@ class Tag
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups("list", "getTag")
      */
     private $id;
 
     /**
      * @Assert\NotBlank(message="Le label du tag est obligatoire")
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups("list", "getTag")
      */
     private $label;
 

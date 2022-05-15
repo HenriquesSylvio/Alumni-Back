@@ -61,7 +61,7 @@ class TagTest extends AbstractEndPoint
             true,
             false
         );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 
     public function testdeleteTag_NotIdenticate(): void
@@ -122,7 +122,9 @@ class TagTest extends AbstractEndPoint
             Request::METHOD_GET,
             '/api/tag',
             '',
-            []
+            [],
+            true,
+            false
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
