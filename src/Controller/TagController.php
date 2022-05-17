@@ -48,7 +48,7 @@ class TagController extends AbstractFOSRestController
         $em->persist($tag);
         $em->flush();
 
-        return new JsonResponse($tag, Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $tag->getId()], Response::HTTP_CREATED);
     }
 
     /**

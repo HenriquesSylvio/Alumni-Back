@@ -314,7 +314,7 @@ class PostTest extends AbstractEndPoint
         ;
         $likePost = $this->entityManager
             ->getRepository(LikePost::class)
-            ->findOneBy(['user' => $user->getId()])
+            ->findOneBy(['likeBy' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
@@ -334,7 +334,7 @@ class PostTest extends AbstractEndPoint
         ;
         $likePost = $this->entityManager
             ->getRepository(LikePost::class)
-            ->findOneBy(['user' => $user->getId()])
+            ->findOneBy(['likeBy' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,

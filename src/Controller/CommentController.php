@@ -61,7 +61,7 @@ class CommentController extends AbstractFOSRestController
         $em->persist($comment);
         $em->flush();
 
-        return new JsonResponse($comment->getContent(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $comment->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -134,7 +134,7 @@ class CommentController extends AbstractFOSRestController
         $em->persist($replyComment);
         $em->flush();
 
-        return new JsonResponse($comment->getContent(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $comment->getId()], Response::HTTP_CREATED);
     }
 
     /**

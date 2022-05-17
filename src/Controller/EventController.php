@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Event;
@@ -60,8 +59,7 @@ class EventController extends AbstractFOSRestController
 
         $em->persist($event);
         $em->flush();
-
-        return new JsonResponse($event->getTitle(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $event->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -157,7 +155,7 @@ class EventController extends AbstractFOSRestController
         $em->persist($participate);
         $em->flush();
 
-        return new JsonResponse($participate, Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
     }
 
     /**

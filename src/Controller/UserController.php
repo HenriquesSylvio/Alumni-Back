@@ -116,7 +116,7 @@ class UserController extends AbstractFOSRestController
         $em->persist($subscribe);
         $em->flush();
 
-        return new JsonResponse($subscribe, Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
     }
 
     /**

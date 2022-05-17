@@ -65,7 +65,7 @@ class PostController extends AbstractFOSRestController
         $em->persist($post);
         $em->flush();
 
-        return new JsonResponse($post->getContent(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $post->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -84,7 +84,7 @@ class PostController extends AbstractFOSRestController
         $em->persist($likePost);
         $em->flush();
 
-        return new JsonResponse($likePost, Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
     }
 
     /**
