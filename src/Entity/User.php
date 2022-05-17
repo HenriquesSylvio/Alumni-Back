@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups("list", "getUser")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $id;
 
@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser", "getParticipation", "getSubscriber")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $firstName;
 
@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser", "getParticipation", "getSubscriber")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $lastName;
 

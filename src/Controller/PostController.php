@@ -93,18 +93,13 @@ class PostController extends AbstractFOSRestController
      *     name = "post_show_id",
      *     requirements = {"id"="\d+"}
      * )
-     * @Rest\QueryParam(
-     *     name="id",
-     *     requirements="[0-9]",
-     *     nullable=false,
-     *     description="Id of the post."
-     * )
      * @Rest\View(serializerGroups={"getPost"})
      */
     public function getPostById(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        return $this->doctrine->getRepository('App:Post')->searchById($id);
+        $post = $this->doctrine->getRepository('App:Post')->searchById($id);
+        return ['post' => $post];
     }
 
     /**
@@ -126,10 +121,11 @@ class PostController extends AbstractFOSRestController
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
     {
-        return $this->doctrine->getRepository('App:Post')->search(
+        $posts = $this->doctrine->getRepository('App:Post')->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
         );
+        return ['posts' => $posts];
     }
 
     /**
@@ -143,7 +139,8 @@ class PostController extends AbstractFOSRestController
     public function getPostsByUser(Request $request)
     {
         $idAuthor = $request->attributes->get('_route_params')['id'];
-        return $this->doctrine->getRepository('App:Post')->searchByUser($idAuthor);
+        $posts = $this->doctrine->getRepository('App:Post')->searchByUser($idAuthor);
+        return ['posts' => $posts];
     }
 
     /**

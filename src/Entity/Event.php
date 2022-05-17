@@ -47,6 +47,7 @@ class Event
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getEvent")
      */
     private $author;
 

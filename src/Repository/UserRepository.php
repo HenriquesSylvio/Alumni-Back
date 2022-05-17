@@ -37,6 +37,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function searchById(string $id){
+
+        $qb = $this->createQueryBuilder('u')
+            ->select('u, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber')
+            ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
+            ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
+            ->Where('u.id = ' . $id)
+            ->groupBy('u.id');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
     public function searchUserWaitingValidation()
     {
         $qb = $this->createQueryBuilder('u')

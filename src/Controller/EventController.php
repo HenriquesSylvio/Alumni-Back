@@ -68,17 +68,11 @@ class EventController extends AbstractFOSRestController
      *     name = "event_show_id",
      *     requirements = {"id"="\d+"}
      * )
-     * @Rest\QueryParam(
-     *     name="id",
-     *     requirements="[0-9]",
-     *     nullable=false,
-     *     description="Id of the event."
-     * )
      * @Rest\View(serializerGroups={"getEvent"})
      */
     public function getEventById(Event $event)
     {
-        return $event;
+        return ['event' => $event];
     }
 
     /**

@@ -45,9 +45,11 @@ class UserController extends AbstractFOSRestController
      * )
      * @Rest\View(serializerGroups={"getUser"})
      */
-    public function getUserById(User $user)
+    public function getUserById(Request $request)
     {
-        return $user;
+        $idUser = $request->attributes->get('_route_params')['id'];
+        $user =  $this->doctrine->getRepository('App:User')->searchById($idUser);
+        return ['user' => $user];
     }
 
     /**
@@ -79,7 +81,8 @@ class UserController extends AbstractFOSRestController
      */
     public function getMyProfile()
     {
-        return $this->security->getUser();
+        $user =  $this->doctrine->getRepository('App:User')->searchById($this->security->getUser()->getId());
+        return ['user' => $user];
     }
 
     /**
@@ -91,7 +94,8 @@ class UserController extends AbstractFOSRestController
      */
     public function getUserWaitingForValidation()
     {
-        return $this->doctrine->getRepository('App:User')->searchUserWaitingValidation();
+        $users = $this->doctrine->getRepository('App:User')->searchUserWaitingValidation();
+        return ['users' => $users];
     }
 
 
@@ -163,5 +167,26 @@ class UserController extends AbstractFOSRestController
         $id = $request->attributes->get('_route_params')['id'];
         $subscription =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscription($id);
         return ['users' => $subscription];
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "user_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteUser(User $user)
+    {
+        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+            if($user !== $this->security->getUser()) {
+                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+            }
+        }
+        $em = $this->doctrine->getManager();
+        $em->remove($user);
+        $em->flush();
+        return ;
     }
 }
