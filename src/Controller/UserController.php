@@ -110,7 +110,10 @@ class UserController extends AbstractFOSRestController
     public function addSubscribe(Subscribe $subscribe)
     {
         if ($subscribe->getSubscriber() == $this->security->getUser()) {
-            return new JsonResponse(['erreur' => 'Vous ne pouvez vous suivre'], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas vous suivre.'], Response::HTTP_UNAUTHORIZED);
+        }
+        if ($subscribe->getSubscriber()->getAcceptAccount() == false) {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas suivre un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
         }
 
         $subscribe->setSubscription($this->security->getUser());
