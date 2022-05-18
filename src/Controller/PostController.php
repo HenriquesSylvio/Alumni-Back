@@ -98,7 +98,7 @@ class PostController extends AbstractFOSRestController
     public function getPostById(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $post = $this->doctrine->getRepository('App:Post')->searchById($id);
+        $post = $this->doctrine->getRepository(Post::class)->searchById($id);
         return ['post' => $post];
     }
 
@@ -121,7 +121,7 @@ class PostController extends AbstractFOSRestController
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
     {
-        $posts = $this->doctrine->getRepository('App:Post')->search(
+        $posts = $this->doctrine->getRepository(Post::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
         );
@@ -139,7 +139,7 @@ class PostController extends AbstractFOSRestController
     public function getPostsByUser(Request $request)
     {
         $idAuthor = $request->attributes->get('_route_params')['id'];
-        $posts = $this->doctrine->getRepository('App:Post')->searchByUser($idAuthor);
+        $posts = $this->doctrine->getRepository(Post::class)->searchByUser($idAuthor);
         return ['posts' => $posts];
     }
 

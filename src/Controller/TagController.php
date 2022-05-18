@@ -75,7 +75,7 @@ class TagController extends AbstractFOSRestController
      */
     public function getTag()
     {
-        $tags =  $this->doctrine->getRepository('App:Tag')->findAll();
+        $tags =  $this->doctrine->getRepository(Tag::class)->findAll();
         return ['tags' => $tags];
     }
 }

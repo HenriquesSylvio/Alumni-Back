@@ -75,7 +75,7 @@ class CommentController extends AbstractFOSRestController
     public function getCommentById(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $comment = $this->doctrine->getRepository('App:Comment')->searchById($id);
+        $comment = $this->doctrine->getRepository(Comment::class)->searchById($id);
         return ['comment' => $comment];
     }
 
@@ -111,7 +111,7 @@ class CommentController extends AbstractFOSRestController
     public function postReplyComment(Comment $comment, ConstraintViolationList $violations, Request $request)
     {
         $idAnswerComment = $request->attributes->get('_route_params')['id'];
-        $answerComment = $this->doctrine->getRepository('App:Comment')->find($idAnswerComment);
+        $answerComment = $this->doctrine->getRepository(Comment::class)->find($idAnswerComment);
 
         $comment->setAuthor($this->security->getUser());
         $comment->setCreateAt(new \DateTime(date("d-m-Y")));
@@ -149,7 +149,7 @@ class CommentController extends AbstractFOSRestController
     public function getcommentsByPost(Request $request)
     {
         $idPost = $request->attributes->get('_route_params')['id'];
-        $comments = $this->doctrine->getRepository('App:Comment')->searchByPost($idPost);
+        $comments = $this->doctrine->getRepository(Comment::class)->searchByPost($idPost);
         return ['comments' => $comments];
     }
 
@@ -164,7 +164,7 @@ class CommentController extends AbstractFOSRestController
     public function getReplyByComment(Request $request)
     {
         $idComment = $request->attributes->get('_route_params')['id'];
-        $comments = $this->doctrine->getRepository('App:Comment')->searchByComment($idComment);
+        $comments = $this->doctrine->getRepository(Comment::class)->searchByComment($idComment);
         return ['comments' => $comments];
     }
 }

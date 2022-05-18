@@ -100,7 +100,7 @@ class EventController extends AbstractFOSRestController
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
-        $events =  $this->doctrine->getRepository('App:Event')->search(
+        $events =  $this->doctrine->getRepository(Event::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('past')
@@ -184,7 +184,7 @@ class EventController extends AbstractFOSRestController
     public function getParticipation(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $participant =  $this->doctrine->getRepository('App:Participate')->searchAllParticipant($id);
+        $participant =  $this->doctrine->getRepository(Participate::class)->searchAllParticipant($id);
         return ['participant' => $participant];
     }
 }

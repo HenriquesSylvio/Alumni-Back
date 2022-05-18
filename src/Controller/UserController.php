@@ -48,7 +48,7 @@ class UserController extends AbstractFOSRestController
     public function getUserById(Request $request)
     {
         $idUser = $request->attributes->get('_route_params')['id'];
-        $user =  $this->doctrine->getRepository('App:User')->searchById($idUser);
+        $user =  $this->doctrine->getRepository(User::class)->searchById($idUser);
         return ['user' => $user];
     }
 
@@ -81,7 +81,7 @@ class UserController extends AbstractFOSRestController
      */
     public function getMyProfile()
     {
-        $user =  $this->doctrine->getRepository('App:User')->searchById($this->security->getUser()->getId());
+        $user =  $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId());
         return ['user' => $user];
     }
 
@@ -94,7 +94,7 @@ class UserController extends AbstractFOSRestController
      */
     public function getUserWaitingForValidation()
     {
-        $users = $this->doctrine->getRepository('App:User')->searchUserWaitingValidation();
+        $users = $this->doctrine->getRepository(User::class)->searchUserWaitingValidation();
         return ['users' => $users];
     }
 
@@ -154,7 +154,7 @@ class UserController extends AbstractFOSRestController
     public function getSubcriber(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $subscriber =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscriber($id);
+        $subscriber =  $this->doctrine->getRepository(Subscribe::class)->searchAllSubscriber($id);
         return ['users' => $subscriber];
     }
 
@@ -168,7 +168,7 @@ class UserController extends AbstractFOSRestController
     public function getSubscription(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        $subscription =  $this->doctrine->getRepository('App:Subscribe')->searchAllSubscription($id);
+        $subscription =  $this->doctrine->getRepository(Subscribe::class)->searchAllSubscription($id);
         return ['users' => $subscription];
     }
 
