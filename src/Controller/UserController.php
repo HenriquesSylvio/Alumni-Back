@@ -49,7 +49,13 @@ class UserController extends AbstractFOSRestController
     {
         $idUser = $request->attributes->get('_route_params')['id'];
         $user =  $this->doctrine->getRepository(User::class)->searchById($idUser);
-        return ['user' => $user];
+        if(is_null($user)) {
+            return new JsonResponse(['erreur' => 'Aucun utilisateur n\'a été trouvé'], Response::HTTP_NOT_FOUND);
+        }
+        if(!$user[0]->getAcceptAccount()){
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas afficher le profil d\'un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
+        }
+        return ['user' => $user[0]];
     }
 
     /**
@@ -81,8 +87,8 @@ class UserController extends AbstractFOSRestController
      */
     public function getMyProfile()
     {
-        $user =  $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId());
-        return ['user' => $user];
+        $data =  $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId())[0];
+        return ['user' => $data];
     }
 
     /**
