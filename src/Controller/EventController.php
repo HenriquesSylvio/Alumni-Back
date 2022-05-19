@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\LikePost;
 use App\Entity\Participate;
+use App\Representation\Paginer;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -74,12 +75,11 @@ class EventController extends AbstractFOSRestController
     {
         return ['event' => $event];
     }
-
+//* @Rest\View(serializerGroups={"getEvent"})
     /**
      * @Get(
      *     name = "event_show",
      * )
-     * @Rest\View(serializerGroups={"getEvent"})
      * @Rest\QueryParam(
      *     name="keyword",
      *     nullable=true,
@@ -97,15 +97,37 @@ class EventController extends AbstractFOSRestController
      *     default=false,
      *     description="get event already past"
      * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     * @Rest\View()
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
         $events =  $this->doctrine->getRepository(Event::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
-            $paramFetcher->get('past')
+            $paramFetcher->get('past'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
         );
-        return ['events' => $events];
+        return new Paginer($events);
     }
 
     /**

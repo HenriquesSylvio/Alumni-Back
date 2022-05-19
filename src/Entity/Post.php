@@ -14,7 +14,6 @@ use JMS\Serializer\Annotation\Expose;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
- * @ExclusionPolicy("all")
  */
 class Post
 {

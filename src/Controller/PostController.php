@@ -131,10 +131,10 @@ class PostController extends AbstractFOSRestController
      *     description="The pagination offset"
      * )
      * @Rest\QueryParam(
-     *     name="currentPage",
+     *     name="current_page",
      *     requirements="\d+",
-     *     default="0",
-     *     description="The pagination offset"
+     *     default="1",
+     *     description="The current page"
      * )
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
@@ -144,7 +144,7 @@ class PostController extends AbstractFOSRestController
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
-            $paramFetcher->get('currentPage')
+            $paramFetcher->get('current_page')
         );
         return new Paginer($posts);
     }

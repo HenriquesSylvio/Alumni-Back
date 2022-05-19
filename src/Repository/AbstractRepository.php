@@ -28,8 +28,10 @@ abstract class AbstractRepository extends EntityRepository
         $pager = new Pagerfanta($adapter);
         //$currentPage = ceil(($offset + 1)/ $limit);
         $pager->setCurrentPage($currentPage);
+
         $pager->setMaxPerPage((int) $limit);
         //dd($pager->getNbPages());
+
         return $pager;
     }
 }
