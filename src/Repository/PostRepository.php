@@ -4,8 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,13 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Post[]    findAll()
  * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PostRepository extends ServiceEntityRepository
+class PostRepository extends AbstractRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Post::class);
-    }
-
     /**
      * @throws ORMException
      * @throws OptimisticLockException
@@ -74,20 +71,20 @@ class PostRepository extends ServiceEntityRepository
     }
 
 
-    public function search($term, $order = 'asc')
+    public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id, p.content, p.createAt')
+            ->addSelect('count(c.id) as numberComment, count(lk.post) as numberLike')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.content LIKE ?1')
             ->orderBy('p.createAt', $order)
-            ->groupBy('p.id')
+            ->groupBy('p.id, p.content, p.createAt')
             ->setParameter(1, '%'.$term.'%');
-
-        $query = $qb->getQuery();
-
-        return $query->execute();
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
     // /**
