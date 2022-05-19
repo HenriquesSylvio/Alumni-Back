@@ -57,10 +57,10 @@ class EventRepository extends ServiceEntityRepository
             ->setParameter(1, '%'.$term.'%');
         if ($past){
             $qb->andWhere('e.date < :date')
-            ->setParameter('date', date("d-m-Y"));
+            ->setParameter('date', date("Y-m-d"));
         }else{
             $qb->andWhere('e.date >= :date')
-                ->setParameter('date', date("d-m-Y"));
+                ->setParameter('date', date("Y-m-d"));
         }
         $qb->orderBy('e.date', $order);
         $query = $qb->getQuery();
