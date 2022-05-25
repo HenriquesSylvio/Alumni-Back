@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -17,7 +18,7 @@ use Pagerfanta\Adapter\DoctrineORMAdapter;
 
 //use Pagerfanta\Pagerfanta;
 
-abstract class AbstractRepository extends EntityRepository
+abstract class AbstractRepository extends ServiceEntityRepository
 {
     protected function paginate(array $qb, $limit = 20, $offset = 0, $currentPage = 1)
     {

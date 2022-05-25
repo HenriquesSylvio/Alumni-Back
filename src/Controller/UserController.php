@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\LikePost;
 use App\Entity\Subscribe;
 use App\Entity\User;
+use App\Representation\Paginer;
 use Doctrine\Persistence\ManagerRegistry;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,6 +91,53 @@ class UserController extends AbstractFOSRestController
     {
         $data =  $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId())[0];
         return ['user' => $data];
+    }
+
+    /**
+     * @Get(
+     *     name = "users_show",
+     * )
+     * @Rest\View()
+     * @Rest\QueryParam(
+     *     name="keyword",
+     *     nullable=true,
+     *     description="The user to search for."
+     * )
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getUsers(ParamFetcherInterface $paramFetcher)
+    {
+        $users = $this->doctrine->getRepository(User::class)->search(
+            $paramFetcher->get('keyword'),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return new Paginer($users);
     }
 
     /**
