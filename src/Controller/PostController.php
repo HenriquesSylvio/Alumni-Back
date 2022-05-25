@@ -20,7 +20,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
-
+use App\Representation\Paginer;
 /**
  * @Route("api/post")
  */
@@ -106,7 +106,7 @@ class PostController extends AbstractFOSRestController
      * @Get(
      *     name = "post_show",
      * )
-     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\View()
      * @Rest\QueryParam(
      *     name="keyword",
      *     nullable=true,
@@ -118,14 +118,35 @@ class PostController extends AbstractFOSRestController
      *     default="asc",
      *     description="Sort order (asc or desc)"
      * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
     {
         $posts = $this->doctrine->getRepository(Post::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
         );
-        return ['posts' => $posts];
+        return new Paginer($posts);
     }
 
     /**
