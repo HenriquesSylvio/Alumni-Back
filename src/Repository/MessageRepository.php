@@ -55,18 +55,34 @@ class MessageRepository extends AbstractRepository
         $qb->select('Distinct u.id, u.firstName, u.lastName, m.content as lastMessage, m.createAt')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'm.sentBy = u.id Or m.receivedBy = u.id')
             ->where('not u.id = ?1')
-            ->andWhere('(m.sentBy = ' . $userId . ' Or m.receivedBy = ?1)')
+            ->andWhere('(m.sentBy = ?1 Or m.receivedBy = ?1)')
             ->andWhere($qb->expr()->in('m.id',$subquery))
             ->setParameter(1, $userId);
 
 
-        $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return  $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+//        return  $qb->getQuery()->getOneOrNullResult();
     }
-//Select Distinct U.Id, Nom, Prenom, Contenu, Date_Crea
-//From Utilisateur U Inner Join Message M On M.Envoye_par =U.id Or M.Recu_Par = U.id
-//Where not U.id = 1 And (Envoye_par = 1 Or Recu_Par = 1)
-//And M.Id In (Select Max(Id) From Message Where Recu_Par = U.id Or Envoye_Par = U.id)
+    public function messages(int $activeUser, int $idOtherUser)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->select('u.id, u.firstName, u.lastName, m.id, m.content, m.createAt')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'm.sentBy = u.id')
+            ->Where('m.sentBy = ?1 And m.receivedBy = ?2')
+            ->orWhere('m.receivedBy = ?1 And m.sentBy = ?2')
+            ->orderBy('m.id', 'DESC')
+            ->setParameter(1, $activeUser)
+            ->setParameter(2, $idOtherUser);
+
+        return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+//        return  $qb->getQuery()->getOneOrNullResult();
+    }
+
+//Select U.Id,  Nom, Prenom, M.Id, Contenu, Date_Crea
+//From Message M
+//Inner Join Utilisateur U on U.Id = M.Recu_Par
+//Where (envoye_par = 1 And Recu_par = 5) Or (envoye_par =5  And Recu_par = 1)
+
 
 //    /**
 //     * @return Message[] Returns an array of Message objects

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Message;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,22 +64,27 @@ class MessageController extends AbstractFOSRestController
      * @Get(
      *     path = "/conversation",
      *     name = "conversation_show",
-     *     requirements = {"id"="\d+"}
      * )
      * @Rest\View(StatusCode = 200)
      */
     public function getConversations()
     {
-//        $events =  $this->doctrine->getRepository(Message::class)->search(
-//            $paramFetcher->get('keyword'),
-//            $paramFetcher->get('order'),
-//            $paramFetcher->get('past'),
-//            $paramFetcher->get('limit'),
-//            $paramFetcher->get('offset'),
-//            $paramFetcher->get('current_page')
-//        );
         $conversations =  $this->doctrine->getRepository(Message::class)->conversations($this->security->getUser()->getId());
         return ['conversations' => $conversations];
-//        return new Paginer($events);
+    }
+
+    /**
+     * @Get(
+     *     path = "/{id}",
+     *     name = "conversation_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 200)
+     */
+    public function getMessages(Request $request)
+    {
+        $idOtherUser = $request->attributes->get('_route_params')['id'];
+        $messages =  $this->doctrine->getRepository(Message::class)->messages($this->security->getUser()->getId(), $idOtherUser);
+        return ['messages' => $messages];
     }
 }
