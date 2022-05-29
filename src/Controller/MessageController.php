@@ -52,6 +52,10 @@ class MessageController extends AbstractFOSRestController
             }
             return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
         }
+        if($message->getReceivedBy() === $this->security->getUser())
+        {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas vous envoyer de message.'], Response::HTTP_BAD_REQUEST);
+        }
 
         $em = $this->doctrine->getManager();
 
