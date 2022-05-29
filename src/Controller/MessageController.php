@@ -58,4 +58,27 @@ class MessageController extends AbstractFOSRestController
         $em->flush();
         return new JsonResponse(['id' => $message->getId()], Response::HTTP_CREATED);
     }
+
+    /**
+     * @Get(
+     *     path = "/conversation",
+     *     name = "conversation_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 200)
+     */
+    public function getConversations()
+    {
+//        $events =  $this->doctrine->getRepository(Message::class)->search(
+//            $paramFetcher->get('keyword'),
+//            $paramFetcher->get('order'),
+//            $paramFetcher->get('past'),
+//            $paramFetcher->get('limit'),
+//            $paramFetcher->get('offset'),
+//            $paramFetcher->get('current_page')
+//        );
+        $conversations =  $this->doctrine->getRepository(Message::class)->conversations($this->security->getUser()->getId());
+        return ['conversations' => $conversations];
+//        return new Paginer($events);
+    }
 }
