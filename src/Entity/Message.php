@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=MessageRepository::class)
@@ -73,7 +74,7 @@ class Message
         return $this->sentBy;
     }
 
-    public function setSentBy(?User $sentBy): self
+    public function setSentBy(?UserInterface $sentBy): self
     {
         $this->sentBy = $sentBy;
 
@@ -85,7 +86,7 @@ class Message
         return $this->receivedBy;
     }
 
-    public function setReceivedBy(?User $receivedBy): self
+    public function setReceivedBy(?UserInterface $receivedBy): self
     {
         $this->receivedBy = $receivedBy;
 

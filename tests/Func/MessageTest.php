@@ -37,7 +37,7 @@ class MessageTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/message',
-            '{"content": "test", sendTo: '. $user->getId() .' }',
+            '{ "content" : "test2", "received_by" : { "id": ' . $user->getId() . ' }}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -52,9 +52,10 @@ class MessageTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/message',
-            '{"content": "test", sendTo: '. $user->getId() .' }',
-            []
+            '{ "content" : "test2", "received_by" : { "id": ' . $user->getId() . ' }}',
+            [],
+            false
         );
-        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }
