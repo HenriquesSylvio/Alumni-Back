@@ -3,6 +3,7 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
+use App\Entity\Event;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\Tag;
@@ -57,5 +58,28 @@ class MessageTest extends AbstractEndPoint
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetConversation_NotIdenticate(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/message/conversation',
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetConversation_OkObjectResult(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/message/conversation',
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 }
