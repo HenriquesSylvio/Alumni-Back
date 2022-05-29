@@ -82,4 +82,35 @@ class MessageTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
+
+    public function testgetMessages_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'henriques.sylvio@outlook.fr'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/message/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetMessages_OkObjectResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'henriques.sylvio@outlook.fr'])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/message/' . $user->getId(),
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
 }

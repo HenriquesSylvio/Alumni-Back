@@ -76,7 +76,7 @@ class MessageController extends AbstractFOSRestController
     /**
      * @Get(
      *     path = "/{id}",
-     *     name = "conversation_show",
+     *     name = "message_show",
      *     requirements = {"id"="\d+"}
      * )
      * @Rest\View(StatusCode = 200)

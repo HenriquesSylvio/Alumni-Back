@@ -78,11 +78,6 @@ class MessageRepository extends AbstractRepository
 //        return  $qb->getQuery()->getOneOrNullResult();
     }
 
-//Select U.Id,  Nom, Prenom, M.Id, Contenu, Date_Crea
-//From Message M
-//Inner Join Utilisateur U on U.Id = M.Recu_Par
-//Where (envoye_par = 1 And Recu_par = 5) Or (envoye_par =5  And Recu_par = 1)
-
 
 //    /**
 //     * @return Message[] Returns an array of Message objects
