@@ -20,7 +20,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
-
+use App\Representation\Paginer;
 /**
  * @Route("api/post")
  */
@@ -65,7 +65,7 @@ class PostController extends AbstractFOSRestController
         $em->persist($post);
         $em->flush();
 
-        return new JsonResponse($post->getContent(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $post->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -79,13 +79,12 @@ class PostController extends AbstractFOSRestController
     public function addLikePost(LikePost $likePost)
     {
         $likePost->setUsers($this->security->getUser());
-
         $em = $this->doctrine->getManager();
 
         $em->persist($likePost);
         $em->flush();
 
-        return new JsonResponse($likePost, Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
     }
 
     /**
@@ -94,25 +93,20 @@ class PostController extends AbstractFOSRestController
      *     name = "post_show_id",
      *     requirements = {"id"="\d+"}
      * )
-     * @Rest\QueryParam(
-     *     name="id",
-     *     requirements="[0-9]",
-     *     nullable=false,
-     *     description="Id of the post."
-     * )
      * @Rest\View(serializerGroups={"getPost"})
      */
     public function getPostById(Request $request)
     {
         $id = $request->attributes->get('_route_params')['id'];
-        return $this->doctrine->getRepository('App:Post')->searchById($id);
+        $post = $this->doctrine->getRepository(Post::class)->searchById($id);
+        return ['post' => $post];
     }
 
     /**
      * @Get(
      *     name = "post_show",
      * )
-     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\View()
      * @Rest\QueryParam(
      *     name="keyword",
      *     nullable=true,
@@ -124,13 +118,35 @@ class PostController extends AbstractFOSRestController
      *     default="asc",
      *     description="Sort order (asc or desc)"
      * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
     {
-        return $this->doctrine->getRepository('App:Post')->search(
+        $posts = $this->doctrine->getRepository(Post::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
         );
+        return new Paginer($posts);
     }
 
     /**
@@ -144,7 +160,8 @@ class PostController extends AbstractFOSRestController
     public function getPostsByUser(Request $request)
     {
         $idAuthor = $request->attributes->get('_route_params')['id'];
-        return $this->doctrine->getRepository('App:Post')->searchByUser($idAuthor);
+        $posts = $this->doctrine->getRepository(Post::class)->searchByUser($idAuthor);
+        return ['posts' => $posts];
     }
 
     /**
@@ -171,17 +188,14 @@ class PostController extends AbstractFOSRestController
     /**
      * @Rest\View(StatusCode = 204)
      * @Rest\Delete(
-     *     path = "/like/{post}/{user}",
+     *     path = "/like/{post}",
      *     name = "like_post_delete",
-     *     requirements = {"post"="\d+", "user"="\d+"}
+     *     requirements = {"post"="\d+"}
      * )
      */
     public function deleteLikePost(LikePost $likePost)
     {
-        if($likePost->getUsers() !== $this->security->getUser())
-        {
-            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
-        }
+        $likePost->setUsers($this->security->getUser());
         $em = $this->doctrine->getManager();
 
         $em->remove($likePost);

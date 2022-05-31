@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups("list", "getUser")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $id;
 
@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $firstName;
 
@@ -81,7 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
      * )
-     * @Serializer\Groups("list", "getUser")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $lastName;
 
@@ -98,17 +98,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $promo;
 
     /**
-     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
      */
     private $posts;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
      */
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="users", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="likeBy", orphanRemoval=true)
      */
     private $likePosts;
 
@@ -118,9 +118,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $acceptAccount;
 
     /**
-     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="author", orphanRemoval=true)
      */
     private $events;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Participate::class, mappedBy="participant", orphanRemoval=true)
+     */
+    private $participates;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Subscribe::class, mappedBy="subscription", orphanRemoval=true)
+     */
+    private $subscribes;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="sentBy", orphanRemoval=true)
+     */
+    private $messages;
 
     public function __construct()
     {
@@ -128,6 +143,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->likePosts = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->participates = new ArrayCollection();
+        $this->subscribes = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -379,6 +397,96 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($event->getAuthor() === $this) {
                 $event->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participate>
+     */
+    public function getParticipates(): Collection
+    {
+        return $this->participates;
+    }
+
+    public function addParticipate(Participate $participate): self
+    {
+        if (!$this->participates->contains($participate)) {
+            $this->participates[] = $participate;
+            $participate->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipate(Participate $participate): self
+    {
+        if ($this->participates->removeElement($participate)) {
+            // set the owning side to null (unless already changed)
+            if ($participate->getParticipant() === $this) {
+                $participate->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Subscribe>
+     */
+    public function getSubscribes(): Collection
+    {
+        return $this->subscribes;
+    }
+
+    public function addSubscribe(Subscribe $subscribe): self
+    {
+        if (!$this->subscribes->contains($subscribe)) {
+            $this->subscribes[] = $subscribe;
+            $subscribe->setSubscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscribe(Subscribe $subscribe): self
+    {
+        if ($this->subscribes->removeElement($subscribe)) {
+            // set the owning side to null (unless already changed)
+            if ($subscribe->getSubscription() === $this) {
+                $subscribe->setSubscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setSentBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getSentBy() === $this) {
+                $message->setSentBy(null);
             }
         }
 

@@ -84,6 +84,6 @@ class AuthController extends AbstractFOSRestController
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse($user->getEmail(), Response::HTTP_CREATED);
+        return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_CREATED);
     }
 }

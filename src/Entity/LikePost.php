@@ -23,7 +23,7 @@ class LikePost
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="likePosts")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    private $user;
+    private $likeBy;
 
     public function getPost(): ?Post
     {
@@ -37,14 +37,14 @@ class LikePost
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUsers(): ?UserInterface
     {
-        return $this->user;
+        return $this->likeBy;
     }
 
     public function setUsers(?UserInterface $users): self
     {
-        $this->user = $users;
+        $this->likeBy = $users;
 
         return $this;
     }

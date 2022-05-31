@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -45,8 +47,19 @@ class Event
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getEvent")
      */
     private $author;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Participate::class, mappedBy="event")
+     */
+    private $participates;
+
+    public function __construct()
+    {
+        $this->participates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -97,6 +110,36 @@ class Event
     public function setAuthor(?UserInterface $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participate>
+     */
+    public function getParticipates(): Collection
+    {
+        return $this->participates;
+    }
+
+    public function addParticipate(Participate $participate): self
+    {
+        if (!$this->participates->contains($participate)) {
+            $this->participates[] = $participate;
+            $participate->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipate(Participate $participate): self
+    {
+        if ($this->participates->removeElement($participate)) {
+            // set the owning side to null (unless already changed)
+            if ($participate->getEvent() === $this) {
+                $participate->setEvent(null);
+            }
+        }
 
         return $this;
     }

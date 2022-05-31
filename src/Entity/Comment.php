@@ -39,6 +39,7 @@ class Comment
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getComment")
      */
     private $author;
 
@@ -49,7 +50,7 @@ class Comment
     private $post;
 
     /**
-     * @ORM\OneToMany(targetEntity=ReplyComment::class, mappedBy="answerComment")
+     * @ORM\OneToMany(targetEntity=ReplyComment::class, mappedBy="answerComment", orphanRemoval=true)
      */
     private $replyComments;
 

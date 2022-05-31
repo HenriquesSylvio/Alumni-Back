@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends AbstractRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -37,6 +38,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function searchById(string $id){
+
+        $qb = $this->createQueryBuilder('u')
+            ->select('u, u.acceptAccount, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber')
+            ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
+            ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
+            ->Where('u.id = ' . $id)
+            ->groupBy('u.id');
+            return  $qb->getQuery()->getOneOrNullResult();
+
+        //dd($qb->getQuery());
+        $query = $qb->getQuery();
+        return $query->execute();
+    }
+
     public function searchUserWaitingValidation()
     {
         $qb = $this->createQueryBuilder('u')
@@ -46,6 +62,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $query = $qb->getQuery();
 
         return $query->execute();
+    }
+
+    public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select("u.id, u.firstName, u.lastName");
+        if (!is_null($term)){
+            $qb->where("DIFFERENCE(u.firstName, ?1) = 4")
+                ->orWhere("DIFFERENCE(u.lastName, ?1) = 4")
+                ->orderBy("DIFFERENCE(u.lastName, ?1)")
+                ->setParameter(1, $term);
+            if(count($qb->getQuery()->getResult()) == 0){
+                $qb->where("DIFFERENCE(u.firstName, ?1) = 3")
+                    ->orWhere("DIFFERENCE(u.lastName, ?1) = 3")
+                    ->orderBy("DIFFERENCE(u.lastName, ?1)");
+            }
+            $qb->setParameter(1, $term);
+        }
+
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
     // /**

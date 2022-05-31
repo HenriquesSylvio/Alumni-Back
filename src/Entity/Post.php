@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -20,6 +22,7 @@ class Post
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups("list", "getPost")
+     * @Expose
      */
     private $id;
 
@@ -39,18 +42,25 @@ class Post
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups("list", "getPost")
      */
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post", orphanRemoval=true)
      */
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", orphanRemoval=true)
      */
     private $likePosts;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="posts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $tag;
 
     public function __construct()
     {
@@ -155,6 +165,18 @@ class Post
                 $likePost->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTag(): ?Tag
+    {
+        return $this->tag;
+    }
+
+    public function setTag(?Tag $tag): self
+    {
+        $this->tag = $tag;
 
         return $this;
     }

@@ -3,7 +3,9 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
+use App\Entity\LikePost;
 use App\Entity\Post;
+use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
@@ -17,8 +19,6 @@ class PostTest extends AbstractEndPoint
      * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
-
-    private $post;
 
     protected function setUp(): void
     {
@@ -204,12 +204,15 @@ class PostTest extends AbstractEndPoint
 
     public function testaddPost_CreatedResult(): void
     {
-        $post = new Post();
-        $post->setContent("Ceci est un test");
+        $tag = $this->entityManager
+            ->getRepository(Tag::class)
+            ->findOneBy(['label' => 'Offre d\'emploi'])
+        ;
+
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test"}',
+            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -221,10 +224,14 @@ class PostTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
+        $tag = $this->entityManager
+            ->getRepository(Tag::class)
+            ->findOneBy(['label' => 'Offre d\'emploi'])
+        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test"}',
+            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             [],
             false
         );
@@ -248,6 +255,14 @@ class PostTest extends AbstractEndPoint
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+
+//        $this->getResponseFromRequest(
+//            Request::METHOD_DELETE,
+//            '/api/post/like/' . $post->getId(),
+//            '',
+//            [],
+//            false
+//        );
     }
 
     public function testaddLikePost_NotIdenticate(): void
@@ -270,22 +285,42 @@ class PostTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testdeleteLikePost_NotTherightUser(): void
+//    public function testdeleteLikePost_NotTherightUser(): void
+//    {
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'admin@outlook.fr'])
+//        ;
+//        $post = $this->entityManager
+//            ->getRepository(Post::class)
+//            ->findOneBy(['author' => $user])
+//        ;
+//        $response = $this->getResponseFromRequest(
+//            Request::METHOD_DELETE,
+//            '/api/post/like/' . $post->getId(),
+//            '',
+//            [],
+//            true,
+//            false
+//        );
+//        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+//    }
+
+    public function testdeleteLikePost_NotIdenticate(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['author' => $user])
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
+            '/api/post/like/' . $likePost->getPost()->getId(),
             '',
             [],
-            true,
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -297,36 +332,16 @@ class PostTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['author' => $user])
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
+            '/api/post/like/' . $likePost->getPost()->getId(),
             '',
             []
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeleteLikePost_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $post->getId() . '/' . $user->getId(),
-            '',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

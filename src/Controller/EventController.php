@@ -1,8 +1,10 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\LikePost;
+use App\Entity\Participate;
+use App\Representation\Paginer;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Request\ParamFetcherInterface;
@@ -58,8 +60,7 @@ class EventController extends AbstractFOSRestController
 
         $em->persist($event);
         $em->flush();
-
-        return new JsonResponse($event->getTitle(), Response::HTTP_CREATED);
+        return new JsonResponse(['id' => $event->getId()], Response::HTTP_CREATED);
     }
 
     /**
@@ -68,24 +69,17 @@ class EventController extends AbstractFOSRestController
      *     name = "event_show_id",
      *     requirements = {"id"="\d+"}
      * )
-     * @Rest\QueryParam(
-     *     name="id",
-     *     requirements="[0-9]",
-     *     nullable=false,
-     *     description="Id of the event."
-     * )
      * @Rest\View(serializerGroups={"getEvent"})
      */
     public function getEventById(Event $event)
     {
-        return $event;
+        return ['event' => $event];
     }
-
+//* @Rest\View(serializerGroups={"getEvent"})
     /**
      * @Get(
      *     name = "event_show",
      * )
-     * @Rest\View(serializerGroups={"getEvent"})
      * @Rest\QueryParam(
      *     name="keyword",
      *     nullable=true,
@@ -103,14 +97,37 @@ class EventController extends AbstractFOSRestController
      *     default=false,
      *     description="get event already past"
      * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     * @Rest\View()
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
-        return $this->doctrine->getRepository('App:Event')->search(
+        $events =  $this->doctrine->getRepository(Event::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
-            $paramFetcher->get('past')
+            $paramFetcher->get('past'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
         );
+        return new Paginer($events);
     }
 
     /**
@@ -132,5 +149,64 @@ class EventController extends AbstractFOSRestController
         $em->remove($event);
         $em->flush();
         return ;
+    }
+
+    /**
+     * @Rest\Post(
+     *     path = "/participate",
+     *     name = "add_participation"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("participate", converter="fos_rest.request_body")
+     */
+    public function addParticipation(Participate $participate)
+    {
+        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez pas participer à un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
+        }
+        $participate->setParticipant($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->persist($participate);
+        $em->flush();
+
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/participate/{event}",
+     *     name = "participation_delete",
+     *     requirements = {"event"="\d+"}
+     * )
+     */
+    public function deleteParticipation(Participate $participate)
+    {
+        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        {
+            return new JsonResponse(['erreur' => 'Vous ne pouvez vous retirer des participants d\'un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
+        }
+        $participate->setParticipant($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->remove($participate);
+        $em->flush();
+        return ;
+    }
+
+    /**
+     * @Get(
+     *     path = "/participate/{id}",
+     *     name = "participation_show_id",
+     * )
+     * @Rest\View(serializerGroups={"getParticipation"})
+     */
+    public function getParticipation(Request $request)
+    {
+        $id = $request->attributes->get('_route_params')['id'];
+        $participant =  $this->doctrine->getRepository(Participate::class)->searchAllParticipant($id);
+        return ['participant' => $participant];
     }
 }
