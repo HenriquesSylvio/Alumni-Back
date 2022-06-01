@@ -327,27 +327,4 @@ class UserTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
-
-    public function testgetFeed_NotIdenticate(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/user/feed',
-            "",
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testgetFeed_OkObjectResult(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/user/feed',
-            "",
-            []
-        );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
-    }
 }

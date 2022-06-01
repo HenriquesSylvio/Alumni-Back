@@ -170,7 +170,6 @@ class UserController extends AbstractFOSRestController
         if ($subscribe->getSubscriber()->getAcceptAccount() == false) {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas suivre un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
         }
-
         $subscribe->setSubscription($this->security->getUser());
 
         $em = $this->doctrine->getManager();

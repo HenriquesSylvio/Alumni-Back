@@ -202,4 +202,47 @@ class PostController extends AbstractFOSRestController
         $em->flush();
         return ;
     }
+
+    /**
+     * @Get(
+     *     path = "/feed",
+     *     name = "feed_show",
+     * )
+     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getFeed(ParamFetcherInterface $paramFetcher)
+    {
+        $posts =  $this->doctrine->getRepository(Post::class)->feed(
+            $this->security->getUser(),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return ['posts' => $posts];
+    }
 }
