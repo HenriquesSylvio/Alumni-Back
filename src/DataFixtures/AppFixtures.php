@@ -36,6 +36,8 @@ class AppFixtures extends Fixture
         $user->setBirthday(new \DateTime(1999-9-25));
         $user->setPromo(new \DateTime(2021-9-01));
         $user->setAcceptAccount(true);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
         $manager->persist($user);
 
         $tag = new Tag();
@@ -47,6 +49,8 @@ class AppFixtures extends Fixture
         $post->setCreateAt(new \DateTime(2022-4-21));
         $post->setAuthor($user);
         $post->setTag($tag);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
         $manager->persist($post);
 
         $event = new Event();
@@ -54,6 +58,8 @@ class AppFixtures extends Fixture
         $event->setDescription("Ceci est un test");
         $event->setDate(new \DateTime(2022-4-21));
         $event->setAuthor($user);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
         $manager->persist($event);
 
         $user = new User();

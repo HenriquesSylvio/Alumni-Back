@@ -99,7 +99,7 @@ class PostController extends AbstractFOSRestController
     {
         $id = $request->attributes->get('_route_params')['id'];
         $post = $this->doctrine->getRepository(Post::class)->searchById($id);
-        return ['post' => $post];
+        return $post;
     }
 
     /**

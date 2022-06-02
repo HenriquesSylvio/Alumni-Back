@@ -73,7 +73,7 @@ class EventController extends AbstractFOSRestController
      */
     public function getEventById(Event $event)
     {
-        return ['event' => $event];
+        return $event;
     }
 //* @Rest\View(serializerGroups={"getEvent"})
     /**

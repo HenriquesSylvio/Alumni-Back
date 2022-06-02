@@ -76,7 +76,7 @@ class CommentController extends AbstractFOSRestController
     {
         $id = $request->attributes->get('_route_params')['id'];
         $comment = $this->doctrine->getRepository(Comment::class)->searchById($id);
-        return ['comment' => $comment];
+        return $comment;
     }
 
     /**

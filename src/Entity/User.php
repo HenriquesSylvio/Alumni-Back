@@ -98,6 +98,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $promo;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     */
+    private $biography;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     */
+    private $urlProfilePicture;
+
+    /**
      * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
      */
     private $posts;
@@ -136,16 +148,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="sentBy", orphanRemoval=true)
      */
     private $messages;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $biography;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $urlProfilePicture;
 
     public function __construct()
     {

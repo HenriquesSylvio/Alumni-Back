@@ -51,7 +51,7 @@ class PostRepository extends AbstractRepository
     public function searchByUser(int $userId)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
@@ -66,7 +66,7 @@ class PostRepository extends AbstractRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
@@ -83,7 +83,7 @@ class PostRepository extends AbstractRepository
     public function search($term, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')

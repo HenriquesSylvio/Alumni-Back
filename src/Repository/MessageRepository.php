@@ -52,7 +52,7 @@ class MessageRepository extends AbstractRepository
             ->setParameter(1, $userId)
             ->getDQL();
         $qb = $this->createQueryBuilder('m');
-        $qb->select('Distinct u.id, u.firstName, u.lastName, m.content as lastMessage, m.createAt')
+        $qb->select('Distinct u.id, u.firstName, u.lastName, u.urlProfilePicture, m.content as lastMessage, m.createAt')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'm.sentBy = u.id Or m.receivedBy = u.id')
             ->where('not u.id = ?1')
             ->andWhere('(m.sentBy = ?1 Or m.receivedBy = ?1)')
@@ -66,7 +66,7 @@ class MessageRepository extends AbstractRepository
     public function messages(int $activeUser, int $idOtherUser)
     {
         $qb = $this->createQueryBuilder('m');
-        $qb->select('u.id, u.firstName, u.lastName, m.id, m.content, m.createAt')
+        $qb->select('u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, m.id as idMessage, m.content, m.createAt')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'm.sentBy = u.id')
             ->Where('m.sentBy = ?1 And m.receivedBy = ?2')
             ->orWhere('m.receivedBy = ?1 And m.sentBy = ?2')
