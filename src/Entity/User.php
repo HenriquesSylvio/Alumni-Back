@@ -137,6 +137,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $messages;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $biography;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $urlProfilePicture;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -489,6 +499,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setSentBy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBiography(): ?string
+    {
+        return $this->biography;
+    }
+
+    public function setBiography(?string $biography): self
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getUrlProfilePicture(): ?string
+    {
+        return $this->urlProfilePicture;
+    }
+
+    public function setUrlProfilePicture(?string $urlProfilePicture): self
+    {
+        $this->urlProfilePicture = $urlProfilePicture;
 
         return $this;
     }
