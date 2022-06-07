@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractEndPoint extends WebTestCase
 {
     protected array $serverInformations = ['ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json'];
-    protected string $admin = '{"email": "admin@outlook.fr", "password": "54875487"}';
-    protected string $user = '{"email": "user@outlook.fr", "password": "54875487"}';
+    protected string $admin = '{"username": "admin", "password": "54875487"}';
+    protected string $user = '{"username": "user", "password": "54875487"}';
     public function getResponseFromRequest(
         string $method,
         string $uri,

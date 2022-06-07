@@ -18,6 +18,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  * @UniqueEntity("email", message="Cette email est déjà utilisé")
+ * @UniqueEntity("username", message="Ce nom d'utilisateur est déjà utilisé")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -148,6 +149,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="sentBy", orphanRemoval=true)
      */
     private $messages;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom d'utilisateur est obligatoire")
+     */
+    private $username;
 
     public function __construct()
     {
@@ -525,6 +532,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUrlProfilePicture(?string $urlProfilePicture): self
     {
         $this->urlProfilePicture = $urlProfilePicture;
+
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }

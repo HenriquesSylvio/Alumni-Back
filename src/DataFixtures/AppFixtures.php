@@ -28,7 +28,8 @@ class AppFixtures extends Fixture
     {
 
         $user = new User();
-        $user->setEmail("henriques.sylvio@outlook.fr");
+        $user->setEmail('henriques.sylvio@outlook.fr');
+        $user->setUsername('henriques.sylvio');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("Henriques");
@@ -64,6 +65,7 @@ class AppFixtures extends Fixture
 
         $user = new User();
         $user->setEmail("admin@outlook.fr");
+        $user->setUsername('admin');
         $user->setRoles(['ROLE_ADMIN']);
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("admin");
@@ -109,6 +111,7 @@ class AppFixtures extends Fixture
 
         $user = new User();
         $user->setEmail("user@outlook.fr");
+        $user->setUsername('user');
         $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("Henriques");
@@ -152,6 +155,7 @@ class AppFixtures extends Fixture
         for($nbUsers = 1; $nbUsers <= 30; $nbUsers++){
             $user = new User();
             $user->setEmail($faker->email);
+            $user->setUsername($faker->userName);
             if($nbUsers === 1)
             {
                 $user->setRoles(['ROLE_ADMIN']);
