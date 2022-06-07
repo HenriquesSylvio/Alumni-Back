@@ -62,7 +62,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Patch(
-     *     path = "/{id}",
+     *     path = "acceptUser/{id}",
      *     name = "accept_user",
      *     requirements = {"id"="\d+"}
      * )

@@ -78,7 +78,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId() + 1,
+            '/api/user/acceptUser/' . $user->getId() + 1,
             "",
             [],
             false
@@ -95,7 +95,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId(),
+            '/api/user/acceptUser/' . $user->getId(),
             "",
             [],
             true,
@@ -113,7 +113,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId(),
+            '/api/user/acceptUser/' . $user->getId(),
             "",
             [],
             true,
@@ -297,10 +297,6 @@ class UserTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'user@outlook.fr'])
         ;
-//        $event = $this->entityManager
-//            ->getRepository(Event::class)
-//            ->findOneBy(['author' => $user->getId()])
-//        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
             '/api/user/subscribe/' . $user->getId(),
@@ -327,4 +323,55 @@ class UserTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
+
+    public function testAddRoleAdminUser_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/addadmin/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testAddRoleAdminUser_NotSuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/addadmin/' . $user->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testAddRoleAdminUser_SuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/addadmin/' . $user->getId(),
+           "",
+           [],
+       );
+       self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+   }
 }
