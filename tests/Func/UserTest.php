@@ -374,4 +374,56 @@ class UserTest extends AbstractEndPoint
        );
        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
    }
+
+    public function testRemoveRoleAdminUser_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/removeadmin/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testRemoveRoleAdminUser_NotSuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/removeadmin/' . $user->getId(),
+            "",
+           [],
+           true,
+           false
+       );
+       self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+   }
+
+   public function testRemoveRoleAdminUser_SuperAdminConnect(): void
+   {
+       $user = $this->entityManager
+           ->getRepository(User::class)
+           ->findOneBy(['email' => 'user@outlook.fr'])
+       ;
+
+       $response = $this->getResponseFromRequest(
+           Request::METHOD_PATCH,
+           '/api/user/removeadmin/' . $user->getId(),
+           "",
+           [],
+       );
+       self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+   }
 }
