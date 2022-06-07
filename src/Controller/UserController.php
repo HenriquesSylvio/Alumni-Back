@@ -268,4 +268,28 @@ class UserController extends AbstractFOSRestController
         return ;
     }
 
+    /**
+     * @Rest\Patch(
+     *     path = "/removeAdmin/{id}",
+     *     name = "remove_admin_user",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 204)
+     */
+    public function removeRoleAdminUser(User $user)
+    {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user->setRoles(['ROLE_USER']);
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
+        return ;
+    }
+
 }

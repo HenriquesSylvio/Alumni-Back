@@ -52,6 +52,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/user/addAdmin, roles: ROLE_SUPER_ADMIN, methods: PATCH }
+        - { path: ^/api/user/removeAdmin, roles: ROLE_SUPER_ADMIN, methods: PATCH }
         - { path: ^/api/user/acceptUser, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: PATCH}
         - { path: ^/api/user/waitingValidation, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN] }
         - { path: ^/api/tag, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: [POST, DELETE] }
