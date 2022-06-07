@@ -426,4 +426,38 @@ class UserTest extends AbstractEndPoint
        );
        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
    }
+
+    public function testUpdateUser_NotSuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/edit',
+            '{"first_name": "test"}',
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testUpdateUser_SuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/edit',
+            '{"first_name": "test"}',
+            [],
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
 }
