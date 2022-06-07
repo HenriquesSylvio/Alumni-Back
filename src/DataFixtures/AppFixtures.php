@@ -66,7 +66,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setEmail("admin@outlook.fr");
         $user->setUsername('admin');
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->setRoles(['ROLE_SUPER_ADMIN']);
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("admin");
         $user->setFirstname("admin");

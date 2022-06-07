@@ -174,7 +174,7 @@ class PostController extends AbstractFOSRestController
      */
     public function deletePost(Post $post)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             if($post->getAuthor() !== $this->security->getUser()) {
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }

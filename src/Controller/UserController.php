@@ -236,10 +236,8 @@ class UserController extends AbstractFOSRestController
      */
     public function deleteUser(User $user)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
-            if($user !== $this->security->getUser()) {
+        if ((!$this->isGranted('ROLE_ADMIN') and $user !== $this->security->getUser()) Or in_array('ROLE_SUPER_ADMIN', $user->getRoles()) or (in_array('ROLE_ADMIN', $user->getRoles()) And !$this->isGranted('ROLE_SUPER_ADMIN'))) {
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
-            }
         }
         $em = $this->doctrine->getManager();
         $em->remove($user);
