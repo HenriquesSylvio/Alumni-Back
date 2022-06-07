@@ -27,11 +27,11 @@ security:
             stateless: true
             jwt: ~
 
-        user:
-            pattern: ^/api/user
-            methods: [GET, PATCH]
-            stateless: true
-            jwt: ~
+#        user:
+#            pattern: ^/api/user
+#            methods: [GET, PATCH]
+#            stateless: true
+#            jwt: ~
 
         main:
             lazy: true
@@ -44,16 +44,19 @@ security:
             # switch_user: true
     role_hierarchy:
         ROLE_ADMIN: [ ROLE_USER ]
-        ROLE_SUPER_ADMIN: [ ROLE_USER, ROLE_ADMIN ]
+        ROLE_SUPER_ADMIN: [ ROLE_ADMIN ]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api/user, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: PATCH }
+        - { path: ^/api/user/addAdmin, roles: ROLE_SUPER_ADMIN, methods: PATCH }
+        - { path: ^/api/user/acceptUser, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: PATCH}
         - { path: ^/api/user/waitingValidation, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN] }
         - { path: ^/api/tag, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: [POST, DELETE] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+
 
           # - { path: ^/profile, roles: ROLE_USER }

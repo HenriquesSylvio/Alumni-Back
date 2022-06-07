@@ -62,7 +62,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Patch(
-     *     path = "acceptUser/{id}",
+     *     path = "/acceptUser/{id}",
      *     name = "accept_user",
      *     requirements = {"id"="\d+"}
      * )
@@ -237,11 +237,35 @@ class UserController extends AbstractFOSRestController
     public function deleteUser(User $user)
     {
         if ((!$this->isGranted('ROLE_ADMIN') and $user !== $this->security->getUser()) Or in_array('ROLE_SUPER_ADMIN', $user->getRoles()) or (in_array('ROLE_ADMIN', $user->getRoles()) And !$this->isGranted('ROLE_SUPER_ADMIN'))) {
-                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
         }
         $em = $this->doctrine->getManager();
         $em->remove($user);
         $em->flush();
         return ;
     }
+
+    /**
+     * @Rest\Patch(
+     *     path = "/addAdmin/{id}",
+     *     name = "add_admin_user",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 204)
+     */
+    public function AddRoleAdminUser (User $user)
+    {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+        }
+        $user->setRoles(['ROLE_ADMIN']);
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
+        return ;
+    }
+
 }

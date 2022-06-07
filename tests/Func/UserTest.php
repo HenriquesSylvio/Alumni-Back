@@ -333,7 +333,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/addadmin/' . $user->getId(),
+            '/api/user/addAdmin/' . $user->getId(),
             "",
             [],
             false
@@ -350,7 +350,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/addadmin/' . $user->getId(),
+            '/api/user/addAdmin/' . $user->getId(),
             "",
             [],
             true,
@@ -368,7 +368,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/addadmin/' . $user->getId(),
+            '/api/user/addAdmin/' . $user->getId(),
            "",
            [],
        );
