@@ -88,7 +88,7 @@
             "@auto-scripts"
         ],
         "compile": [
-            "php bin/console doctrine:fixtures:load --no-interaction --env=PROD"
+            "php bin/console doctrine:fixtures:load --no-interaction"
         ]
     },
     "conflict": {
