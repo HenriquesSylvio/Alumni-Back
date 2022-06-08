@@ -76,7 +76,7 @@ class CommentController extends AbstractFOSRestController
     {
         $id = $request->attributes->get('_route_params')['id'];
         $comment = $this->doctrine->getRepository(Comment::class)->searchById($id);
-        return ['comment' => $comment];
+        return $comment;
     }
 
     /**
@@ -89,7 +89,7 @@ class CommentController extends AbstractFOSRestController
      */
     public function deleteComment(Comment $comment)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             if($comment->getAuthor() !== $this->security->getUser()) {
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }

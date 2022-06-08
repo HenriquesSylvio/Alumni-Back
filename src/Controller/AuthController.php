@@ -43,10 +43,10 @@ class AuthController extends AbstractFOSRestController
     public function getTokenUser(Request $request, UserRepository $userRepository, JWTTokenManagerInterface $JWTManager)
     {
         $user = $userRepository->findOneBy([
-            'email'=>$request->get('email'),
+            'username'=>$request->get('username'),
         ]);
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $request->get('password'))) {
-            return new JsonResponse(['erreur' => 'Email ou mot passe incorrect(s)']);
+            return new JsonResponse(['erreur' => 'Nom d\'utilisateur ou mot passe incorrect(s)']);
         }
 
         if ($user->getAcceptAccount() == false) {

@@ -18,6 +18,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  * @UniqueEntity("email", message="Cette email est déjà utilisé")
+ * @UniqueEntity("username", message="Ce nom d'utilisateur est déjà utilisé")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -52,6 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     max=20,
      *     minMessage="Votre mot de passe doit être au moins de {{ limit }} caractères",
      *     maxMessage="Votre mot de passe ne peut pas dépasser les {{ limit }} caractères"
+     * , groups={"editUser"}
      * )
      * @Assert\Regex(
      *     pattern="#^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)#",
@@ -63,11 +65,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre prénom est obligatoire")
+     * @Assert\NotBlank(message="Votre prénom est obligatoire", groups={"editUser"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
+     * , groups={"editUser"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
@@ -75,11 +78,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre nom est obligatoire")
+     * @Assert\NotBlank(message="Votre nom est obligatoire", groups={"editUser"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
+     * , groups={"editUser"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
@@ -96,6 +100,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Serializer\Groups("list", "getUser")
      */
     private $promo;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     */
+    private $biography;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     */
+    private $urlProfilePicture;
 
     /**
      * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
@@ -136,6 +152,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="sentBy", orphanRemoval=true)
      */
     private $messages;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom d'utilisateur est obligatoire")
+     */
+    private $username;
 
     public function __construct()
     {
@@ -489,6 +511,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setSentBy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBiography(): ?string
+    {
+        return $this->biography;
+    }
+
+    public function setBiography(?string $biography): self
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getUrlProfilePicture(): ?string
+    {
+        return $this->urlProfilePicture;
+    }
+
+    public function setUrlProfilePicture(?string $urlProfilePicture): self
+    {
+        $this->urlProfilePicture = $urlProfilePicture;
+
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }

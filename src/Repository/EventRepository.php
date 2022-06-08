@@ -53,7 +53,8 @@ class EventRepository extends AbstractRepository
     public function search($term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('e')
-            ->select('e')
+            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture')
+            ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
             ->setParameter(1, '%' . $term . '%');
@@ -70,9 +71,6 @@ class EventRepository extends AbstractRepository
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
-
-//        $query = $qb->getQuery();
-//        return $query->execute();
     }
 
     // /**

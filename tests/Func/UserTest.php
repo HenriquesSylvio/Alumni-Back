@@ -78,7 +78,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId() + 1,
+            '/api/user/acceptUser/' . $user->getId() + 1,
             "",
             [],
             false
@@ -95,7 +95,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId(),
+            '/api/user/acceptUser/' . $user->getId(),
             "",
             [],
             true,
@@ -113,7 +113,7 @@ class UserTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_PATCH,
-            '/api/user/' . $user->getId(),
+            '/api/user/acceptUser/' . $user->getId(),
             "",
             [],
             true,
@@ -261,10 +261,6 @@ class UserTest extends AbstractEndPoint
 
     public function testgetsubscription_NotIdenticate(): void
     {
-//        $event = $this->entityManager
-//            ->getRepository(Event::class)
-//            ->findOneBy(['description' => 'Ceci est un test'])
-//        ;
         $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => 'user@outlook.fr'])
@@ -301,10 +297,6 @@ class UserTest extends AbstractEndPoint
             ->getRepository(User::class)
             ->findOneBy(['email' => 'user@outlook.fr'])
         ;
-//        $event = $this->entityManager
-//            ->getRepository(Event::class)
-//            ->findOneBy(['author' => $user->getId()])
-//        ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
             '/api/user/subscribe/' . $user->getId(),
@@ -332,11 +324,16 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
-    public function testgetUsers_NotIdenticate(): void
+    public function testAddRoleAdminUser_NotIdenticate(): void
     {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
         $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/user',
+            Request::METHOD_PATCH,
+            '/api/user/addAdmin/' . $user->getId(),
             "",
             [],
             false
@@ -344,13 +341,116 @@ class UserTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testgetUsers_OkObjectResult(): void
+    public function testAddRoleAdminUser_NotSuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/addAdmin/' . $user->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testAddRoleAdminUser_SuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/addAdmin/' . $user->getId(),
+           "",
+           [],
+       );
+       self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+   }
+
+    public function testRemoveRoleAdminUser_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/removeAdmin/' . $user->getId(),
+            "",
+            [],
+            false
+        );
+
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testRemoveRoleAdminUser_NotSuperAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PATCH,
+            '/api/user/removeAdmin/' . $user->getId(),
+            "",
+           [],
+           true,
+           false
+       );
+       self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+   }
+
+   public function testRemoveRoleAdminUser_SuperAdminConnect(): void
+   {
+       $user = $this->entityManager
+           ->getRepository(User::class)
+           ->findOneBy(['email' => 'user@outlook.fr'])
+       ;
+
+       $response = $this->getResponseFromRequest(
+           Request::METHOD_PATCH,
+           '/api/user/removeAdmin/' . $user->getId(),
+           "",
+           [],
+       );
+       self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+   }
+
+    public function testUpdateUser_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PUT,
+            '/api/user/edit',
+            '{"first_name": "user", "last_name": "user"}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testUpdateUser_CreatedResult(): void
     {
         $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/user',
-            "",
-            []
+            Request::METHOD_PUT,
+            '/api/user/edit',
+            '{"first_name": "user", "last_name": "user"}',
+            [],
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }

@@ -49,10 +49,11 @@ class CommentRepository extends ServiceEntityRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c, count(rc.answerComment) as numberComment')
+            ->select('c.id as idComment, c.content, c.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(rc.answerComment) as numberComment')
             ->leftJoin('App:ReplyComment', 'rc', JOIN::WITH, 'c.id = rc.answerComment')
+            ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = c.author')
             ->where('c.id = ' . $id)
-            ->groupBy('c.id');
+            ->groupBy('c.id, u.id');
 
         $query = $qb->getQuery();
 
@@ -62,10 +63,11 @@ class CommentRepository extends ServiceEntityRepository
     public function searchByPost(int $postId)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c, count(rc.answerComment) as numberComment')
+            ->select('c.id as idComment, c.content, c.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(rc.answerComment) as numberComment')
             ->leftJoin('App:ReplyComment', 'rc', JOIN::WITH, 'c.id = rc.answerComment')
+            ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = c.author')
             ->where('c.post = ' . $postId)
-            ->groupBy('c.id');
+            ->groupBy('c.id, u.id');
 
         $query = $qb->getQuery();
 
@@ -75,11 +77,12 @@ class CommentRepository extends ServiceEntityRepository
     public function searchByComment(int $commentId)
     {
         $qb = $this->createQueryBuilder('c')
-            ->select('c, count(rcR.answerComment) as numberComment')
+            ->select('c.id as idComment, c.content, c.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(rcR.answerComment) as numberComment')
+            ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = c.author')
             ->InnerJoin('App:ReplyComment', 'rcA', JOIN::WITH, 'c.id = rcA.replyComment')
             ->LeftJoin('App:ReplyComment', 'rcR', JOIN::WITH, 'c.id = rcR.answerComment')
             ->where('rcA.answerComment = ' . $commentId)
-            ->groupBy('c.id');
+            ->groupBy('c.id, u.id');
 
         $query = $qb->getQuery();
 

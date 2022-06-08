@@ -67,7 +67,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('u')
-            ->select("u.id, u.firstName, u.lastName");
+            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture");
         if (!is_null($term)){
             $qb->where("DIFFERENCE(u.firstName, ?1) = 4")
                 ->orWhere("DIFFERENCE(u.lastName, ?1) = 4")

@@ -73,7 +73,7 @@ class EventController extends AbstractFOSRestController
      */
     public function getEventById(Event $event)
     {
-        return ['event' => $event];
+        return $event;
     }
 //* @Rest\View(serializerGroups={"getEvent"})
     /**
@@ -140,7 +140,7 @@ class EventController extends AbstractFOSRestController
      */
     public function deleteEvent(Event $event)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             if($event->getAuthor() !== $this->security->getUser()) {
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }

@@ -51,11 +51,13 @@ class PostRepository extends AbstractRepository
     public function searchByUser(int $userId)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.author = ' . $userId)
-            ->groupBy('p.id');
+            ->orderBy('p.createAt', 'desc')
+            ->groupBy('p.id, u.id');
 
         $query = $qb->getQuery();
 
@@ -64,11 +66,13 @@ class PostRepository extends AbstractRepository
     public function searchById(string $id)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
-            ->Where('p.id = ' . $id)
-            ->groupBy('p.id');
+            ->Where('p.id = ?1')
+            ->groupBy('p.id, u.id')
+            ->setParameter(1, $id);
 
         $query = $qb->getQuery();
 
@@ -76,17 +80,35 @@ class PostRepository extends AbstractRepository
     }
 
 
-    public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($term, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id, p.content, p.createAt')
-            ->addSelect('count(c.id) as numberComment, count(lk.post) as numberLike')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.content LIKE ?1')
             ->orderBy('p.createAt', $order)
-            ->groupBy('p.id, p.content, p.createAt')
+            ->groupBy('p.id, u.id')
             ->setParameter(1, '%'.$term.'%');
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
+    }
+
+    public function feed($idUser, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
+            ->innerJoin('App:Subscribe', 's', JOIN::WITH, 'u.id = s.subscriber')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->where('s.subscription= ?1')
+            ->orderBy('p.createAt', $order)
+            ->groupBy('p.id, u.id')
+            ->setParameter(1, $idUser);
+
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
