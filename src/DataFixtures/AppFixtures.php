@@ -27,41 +27,41 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager) : void
     {
 
-//        $user = new User();
-//        $user->setEmail('henriques.sylvio@outlook.fr');
-//        $user->setUsername('henriques.sylvio');
-//        $user->setRoles(['ROLE_ADMIN']);
-//        $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
-//        $user->setLastName("Henriques");
-//        $user->setFirstname("Sylvio");
-//        $user->setBirthday(new \DateTime(1999-9-25));
-//        $user->setPromo(new \DateTime(2021-9-01));
-//        $user->setAcceptAccount(true);
-//        $user->setBiography("test");
-//        $user->setUrlProfilePicture("test");
-//        $manager->persist($user);
-//
-//        $tag = new Tag();
-//        $tag->setLabel("Offre d'emploi");
-//        $manager->persist($tag);
-//
-//        $post = new Post();
-//        $post->setContent("Ceci est un test");
-//        $post->setCreateAt(new \DateTime(2022-4-21));
-//        $post->setAuthor($user);
-//        $post->setTag($tag);
-//        $user->setBiography("test");
-//        $user->setUrlProfilePicture("test");
-//        $manager->persist($post);
-//
-//        $event = new Event();
-//        $event->setTitle("Ceci est un test");
-//        $event->setDescription("Ceci est un test");
-//        $event->setDate(new \DateTime(2022-4-21));
-//        $event->setAuthor($user);
-//        $user->setBiography("test");
-//        $user->setUrlProfilePicture("test");
-//        $manager->persist($event);
+        $user = new User();
+        $user->setEmail('henriques.sylvio@outlook.fr');
+        $user->setUsername('henriques.sylvio');
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
+        $user->setLastName("Henriques");
+        $user->setFirstname("Sylvio");
+        $user->setBirthday(new \DateTime(1999-9-25));
+        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setAcceptAccount(true);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
+        $manager->persist($user);
+
+        $tag = new Tag();
+        $tag->setLabel("Offre d'emploi");
+        $manager->persist($tag);
+
+        $post = new Post();
+        $post->setContent("Ceci est un test");
+        $post->setCreateAt(new \DateTime(2022-4-21));
+        $post->setAuthor($user);
+        $post->setTag($tag);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
+        $manager->persist($post);
+
+        $event = new Event();
+        $event->setTitle("Ceci est un test");
+        $event->setDescription("Ceci est un test");
+        $event->setDate(new \DateTime(2022-4-21));
+        $event->setAuthor($user);
+        $user->setBiography("test");
+        $user->setUrlProfilePicture("test");
+        $manager->persist($event);
 
         $user = new User();
         $user->setEmail("admin@outlook.fr");
