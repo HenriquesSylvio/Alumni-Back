@@ -11,6 +11,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\View;
@@ -20,12 +21,21 @@ use Symfony\Component\Security\Core\Security;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("api/user")
  */
 class UserController extends AbstractFOSRestController
 {
+
+    /**
+     * @var UserPasswordHasherInterface
+     */
+    private $passwordHasher;
+
     /**
      * @var Security
      */
@@ -33,10 +43,11 @@ class UserController extends AbstractFOSRestController
 
     private $doctrine;
 
-    public function __construct(Security $security, ManagerRegistry $doctrine)
+    public function __construct(Security $security, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $this->security = $security;
         $this->doctrine = $doctrine;
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -290,6 +301,40 @@ class UserController extends AbstractFOSRestController
         $em->flush();
 
         return ;
+    }
+
+    /**
+     * @Rest\View(StatusCode = 200)
+     * @Rest\Put(
+     *     path = "/edit",
+     *     name = "user_update",
+     * )
+     * @ParamConverter("newUser", converter="fos_rest.request_body")
+     */
+    public function updateUser(User $newUser,  ValidatorInterface $validator)
+    {
+        $user = $this->doctrine->getRepository(User::class)->find($this->security->getUser());
+        $errors = $validator->validate($newUser,null,  ['editUser']);
+
+        if (count($errors) > 0) {
+            foreach($errors as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->setBiography($newUser->getBiography());
+        $user->setLastName($newUser->getLastName());
+        $user->setFirstName($newUser->getFirstName());
+        $user->setUrlProfilePicture($newUser->getUrlProfilePicture());
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+        return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_OK);
+        return ['user' => $user->gete];
     }
 
 }

@@ -427,7 +427,7 @@ class UserTest extends AbstractEndPoint
        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
    }
 
-    public function testUpdateUser_NotSuperAdminConnect(): void
+    public function testUpdateUser_NotIdenticate(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
@@ -435,27 +435,21 @@ class UserTest extends AbstractEndPoint
         ;
 
         $response = $this->getResponseFromRequest(
-            Request::METHOD_PATCH,
+            Request::METHOD_PUT,
             '/api/user/edit',
-            '{"first_name": "test"}',
+            '{"first_name": "user", "last_name": "user"}',
             [],
-            true,
             false
         );
-        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testUpdateUser_SuperAdminConnect(): void
+    public function testUpdateUser_CreatedResult(): void
     {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-
         $response = $this->getResponseFromRequest(
-            Request::METHOD_PATCH,
+            Request::METHOD_PUT,
             '/api/user/edit',
-            '{"first_name": "test"}',
+            '{"first_name": "user", "last_name": "user"}',
             [],
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());

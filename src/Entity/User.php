@@ -53,6 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     max=20,
      *     minMessage="Votre mot de passe doit être au moins de {{ limit }} caractères",
      *     maxMessage="Votre mot de passe ne peut pas dépasser les {{ limit }} caractères"
+     * , groups={"editUser"}
      * )
      * @Assert\Regex(
      *     pattern="#^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)#",
@@ -64,11 +65,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre prénom est obligatoire")
+     * @Assert\NotBlank(message="Votre prénom est obligatoire", groups={"editUser"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
+     * , groups={"editUser"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
@@ -76,11 +78,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre nom est obligatoire")
+     * @Assert\NotBlank(message="Votre nom est obligatoire", groups={"editUser"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
+     * , groups={"editUser"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
