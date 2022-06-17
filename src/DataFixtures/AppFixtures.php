@@ -15,7 +15,7 @@ use Faker;
 
 class AppFixtures extends Fixture
 {
-    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'birthday' => '25-09-1999', 'promo' => '25-09-1999'];
+    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'promo' => '2017'];
 
     private UserPasswordHasherInterface  $passwordHasher;
 
@@ -34,8 +34,7 @@ class AppFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("Henriques");
         $user->setFirstname("Sylvio");
-        $user->setBirthday(new \DateTime(1999-9-25));
-        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setPromo(2017);
         $user->setAcceptAccount(true);
         $user->setBiography("test");
         $user->setUrlProfilePicture("test");
@@ -70,8 +69,7 @@ class AppFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("admin");
         $user->setFirstname("admin");
-        $user->setBirthday(new \DateTime(1999-9-25));
-        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setPromo(2017);
         $user->setAcceptAccount(true);
         $manager->persist($user);
 
@@ -116,8 +114,7 @@ class AppFixtures extends Fixture
         $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
         $user->setLastName("Henriques");
         $user->setFirstname("Sylvio");
-        $user->setBirthday(new \DateTime(1999-9-25));
-        $user->setPromo(new \DateTime(2021-9-01));
+        $user->setPromo(2017);
         $user->setAcceptAccount(true);
         $manager->persist($user);
 
@@ -167,8 +164,7 @@ class AppFixtures extends Fixture
             $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
             $user->setLastName($faker->lastName);
             $user->setFirstname($faker->firstName);
-            $user->setBirthday(new \DateTime(1999-9-25));
-            $user->setPromo(new \DateTime(2021-9-01));
+            $user->setPromo(2017);
             $manager->persist($user);
             $post = new Post();
             $post->setContent("Ceci est un test");

@@ -311,7 +311,7 @@ class UserController extends AbstractFOSRestController
      * )
      * @ParamConverter("newUser", converter="fos_rest.request_body")
      */
-    public function updateUser(User $newUser,  ValidatorInterface $validator)
+    public function updateUser(User $newUser, ValidatorInterface $validator)
     {
         $user = $this->doctrine->getRepository(User::class)->find($this->security->getUser());
         $errors = $validator->validate($newUser,null,  ['editUser']);
@@ -334,7 +334,6 @@ class UserController extends AbstractFOSRestController
         $em->persist($user);
         $em->flush();
         return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_OK);
-        return ['user' => $user->gete];
     }
 
 }

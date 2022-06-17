@@ -18,6 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("api")
@@ -64,14 +65,21 @@ class AuthController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("user", converter="fos_rest.request_body")
      */
-    public function registerUser(User $user, ManagerRegistry $doctrine, ConstraintViolationList $violations)
+    public function registerUser(User $user, ManagerRegistry $doctrine,ValidatorInterface $validator)
     {
-        if (count($violations)) {
-            foreach($violations as $error)
+
+        $errors = $validator->validate($user,null,  ['register']);
+        if (count($errors)) {
+            foreach($errors as $error)
             {
                 $errorArray[$error->getPropertyPath()] = $error->getMessage();
             }
             return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
+        $maxPromo = date('Y', strtotime(date('Y'). ' + 3 years'));
+        if (!($user->getPromo() >= 2017 && $user->getPromo() <= $maxPromo)) {
+            return new JsonResponse(['erreur' => 'L\'année de la promo ne peut pas être inférieure à 2017 et à supérieure à  ' . $maxPromo], Response::HTTP_BAD_REQUEST);
         }
 
         $em = $doctrine->getManager();

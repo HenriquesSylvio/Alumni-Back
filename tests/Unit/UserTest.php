@@ -69,19 +69,9 @@ class UserTest extends TestCase
         self::assertEquals($value, $this->user->getLastName());
     }
 
-    public function testGetBirthday(): void
-    {
-        $value = new \DateTime(1999-9-25);
-
-        $response = $this->user->setBirthday($value);
-
-        self::assertInstanceOf(User::class, $response);
-        self::assertEquals($value, $this->user->getBirthday());
-    }
-
     public function testGetPromo(): void
     {
-        $value = new \DateTime(2021-9-01);
+        $value = 2017;
 
         $response = $this->user->setPromo($value);
 
