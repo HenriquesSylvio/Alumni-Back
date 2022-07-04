@@ -54,9 +54,15 @@ class Comment
      */
     private $replyComments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=LikeComment::class, mappedBy="comment", orphanRemoval=true)
+     */
+    private $likeComments;
+
     public function __construct()
     {
         $this->replyComments = new ArrayCollection();
+        $this->likeComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,6 +142,36 @@ class Comment
             // set the owning side to null (unless already changed)
             if ($replyComment->getAnswerComment() === $this) {
                 $replyComment->setAnswerComment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LikePost>
+     */
+    public function getLikeComments(): Collection
+    {
+        return $this->likeComments;
+    }
+
+    public function addLikeComment(LikeComment $likeComment): self
+    {
+        if (!$this->likeComments->contains($likeComment)) {
+            $this->likeComments[] = $likeComment;
+            $likeComment->setComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikeComment(LikeComment $likeComment): self
+    {
+        if ($this->likeComments->removeElement($likeComment)) {
+            // set the owning side to null (unless already changed)
+            if ($likeComment->getComment() === $this) {
+                $likeComment->setComment(null);
             }
         }
 

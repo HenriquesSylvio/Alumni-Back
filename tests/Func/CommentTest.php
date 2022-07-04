@@ -3,6 +3,7 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
+use App\Entity\LikeComment;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\User;
@@ -272,5 +273,80 @@ class CommentTest extends AbstractEndPoint
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testaddLikeComment_CreatedResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr']);
+
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['author' => $user]);
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/comment/like',
+            '{"comment": {"id" : ' . $comment->getId() . '}}',
+            []
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function  testaddLikeComment_NoIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr']);
+
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['author' => $user]);
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/post/like',
+            '{"post": {"id" : ' . $comment->getId() . '}}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteLikeComment_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr']);
+
+        $likeComment = $this->entityManager
+            ->getRepository(LikeComment::class)
+            ->findOneBy(['likeBy' => $user->getId()]);
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/comment/like/' . $likeComment->getComment()->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+    public function testdeleteLikeComment_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $likeComment = $this->entityManager
+            ->getRepository(LikeComment::class)
+            ->findOneBy(['likeBy' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $likeComment->getComment()->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }

@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Comment;
 use App\Entity\Event;
+use App\Entity\LikeComment;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\Tag;
@@ -73,6 +74,13 @@ class AppFixtures extends Fixture
         $postPrincipal->setAuthor($user);
         $postPrincipal->setTag($tag);
         $manager->persist($postPrincipal);
+
+        $commentPrincipal = new Comment();
+        $commentPrincipal->setContent("Ceci est un test");
+        $commentPrincipal->setCreateAt(new \DateTime(2022-4-21));
+        $commentPrincipal->setAuthor($user);
+        $commentPrincipal->setPost($postPrincipal);
+        $manager->persist($commentPrincipal);
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
@@ -176,6 +184,10 @@ class AppFixtures extends Fixture
             $comment->setAuthor($user);
             $comment->setPost($postPrincipal);
             $manager->persist($comment);
+            $likeComment = new LikeComment();
+            $likeComment->setUsers($user);
+            $likeComment->setComment($commentPrincipal);
+            $manager->persist($likeComment);
             $event = new Event();
             $event->setTitle("Ceci est un test");
             $event->setDescription("Ceci est un test");

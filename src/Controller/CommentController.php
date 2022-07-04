@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-
+use App\Entity\LikeComment;
 use App\Entity\Comment;
 use App\Entity\ReplyComment;
 use Doctrine\Persistence\ManagerRegistry;
@@ -166,5 +166,42 @@ class CommentController extends AbstractFOSRestController
         $idComment = $request->attributes->get('_route_params')['id'];
         $comments = $this->doctrine->getRepository(Comment::class)->searchByComment($idComment);
         return ['comments' => $comments];
+    }
+
+    /**
+     * @Rest\Post(
+     *     path = "/like",
+     *     name = "add_like_comment"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("likeComment", converter="fos_rest.request_body")
+     */
+    public function addLikeComment(LikeComment $likeComment)
+    {
+        $likeComment->setUsers($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->persist($likeComment);
+        $em->flush();
+
+        return new JsonResponse(['status' => 'ok'], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/like/{comment}",
+     *     name = "like_comment_delete",
+     *     requirements = {"comment"="\d+"}
+     * )
+     */
+    public function deleteLikeComment(LikeComment $likeComment)
+    {
+        $likeComment->setUsers($this->security->getUser());
+        $em = $this->doctrine->getManager();
+
+        $em->remove($likeComment);
+        $em->flush();
+        return ;
     }
 }
