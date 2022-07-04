@@ -149,7 +149,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event',
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y") . '"}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());

@@ -17,7 +17,8 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email", message="Cette email est déjà utilisé")
+ * @UniqueEntity("email", message="Cet email est déjà utilisé")
+ * @UniqueEntity("username", message="Ce nom d'utilisateur est déjà utilisé")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -31,8 +32,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\NotBlank(message="L'email est obligatoire")
-     * @Assert\Email(message="Email format invalide")
+     * @Assert\NotBlank(message="L'email est obligatoire", groups={"register"})
+     * @Assert\Email(message="Email format invalide", groups={"register"})
      * @Serializer\Groups("list", "getUser")
      */
     private $email;
@@ -46,28 +47,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire", groups={"register"})
      * @Assert\Length(
      *     min=8,
      *     max=20,
      *     minMessage="Votre mot de passe doit être au moins de {{ limit }} caractères",
      *     maxMessage="Votre mot de passe ne peut pas dépasser les {{ limit }} caractères"
+     * , groups={"register"}
      * )
      * @Assert\Regex(
      *     pattern="#^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W)#",
      *     match=true,
      *     message="Les mots de passe doivent contenir au moins 8 caractères et contenir au moins une des catégories suivantes : majuscules, minuscules, chiffres et symboles."
+     *   , groups={"register"}
      * )
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre prénom est obligatoire")
+     * @Assert\NotBlank(message="Votre prénom est obligatoire", groups={"editUser", "register"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre prénom ne peut pas contenir de chiffre"
+     * , groups={"editUser", "register"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
@@ -75,27 +79,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Votre nom est obligatoire")
+     * @Assert\NotBlank(message="Votre nom est obligatoire", groups={"editUser", "register"})
      * @Assert\Regex(
      *     pattern="/\d/",
      *     match=false,
      *     message="Votre nom ne peut pas contenir de chiffre"
+     * , groups={"editUser", "register"}
      * )
      * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $lastName;
+    
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     */
+    private $biography;
 
     /**
-     * @ORM\Column(type="date")
-     * @Serializer\Groups("list", "getUser")
+     * @ORM\Column(type="text", nullable=true)
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
-    private $birthday;
-
-    /**
-     * @ORM\Column(type="date")
-     * @Serializer\Groups("list", "getUser")
-     */
-    private $promo;
+    private $urlProfilePicture;
 
     /**
      * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
@@ -137,6 +142,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $subscribes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="sentBy", orphanRemoval=true)
+     */
+    private $messages;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom d'utilisateur est obligatoire", groups={"register"})
+     */
+    private $username;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="L'année de la promo est obligatoire", groups={"register"})
+     */
+    private $promo;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -146,6 +168,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->events = new ArrayCollection();
         $this->participates = new ArrayCollection();
         $this->subscribes = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -247,24 +270,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
-    {
-        return $this->birthday;
-    }
-
-    public function setBirthday(\DateTimeInterface $birthday): self
-    {
-        $this->birthday = $birthday;
-
-        return $this;
-    }
-
-    public function getPromo(): ?\DateTimeInterface
+    public function getPromo(): ?int
     {
         return $this->promo;
     }
 
-    public function setPromo(\DateTimeInterface $promo): self
+    public function setPromo(int $promo): self
     {
         $this->promo = $promo;
 
@@ -489,6 +500,67 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $subscribe->setSubscription(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setSentBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getSentBy() === $this) {
+                $message->setSentBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBiography(): ?string
+    {
+        return $this->biography;
+    }
+
+    public function setBiography(?string $biography): self
+    {
+        $this->biography = $biography;
+
+        return $this;
+    }
+
+    public function getUrlProfilePicture(): ?string
+    {
+        return $this->urlProfilePicture;
+    }
+
+    public function setUrlProfilePicture(?string $urlProfilePicture): self
+    {
+        $this->urlProfilePicture = $urlProfilePicture;
+
+        return $this;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }

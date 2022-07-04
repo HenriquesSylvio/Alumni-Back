@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Comment;
 use App\Entity\Event;
+use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -17,13 +20,12 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EventRepository extends ServiceEntityRepository
+class EventRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
     }
-
     /**
      * @throws ORMException
      * @throws OptimisticLockException
@@ -48,13 +50,14 @@ class EventRepository extends ServiceEntityRepository
         }
     }
 
-    public function search($term, $order = 'asc', $past = false)
+    public function search($term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('e')
-            ->select('e')
+            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture')
+            ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
-            ->setParameter(1, '%'.$term.'%');
+            ->setParameter(1, '%' . $term . '%');
         if ($past){
             $qb->andWhere('e.date < :date')
             ->setParameter('date', date("Y-m-d"));
@@ -62,10 +65,12 @@ class EventRepository extends ServiceEntityRepository
             $qb->andWhere('e.date >= :date')
                 ->setParameter('date', date("Y-m-d"));
         }
-        $qb->orderBy('e.date', $order);
-        $query = $qb->getQuery();
 
-        return $query->execute();
+        $qb->orderBy('e.date', $order);
+
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
     // /**

@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -20,6 +22,7 @@ class Post
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups("list", "getPost")
+     * @Expose
      */
     private $id;
 

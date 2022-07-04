@@ -22,3 +22,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+doctrine:
+    # Search for the ORM property
+    orm:
+        # Those values should be already in your file and this doesn't matter
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        # We need this the dql property to register the custom doctrine functions :
+        dql:
+            string_functions:
+                # Match agains should have the path to the SOUNDEX class created in the previous step
+                DIFFERENCE: App\Extensions\Doctrine\DifferenceFunction

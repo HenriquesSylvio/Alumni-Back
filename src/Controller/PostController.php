@@ -20,7 +20,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
-
+use App\Representation\Paginer;
 /**
  * @Route("api/post")
  */
@@ -99,14 +99,14 @@ class PostController extends AbstractFOSRestController
     {
         $id = $request->attributes->get('_route_params')['id'];
         $post = $this->doctrine->getRepository(Post::class)->searchById($id);
-        return ['post' => $post];
+        return $post;
     }
 
     /**
      * @Get(
      *     name = "post_show",
      * )
-     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\View()
      * @Rest\QueryParam(
      *     name="keyword",
      *     nullable=true,
@@ -118,14 +118,35 @@ class PostController extends AbstractFOSRestController
      *     default="asc",
      *     description="Sort order (asc or desc)"
      * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
      */
     public function getPosts(ParamFetcherInterface $paramFetcher)
     {
         $posts = $this->doctrine->getRepository(Post::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
         );
-        return ['posts' => $posts];
+        return new Paginer($posts);
     }
 
     /**
@@ -153,7 +174,7 @@ class PostController extends AbstractFOSRestController
      */
     public function deletePost(Post $post)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             if($post->getAuthor() !== $this->security->getUser()) {
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }
@@ -180,5 +201,48 @@ class PostController extends AbstractFOSRestController
         $em->remove($likePost);
         $em->flush();
         return ;
+    }
+
+    /**
+     * @Get(
+     *     path = "/feed",
+     *     name = "feed_show",
+     * )
+     * @Rest\View(serializerGroups={"getPost"})
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getFeed(ParamFetcherInterface $paramFetcher)
+    {
+        $posts =  $this->doctrine->getRepository(Post::class)->feed(
+            $this->security->getUser(),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return ['posts' => $posts];
     }
 }

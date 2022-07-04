@@ -8,6 +8,8 @@ services:
     container_name: db
     ports: 
       - "5432:5432"
+    build:
+      context: ./pg
     image: "postgres:latest"
     restart: always
     volumes:

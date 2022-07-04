@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegisterTest extends AbstractEndPoint
 {
-    private string $userPayload = '{"email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "birthday": "25-09-1999", "promo": "25-09-2021"}';
+    private string $userPayload = '{"email": "%s", "password": "S-t5S-t5", "username": "%s", "first_name": "test", "last_name": "test", "promo": "2017"}';
 
     public function testcreateUser(): void
     {
@@ -26,8 +26,7 @@ class RegisterTest extends AbstractEndPoint
     private function getPayload(): string
     {
         $faker = Factory::create();
-
-        return sprintf($this->userPayload, $faker->email);
+        return sprintf($this->userPayload, $faker->email, $faker->userName);
     }
 
 }

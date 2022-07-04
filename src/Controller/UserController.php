@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\LikePost;
 use App\Entity\Subscribe;
 use App\Entity\User;
+use App\Representation\Paginer;
 use Doctrine\Persistence\ManagerRegistry;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations\Patch;
 use FOS\RestBundle\Controller\Annotations\View;
@@ -18,12 +21,21 @@ use Symfony\Component\Security\Core\Security;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("api/user")
  */
 class UserController extends AbstractFOSRestController
 {
+
+    /**
+     * @var UserPasswordHasherInterface
+     */
+    private $passwordHasher;
+
     /**
      * @var Security
      */
@@ -31,10 +43,11 @@ class UserController extends AbstractFOSRestController
 
     private $doctrine;
 
-    public function __construct(Security $security, ManagerRegistry $doctrine)
+    public function __construct(Security $security, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $this->security = $security;
         $this->doctrine = $doctrine;
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -55,12 +68,12 @@ class UserController extends AbstractFOSRestController
         if(!$user[0]->getAcceptAccount()){
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas afficher le profil d\'un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
         }
-        return ['user' => $user[0]];
+        return $user[0];
     }
 
     /**
      * @Rest\Patch(
-     *     path = "/{id}",
+     *     path = "/acceptUser/{id}",
      *     name = "accept_user",
      *     requirements = {"id"="\d+"}
      * )
@@ -87,8 +100,54 @@ class UserController extends AbstractFOSRestController
      */
     public function getMyProfile()
     {
-        $data =  $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId())[0];
-        return ['user' => $data];
+        return $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId())[0];
+    }
+
+    /**
+     * @Get(
+     *     name = "users_show",
+     * )
+     * @Rest\View()
+     * @Rest\QueryParam(
+     *     name="keyword",
+     *     nullable=true,
+     *     description="The user to search for."
+     * )
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getUsers(ParamFetcherInterface $paramFetcher)
+    {
+        $users = $this->doctrine->getRepository(User::class)->search(
+            $paramFetcher->get('keyword'),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return new Paginer($users);
     }
 
     /**
@@ -115,7 +174,7 @@ class UserController extends AbstractFOSRestController
      */
     public function addSubscribe(Subscribe $subscribe)
     {
-        if ($subscribe->getSubscriber() == $this->security->getUser()) {
+        if ($subscribe->getSubscriber() === $this->security->getUser()) {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas vous suivre.'], Response::HTTP_UNAUTHORIZED);
         }
         if ($subscribe->getSubscriber()->getAcceptAccount() == false) {
@@ -188,14 +247,93 @@ class UserController extends AbstractFOSRestController
      */
     public function deleteUser(User $user)
     {
-        if (!in_array("ROLE_ADMIN", $this->security->getUser()->getRoles())) {
-            if($user !== $this->security->getUser()) {
-                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
-            }
+        if ((!$this->isGranted('ROLE_ADMIN') and $user !== $this->security->getUser()) Or in_array('ROLE_SUPER_ADMIN', $user->getRoles()) or (in_array('ROLE_ADMIN', $user->getRoles()) And !$this->isGranted('ROLE_SUPER_ADMIN'))) {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
         }
         $em = $this->doctrine->getManager();
         $em->remove($user);
         $em->flush();
         return ;
     }
+
+    /**
+     * @Rest\Patch(
+     *     path = "/addAdmin/{id}",
+     *     name = "add_admin_user",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 204)
+     */
+    public function AddRoleAdminUser (User $user)
+    {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+        }
+        $user->setRoles(['ROLE_ADMIN']);
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
+        return ;
+    }
+
+    /**
+     * @Rest\Patch(
+     *     path = "/removeAdmin/{id}",
+     *     name = "remove_admin_user",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(StatusCode = 204)
+     */
+    public function removeRoleAdminUser(User $user)
+    {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+            return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user->setRoles(['ROLE_USER']);
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+
+        return ;
+    }
+
+    /**
+     * @Rest\View(StatusCode = 200)
+     * @Rest\Put(
+     *     path = "/edit",
+     *     name = "user_update",
+     * )
+     * @ParamConverter("newUser", converter="fos_rest.request_body")
+     */
+    public function updateUser(User $newUser, ValidatorInterface $validator)
+    {
+        $user = $this->doctrine->getRepository(User::class)->find($this->security->getUser());
+        $errors = $validator->validate($newUser,null,  ['editUser']);
+
+        if (count($errors) > 0) {
+            foreach($errors as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->setBiography($newUser->getBiography());
+        $user->setLastName($newUser->getLastName());
+        $user->setFirstName($newUser->getFirstName());
+        $user->setUrlProfilePicture($newUser->getUrlProfilePicture());
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($user);
+        $em->flush();
+        return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_OK);
+    }
+
 }
