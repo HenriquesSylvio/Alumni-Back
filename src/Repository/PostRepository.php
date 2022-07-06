@@ -114,8 +114,14 @@ class PostRepository extends AbstractRepository
 
     public function search($term, int $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
     {
+        $subquery  = $this->createQueryBuilder('p2')
+            ->select('count(distinct lk2.likeBy)')
+            ->from('App:LikePost', 'lk2')
+            ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
+
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike, case when lk.likeBy = ' . $activeUserId . ' then true else false end as like')
+            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(c) as numberComment, count(lk.post) as numberLike
+            , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
@@ -128,10 +134,17 @@ class PostRepository extends AbstractRepository
         return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
-    public function feed($idUser, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function feed($idUser, $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
     {
+
+        $subquery  = $this->createQueryBuilder('p2')
+            ->select('count(distinct lk2.likeBy)')
+            ->from('App:LikePost', 'lk2')
+            ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
+
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike, case when lk.likeBy = ?1 then true else false end as like')
+            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike
+            , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->innerJoin('App:Subscribe', 's', JOIN::WITH, 'u.id = s.subscriber')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')

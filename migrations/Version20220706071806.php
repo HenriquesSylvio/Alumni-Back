@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220617103101 extends AbstractMigration
+final class Version20220706071806 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -40,7 +40,7 @@ final class Version20220617103101 extends AbstractMigration
         $this->addSql('CREATE TABLE participate (event_id INT NOT NULL, participant_id INT NOT NULL, PRIMARY KEY(event_id, participant_id))');
         $this->addSql('CREATE INDEX IDX_D02B13871F7E88B ON participate (event_id)');
         $this->addSql('CREATE INDEX IDX_D02B1389D1C3019 ON participate (participant_id)');
-        $this->addSql('CREATE TABLE post (id INT NOT NULL, author_id INT NOT NULL, tag_id INT NOT NULL, content TEXT NOT NULL, create_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE post (id INT NOT NULL, author_id INT NOT NULL, tag_id INT NOT NULL, content TEXT NOT NULL, create_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DF675F31B ON post (author_id)');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DBAD26311 ON post (tag_id)');
         $this->addSql('CREATE TABLE reply_comment (answer_comment_id INT NOT NULL, reply_comment_id INT NOT NULL, PRIMARY KEY(answer_comment_id, reply_comment_id))');

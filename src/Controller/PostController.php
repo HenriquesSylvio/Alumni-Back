@@ -239,6 +239,7 @@ class PostController extends AbstractFOSRestController
     {
         $posts =  $this->doctrine->getRepository(Post::class)->feed(
             $this->security->getUser(),
+            $this->security->getUser()->getId(),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
