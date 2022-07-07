@@ -58,7 +58,7 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id and lk2.likeBy = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(distinct c) as numberComment, count(distinct lk.likeBy) as numberLike
+            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct c) as numberComment, count(distinct lk.likeBy) as numberLike
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
@@ -71,6 +71,33 @@ class PostRepository extends AbstractRepository
 
         return $query->execute();
     }
+
+
+    public function feed($idUser, $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    {
+
+        $subquery  = $this->createQueryBuilder('p2')
+            ->select('count(distinct lk2.likeBy)')
+            ->from('App:LikePost', 'lk2')
+            ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
+
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct c) as numberComment, count(distinct lk.likeBy) as numberLike
+            , case when (' . $subquery . ') = 1 then true else false end as like')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
+            ->innerJoin('App:Subscribe', 's', JOIN::WITH, 'u.id = s.subscriber')
+            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
+            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->where('s.subscription= ?1')
+            ->orderBy('p.createAt', $order)
+            ->groupBy('p.id, u.id')
+            ->setParameter(1, $idUser);
+
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
+    }
+
     public function searchById(string $id, int $activeUserId)
     {
         $subquery  = $this->createQueryBuilder('p2')
@@ -85,7 +112,7 @@ class PostRepository extends AbstractRepository
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
             ->Where('p.id = ?1')
-            ->groupBy('p, like, u.id')
+            ->groupBy('p.id, u.id')
             ->setParameter(1, $id);
 
 //        $qb = $this->createQueryBuilder('p')
@@ -127,33 +154,8 @@ class PostRepository extends AbstractRepository
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->where('p.content LIKE ?1')
             ->orderBy('p.createAt', $order)
-            ->groupBy('p.id, u.id, lk.likeBy')
+            ->groupBy('p.id, u.id')
             ->setParameter(1, '%'.$term.'%');
-        $query = $qb->getQuery()
-            ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
-    }
-
-    public function feed($idUser, $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
-    {
-
-        $subquery  = $this->createQueryBuilder('p2')
-            ->select('count(distinct lk2.likeBy)')
-            ->from('App:LikePost', 'lk2')
-            ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
-
-        $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.title, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, count(c) as numberComment, count(lk.post) as numberLike
-            , case when (' . $subquery . ') = 1 then true else false end as like')
-            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
-            ->innerJoin('App:Subscribe', 's', JOIN::WITH, 'u.id = s.subscriber')
-            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
-            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
-            ->where('s.subscription= ?1')
-            ->orderBy('p.createAt', $order)
-            ->groupBy('p.id, u.id, lk.likeBy')
-            ->setParameter(1, $idUser);
-
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
