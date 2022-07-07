@@ -27,11 +27,11 @@ class Faculty
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="faculty")
      */
-    private $users;
+    private $Users;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->Users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -56,13 +56,13 @@ class Faculty
      */
     public function getUsers(): Collection
     {
-        return $this->users;
+        return $this->Users;
     }
 
     public function addUser(User $user): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
+        if (!$this->Users->contains($user)) {
+            $this->Users[] = $user;
             $user->setFaculty($this);
         }
 
@@ -71,7 +71,7 @@ class Faculty
 
     public function removeUser(User $user): self
     {
-        if ($this->users->removeElement($user)) {
+        if ($this->Users->removeElement($user)) {
             // set the owning side to null (unless already changed)
             if ($user->getFaculty() === $this) {
                 $user->setFaculty(null);

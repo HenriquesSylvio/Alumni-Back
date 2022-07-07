@@ -44,6 +44,10 @@ class AppFixtures extends Fixture
         $faculty3->setName('Community Management');
         $manager->persist($faculty3);
 
+        $faculty4 = new Faculty();
+        $faculty4->setName('Autre');
+        $manager->persist($faculty4);
+
         $facultyArray = array($faculty, $faculty1, $faculty2, $faculty3);
 
         $user = new User();
@@ -57,6 +61,7 @@ class AppFixtures extends Fixture
         $user->setAcceptAccount(true);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
+        $user->setFaculty($faculty4);
         $manager->persist($user);
 
         $tag = new Tag();
@@ -91,6 +96,7 @@ class AppFixtures extends Fixture
         $user->setFirstname('admin');
         $user->setPromo(2017);
         $user->setAcceptAccount(true);
+        $user->setFaculty($faculty4);
         $manager->persist($user);
 
         $postPrincipal = new Post();
