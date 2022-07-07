@@ -187,15 +187,16 @@ class AppFixtures extends Fixture
             {
                 $user->setRoles(['ROLE_ADMIN']);
                 $user->setAcceptAccount(true);
+                $user->setFaculty($faculty4);
             } else {
                 $user->setRoles(['ROLE_USER']);
                 $user->setAcceptAccount(false);
+                $user->setFaculty($facultyArray[rand(0, count($facultyArray) - 1)]);
             }
             $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
             $user->setLastName($faker->lastName);
             $user->setFirstname($faker->firstName);
             $user->setPromo(2017);
-            $user->setFaculty($facultyArray[rand(0, count($facultyArray) - 1)]);
             $manager->persist($user);
             $post = new Post();
             $post->setContent('Ceci est un test');
