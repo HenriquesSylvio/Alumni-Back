@@ -27,9 +27,6 @@ class DifferenceFunction extends FunctionNode
 
     public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
     {
-//        return 'DIFFERENCE(' .
-//            $this->stringExpression->dispatch($sqlWalker) .
-//            ')';
         return 'DIFFERENCE(' .
             $this->firstString->dispatch($sqlWalker) . ', ' .
             $this->secondString->dispatch($sqlWalker) .

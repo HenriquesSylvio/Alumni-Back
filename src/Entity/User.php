@@ -156,6 +156,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="L'année de la promo est obligatoire", groups={"register"})
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
      */
     private $promo;
 
