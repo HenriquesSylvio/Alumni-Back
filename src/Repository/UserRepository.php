@@ -41,7 +41,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function searchById(string $id, string $activeUserId){
 
         $qb = $this->createQueryBuilder('u')
-            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe')
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, u.faculty, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe')
             ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
             ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
             ->Where('u.id = ' . $id)
@@ -66,7 +66,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('u')
-            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo");
+            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.faculty");
         if (!is_null($term)){
             $qb->where("DIFFERENCE(u.firstName, ?1) = 4")
                 ->orWhere("DIFFERENCE(u.lastName, ?1) = 4")
