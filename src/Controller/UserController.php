@@ -61,11 +61,12 @@ class UserController extends AbstractFOSRestController
     public function getUserById(Request $request)
     {
         $idUser = $request->attributes->get('_route_params')['id'];
-        $user =  $this->doctrine->getRepository(User::class)->searchById($idUser);
-        if(is_null($user)) {
+
+        $user =  $this->doctrine->getRepository(User::class)->searchById($idUser, $this->security->getUser()->getId());
+        if(empty($user)) {
             return new JsonResponse(['erreur' => 'Aucun utilisateur n\'a été trouvé'], Response::HTTP_NOT_FOUND);
         }
-        if(!$user[0]->getAcceptAccount()){
+        if(!$user[0]['acceptAccount']){
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas afficher le profil d\'un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
         }
         return $user[0];
@@ -100,7 +101,17 @@ class UserController extends AbstractFOSRestController
      */
     public function getMyProfile()
     {
-        return $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId())[0];
+        return $this->doctrine->getRepository(User::class)->searchById($this->security->getUser()->getId(), $this->security->getUser()->getId())[0];
+
+//        $idUser = $this->security->getUser()->getId();
+//        $user =  $this->doctrine->getRepository(User::class)->searchById($idUser);
+//        if(is_null($user)) {
+//            return new JsonResponse(['erreur' => 'Aucun utilisateur n\'a été trouvé'], Response::HTTP_NOT_FOUND);
+//        }
+//        if(!$user[0]->getAcceptAccount()){
+//            return new JsonResponse(['erreur' => 'Vous ne pouvez pas afficher le profil d\'un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
+//        }
+//        return $user[0];
     }
 
     /**
@@ -177,6 +188,7 @@ class UserController extends AbstractFOSRestController
         if ($subscribe->getSubscriber() === $this->security->getUser()) {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas vous suivre.'], Response::HTTP_UNAUTHORIZED);
         }
+//        dd($subscribe->getSubscriber()->getAcceptAccount());
         if ($subscribe->getSubscriber()->getAcceptAccount() == false) {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas suivre un utilisateur qui n\'a pas encore été accepté.'], Response::HTTP_UNAUTHORIZED);
         }
@@ -311,7 +323,7 @@ class UserController extends AbstractFOSRestController
      * )
      * @ParamConverter("newUser", converter="fos_rest.request_body")
      */
-    public function updateUser(User $newUser,  ValidatorInterface $validator)
+    public function updateUser(User $newUser, ValidatorInterface $validator)
     {
         $user = $this->doctrine->getRepository(User::class)->find($this->security->getUser());
         $errors = $validator->validate($newUser,null,  ['editUser']);
@@ -323,7 +335,6 @@ class UserController extends AbstractFOSRestController
             }
             return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
         }
-
         $user->setBiography($newUser->getBiography());
         $user->setLastName($newUser->getLastName());
         $user->setFirstName($newUser->getFirstName());
@@ -334,7 +345,6 @@ class UserController extends AbstractFOSRestController
         $em->persist($user);
         $em->flush();
         return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_OK);
-        return ['user' => $user->gete];
     }
 
 }
