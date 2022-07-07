@@ -194,14 +194,11 @@ class PostController extends AbstractFOSRestController
      *     requirements = {"post"="\d+"}
      * )
      */
-    public function deleteLikePost(LikePost $likePost)
+    public function deleteLikePost(Request $request)
     {
-        $likePost->setUsers($this->security->getUser());
-        $em = $this->doctrine->getManager();
-
-        $em->remove($likePost);
-        $em->flush();
-        return ;
+        $idPost = $request->attributes->get('_route_params')['post'];
+        $this->doctrine->getRepository(LikePost::class)->delete($idPost, $this->security->getUser()->getId());
+        return;
     }
 
     /**
