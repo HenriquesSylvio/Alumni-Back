@@ -56,7 +56,7 @@ abstract class AbstractEndPoint extends WebTestCase
             sprintf(
                 $loginPayload,
                 AppFixtures::DEFAULT_USER['email'], AppFixtures::DEFAULT_USER['password'], AppFixtures::DEFAULT_USER['first_name'],
-                AppFixtures::DEFAULT_USER['last_name'], AppFixtures::DEFAULT_USER['promo']
+                AppFixtures::DEFAULT_USER['last_name'], AppFixtures::DEFAULT_USER['promo'], AppFixtures::DEFAULT_USER['faculty_id']
             )
         );
         $data = json_decode($client->getResponse()->getContent(), true);

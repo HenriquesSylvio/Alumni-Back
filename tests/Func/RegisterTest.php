@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RegisterTest extends AbstractEndPoint
 {
-    private string $userPayload = '{"email": "%s", "password": "S-t5S-t5", "username": "%s", "first_name": "test", "last_name": "test", "promo": "2017"}';
+    private string $userPayload = '{"email": "%s", "password": "S-t5S-t5", "username": "%s", "first_name": "test", "last_name": "test", "promo": "2017", "faculty_id": "1"}';
 
     public function testcreateUser(): void
     {
