@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Security;
 
 class UserTest extends AbstractEndPoint
 {
-    private string $userPayload = '{"id : 2 ,email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "birthday": "25-09-1999", "promo": "25-09-2021"}';
+    private string $userPayload = '{"id : 2 ,email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "promo": "2017"}';
     /**
      * @var \Doctrine\ORM\EntityManager
      */

@@ -38,18 +38,17 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         $this->_em->flush();
     }
 
-    public function searchById(string $id){
+    public function searchById(string $id, string $activeUserId){
 
         $qb = $this->createQueryBuilder('u')
-            ->select('u, u.acceptAccount, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber')
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe')
             ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
             ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
             ->Where('u.id = ' . $id)
-            ->groupBy('u.id');
-            return  $qb->getQuery()->getOneOrNullResult();
-
+            ->groupBy('u.id, follower.subscription');
         //dd($qb->getQuery());
-        $query = $qb->getQuery();
+        $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $query;
         return $query->execute();
     }
 
@@ -67,7 +66,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('u')
-            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture");
+            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo");
         if (!is_null($term)){
             $qb->where("DIFFERENCE(u.firstName, ?1) = 4")
                 ->orWhere("DIFFERENCE(u.lastName, ?1) = 4")
