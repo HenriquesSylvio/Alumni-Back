@@ -212,7 +212,7 @@ class PostTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
+            '{"title": "Ceci est un test","content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -231,7 +231,7 @@ class PostTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
+            '{"title": "Ceci est un test","content": "Ceci est un test", "tag": { "id" : ' . $tag->getId() . '}}',
             [],
             false
         );

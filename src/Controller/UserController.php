@@ -63,8 +63,7 @@ class UserController extends AbstractFOSRestController
         $idUser = $request->attributes->get('_route_params')['id'];
 
         $user =  $this->doctrine->getRepository(User::class)->searchById($idUser, $this->security->getUser()->getId());
-
-        if(is_null($user)) {
+        if(empty($user)) {
             return new JsonResponse(['erreur' => 'Aucun utilisateur n\'a été trouvé'], Response::HTTP_NOT_FOUND);
         }
         if(!$user[0]['acceptAccount']){
