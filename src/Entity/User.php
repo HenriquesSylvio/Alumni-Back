@@ -160,6 +160,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $promo;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Faculty::class, inversedBy="Users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $faculty;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -562,6 +568,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getFaculty(): ?Faculty
+    {
+        return $this->faculty;
+    }
+
+    public function setFaculty(?Faculty $faculty): self
+    {
+        $this->faculty = $faculty;
 
         return $this;
     }

@@ -5,9 +5,11 @@ namespace App\DataFixtures;
 use App\Entity\Comment;
 use App\Entity\Event;
 use App\Entity\LikeComment;
+use App\Entity\Faculty;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\Tag;
+use ContainerOU1xmFb\getDoctrine_CacheClearResultCommandService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,7 +18,7 @@ use Faker;
 
 class AppFixtures extends Fixture
 {
-    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'promo' => '2017'];
+    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'promo' => '2017', 'faculty_id' => '1'];
 
     private UserPasswordHasherInterface  $passwordHasher;
 
@@ -27,6 +29,27 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager) : void
     {
+        $faculty = new Faculty();
+        $faculty->setName('Développement web');
+        $manager->persist($faculty);
+
+        $faculty1 = new Faculty();
+        $faculty1->setName('Communication Graphique');
+        $manager->persist($faculty1);
+
+        $faculty2 = new Faculty();
+        $faculty2->setName('Web Marketing');
+        $manager->persist($faculty2);
+
+        $faculty3 = new Faculty();
+        $faculty3->setName('Community Management');
+        $manager->persist($faculty3);
+
+        $faculty4 = new Faculty();
+        $faculty4->setName('Autre');
+        $manager->persist($faculty4);
+
+        $facultyArray = array($faculty, $faculty1, $faculty2, $faculty3);
 
         $user = new User();
         $user->setEmail('henriques.sylvio@outlook.fr');
@@ -39,6 +62,7 @@ class AppFixtures extends Fixture
         $user->setAcceptAccount(true);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
+        $user->setFaculty($faculty4);
         $manager->persist($user);
 
         $tag = new Tag();
@@ -73,6 +97,7 @@ class AppFixtures extends Fixture
         $user->setFirstname('admin');
         $user->setPromo(2017);
         $user->setAcceptAccount(true);
+        $user->setFaculty($faculty4);
         $manager->persist($user);
 
         $postPrincipal = new Post();
@@ -127,6 +152,7 @@ class AppFixtures extends Fixture
         $user->setFirstname('Sylvio');
         $user->setPromo(2017);
         $user->setAcceptAccount(true);
+        $user->setFaculty($faculty);
         $manager->persist($user);
 
 
@@ -169,9 +195,11 @@ class AppFixtures extends Fixture
             {
                 $user->setRoles(['ROLE_ADMIN']);
                 $user->setAcceptAccount(true);
+                $user->setFaculty($faculty4);
             } else {
                 $user->setRoles(['ROLE_USER']);
                 $user->setAcceptAccount(false);
+                $user->setFaculty($facultyArray[rand(0, count($facultyArray) - 1)]);
             }
             $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
             $user->setLastName($faker->lastName);

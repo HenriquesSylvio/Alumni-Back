@@ -4,8 +4,10 @@ namespace App\Repository;
 
 use App\Entity\LikePost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -43,6 +45,20 @@ class LikePostRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function delete($idPost, $idUser)
+    {
+        $qb = $this->createQueryBuilder('lk')
+            ->delete()
+            ->where('lk.post = :idPost')
+            ->andWhere('lk.likeBy = :idUser')
+            ->setParameter('idUser', $idUser)
+            ->setParameter('idPost', $idPost);
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
     }
 
     // /**
