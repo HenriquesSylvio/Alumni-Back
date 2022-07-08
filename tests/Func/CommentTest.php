@@ -305,8 +305,8 @@ class CommentTest extends AbstractEndPoint
             ->findOneBy(['author' => $user]);
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post/like',
-            '{"post": {"id" : ' . $comment->getId() . '}}',
+            '/api/comment/like',
+            '{"comment": {"id" : ' . $comment->getId() . '}}',
             [],
             false
         );
@@ -343,7 +343,7 @@ class CommentTest extends AbstractEndPoint
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/post/like/' . $likeComment->getComment()->getId(),
+            '/api/comment/like/' . $likeComment->getComment()->getId(),
             '',
             []
         );
