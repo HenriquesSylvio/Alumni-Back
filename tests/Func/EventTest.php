@@ -7,7 +7,6 @@ use App\Entity\Event;
 use App\Entity\Participate;
 use App\Entity\Post;
 use App\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,8 +96,6 @@ class EventTest extends AbstractEndPoint
             '/api/event/' . $event->getId(),
             "",
             [],
-            true,
-            true
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
@@ -239,13 +236,17 @@ class EventTest extends AbstractEndPoint
 
     public function testaddParticipation_EventAlreadyPast(): void
     {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
+//        $user = $this->entityManager
+//            ->getRepository(User::class)
+//            ->findOneBy(['email' => 'admin@outlook.fr'])
+//        ;
+//        $event = $this->entityManager
+//            ->getRepository(Event::class)
+//            ->findOneBy(['author' => $user->getId()])
+//        ;
         $event = $this->entityManager
             ->getRepository(Event::class)
-            ->findOneBy(['author' => $user->getId()])
+            ->findOneBy(['date' => new \DateTime("2022-7-9")])
         ;
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
@@ -346,6 +347,7 @@ class EventTest extends AbstractEndPoint
             '',
             []
         );
+
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 

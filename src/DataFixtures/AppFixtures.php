@@ -2,13 +2,10 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Comment;
 use App\Entity\Event;
 use App\Entity\Faculty;
 use App\Entity\LikePost;
 use App\Entity\Post;
-use App\Entity\Tag;
-use ContainerOU1xmFb\getDoctrine_CacheClearResultCommandService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -64,16 +61,10 @@ class AppFixtures extends Fixture
         $user->setFaculty($faculty4);
         $manager->persist($user);
 
-        $tag = new Tag();
-        $tag->setLabel('Offre d\'emploi');
-        $manager->persist($tag);
-
         $post = new Post();
         $post->setContent('Ceci est un test');
-        $post->setCreateAt(new \DateTime(2022-4-21));
+        $post->setCreateAt(new \DateTime(date("d-m-Y")));
         $post->setAuthor($user);
-        $post->setTag($tag);
-        $post->setTitle('Ceci est un test');
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
         $manager->persist($post);
@@ -81,7 +72,7 @@ class AppFixtures extends Fixture
         $event = new Event();
         $event->setTitle('Ceci est un test');
         $event->setDescription('Ceci est un test');
-        $event->setDate(new \DateTime(2022-4-21));
+        $event->setDate(new \DateTime("2022-7-9"));
         $event->setAuthor($user);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
@@ -103,26 +94,23 @@ class AppFixtures extends Fixture
         $postPrincipal->setContent('Ceci est un test');
         $postPrincipal->setCreateAt(new \DateTime(2022-4-21));
         $postPrincipal->setAuthor($user);
-        $postPrincipal->setTag($tag);
-        $postPrincipal->setTitle('Ceci est un test');
         $manager->persist($postPrincipal);
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt(new \DateTime(date("d-m-Y")));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
         }
 
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
             $comment->setAuthor($user);
-            $comment->setPost($post);
+            $comment->setMainPost($post);
+            $comment->setParentPost($postPrincipal);
             $manager->persist($comment);
         }
 
@@ -130,7 +118,7 @@ class AppFixtures extends Fixture
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(date('d-m-Y')));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
@@ -151,27 +139,26 @@ class AppFixtures extends Fixture
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt(new \DateTime(date("d-m-Y")));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
         }
 
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
             $comment->setAuthor($user);
-            $comment->setPost($post);
-            $manager->persist($comment);
+            $comment->setMainPost($postPrincipal);
+            $comment->setParentPost($postPrincipal);
+            $manager->persist($post);
         }
 
         for($nbEvent = 1; $nbEvent <= 30; $nbEvent++){
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(2022-4-21));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
@@ -200,29 +187,27 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt(new \DateTime(date("d-m-Y")));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
             $likePost = new LikePost();
             $likePost->setUsers($user);
             $likePost->setPost($postPrincipal);
             $manager->persist($likePost);
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
             $comment->setAuthor($user);
-            $comment->setPost($postPrincipal);
+            $comment->setMainPost($postPrincipal);
+            $comment->setParentPost($postPrincipal);
             $manager->persist($comment);
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(2022-4-21));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
-
         $manager->flush();
     }
 }
