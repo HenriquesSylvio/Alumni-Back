@@ -206,7 +206,7 @@ class PostTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"title": "Ceci est un test","content": "Ceci est un test"}',
+            '{"content": "Ceci est un test"}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -217,7 +217,7 @@ class PostTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/post',
-            '{"title": "Ceci est un test","content": "Ceci est un test"}',
+            '{"content": "Ceci est un test"}',
             [],
             false
         );
@@ -353,5 +353,71 @@ class PostTest extends AbstractEndPoint
             []
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testgetComment_NotIdenticate(): void
+    {
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/post/' . $post->getId() . '/comment',
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetComment_OkObjectResult(): void
+    {
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/post/' . $post->getId() . '/comment',
+            "",
+            [],
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testaddComment_CreatedResult(): void
+    {
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/post',
+            '{"content": "Ceci est un test", "postParent": ' . $post->getId() . '}',
+            []
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function testaddComment_NotIdenticate(): void
+    {
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/post',
+            '{"content": "Ceci est un test", "postParent": ' . $post->getId() . '}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 }
