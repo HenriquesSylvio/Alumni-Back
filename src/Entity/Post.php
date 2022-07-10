@@ -62,10 +62,22 @@ class Post
      */
     private $title;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="parentPost")
+     */
+    private $parentPost;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="mainPost")
+     */
+    private $mainPost;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->likePosts = new ArrayCollection();
+        $this->parentPost = new ArrayCollection();
+        $this->mainPost = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +189,74 @@ class Post
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getParentPost(): ?self
+    {
+        return $this->parentPost;
+    }
+
+    public function setParentPost(?self $parentPost): self
+    {
+        $this->parentPost = $parentPost;
+
+        return $this;
+    }
+
+    public function addParentPost(self $parentPost): self
+    {
+        if (!$this->parentPost->contains($parentPost)) {
+            $this->parentPost[] = $parentPost;
+            $parentPost->setParentPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParentPost(self $parentPost): self
+    {
+        if ($this->parentPost->removeElement($parentPost)) {
+            // set the owning side to null (unless already changed)
+            if ($parentPost->getParentPost() === $this) {
+                $parentPost->setParentPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMainPost(): ?self
+    {
+        return $this->mainPost;
+    }
+
+    public function setMainPost(?self $mainPost): self
+    {
+        $this->mainPost = $mainPost;
+
+        return $this;
+    }
+
+    public function addMainPost(self $mainPost): self
+    {
+        if (!$this->mainPost->contains($mainPost)) {
+            $this->mainPost[] = $mainPost;
+            $mainPost->setMainPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMainPost(self $mainPost): self
+    {
+        if ($this->mainPost->removeElement($mainPost)) {
+            // set the owning side to null (unless already changed)
+            if ($mainPost->getMainPost() === $this) {
+                $mainPost->setMainPost(null);
+            }
+        }
 
         return $this;
     }
