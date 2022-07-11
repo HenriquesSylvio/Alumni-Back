@@ -51,6 +51,8 @@ class PostController extends AbstractFOSRestController
     {
         $post->setAuthor($this->security->getUser());
         $post->setCreateAt(new \DateTime(date("d-m-Y")));
+        $post->setParentPost(null);
+        $post->setMainPost(null);
 
         if (count($violations)) {
             foreach($violations as $error)
@@ -244,4 +246,90 @@ class PostController extends AbstractFOSRestController
         );
         return ['posts' => $posts];
     }
+
+    /**
+     * @Rest\Post(
+     *     path = "/{postParent}/comment",
+     *     name = "add_comments"
+     * )
+     * @Rest\View(StatusCode = 201)
+     * @ParamConverter("post", converter="fos_rest.request_body")
+     */
+    public function addComment(Post $post, ConstraintViolationList $violations, Request $request)
+    {
+        $idPostParent = $request->attributes->get('_route_params')['postParent'];
+        $postParent = $this->doctrine->getRepository(Post::class)->find($idPostParent);
+
+        $post->setAuthor($this->security->getUser());
+        $post->setCreateAt(new \DateTime(date("d-m-Y")));
+        $post->setParentPost($postParent);
+
+        if (is_null($postParent->getMainPost())){
+            $post->setMainPost($postParent);
+        }else{
+            $post->setMainPost($postParent->getParentPost());
+        }
+
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
+
+        $em = $this->doctrine->getManager();
+
+        $em->persist($post);
+        $em->flush();
+
+        return new JsonResponse(['id' => $post->getId()], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Get(
+     *     path = "/{postParent}/comment",
+     *     name = "comment_show",
+     * )
+     * @Rest\View(StatusCode = 200)
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getComment(Request $request, ParamFetcherInterface $paramFetcher)
+    {
+        $idPostParent = $request->attributes->get('_route_params')['postParent'];
+
+        $posts =  $this->doctrine->getRepository(Post::class)->getCommentByPost(
+            $idPostParent,
+            $this->security->getUser()->getId(),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return ['posts' => $posts];
+    }
+
 }

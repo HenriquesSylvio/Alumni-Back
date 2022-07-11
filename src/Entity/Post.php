@@ -47,30 +47,22 @@ class Post
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post", orphanRemoval=true)
-     */
-    private $comments;
-
-    /**
      * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="post", orphanRemoval=true)
      */
     private $likePosts;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="posts")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=Post::class)
      */
-    private $tag;
+    private $mainPost;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le titre est obligatoire")
+     * @ORM\ManyToOne(targetEntity=Post::class)
      */
-    private $title;
+    private $parentPost;
 
     public function __construct()
     {
-        $this->comments = new ArrayCollection();
         $this->likePosts = new ArrayCollection();
     }
 
@@ -116,36 +108,6 @@ class Post
     }
 
     /**
-     * @return Collection<int, Comment>
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
-
-    public function addComment(Comment $comment): self
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setPost($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getPost() === $this) {
-                $comment->setPost(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, LikePost>
      */
     public function getLikePosts(): Collection
@@ -175,26 +137,26 @@ class Post
         return $this;
     }
 
-    public function getTag(): ?Tag
+    public function getMainPost(): ?self
     {
-        return $this->tag;
+        return $this->mainPost;
     }
 
-    public function setTag(?Tag $tag): self
+    public function setMainPost(?self $mainPost): self
     {
-        $this->tag = $tag;
+        $this->mainPost = $mainPost;
 
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getParentPost(): ?self
     {
-        return $this->title;
+        return $this->parentPost;
     }
 
-    public function setTitle(string $title): self
+    public function setParentPost(?self $parentPost): self
     {
-        $this->title = $title;
+        $this->parentPost = $parentPost;
 
         return $this;
     }

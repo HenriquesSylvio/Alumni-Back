@@ -39,47 +39,6 @@ class PostTest extends TestCase
         self::assertEquals($value, $this->post->getCreateAt());
     }
 
-    public function testGetComment(): void
-    {
-        $value = new Comment();
-
-        $response = $this->post->addComment($value);
-
-        self::assertInstanceOf(Post::class, $response);
-        self::assertCount(1, $this->post->getComments());
-        self::assertTrue($this->post->getComments()->contains($value));
-
-        $response = $this->post->removeComment($value);
-
-        self::assertInstanceOf(Post::class, $response);
-        self::assertCount(0, $this->post->getComments());
-        self::assertFalse($this->post->getComments()->contains($value));
-    }
-
-    public function testGetComments(): void
-    {
-        $value = new Comment();
-        $value1 = new Comment();
-        $value2 = new Comment();
-
-        $this->post->addComment($value);
-        $this->post->addComment($value1);
-        $this->post->addComment($value2);
-
-        self::assertCount(3, $this->post->getComments());
-        self::assertTrue($this->post->getComments()->contains($value));
-        self::assertTrue($this->post->getComments()->contains($value1));
-        self::assertTrue($this->post->getComments()->contains($value2));
-
-        $response = $this->post->removeComment($value);
-
-        self::assertInstanceOf(Post::class, $response);
-        self::assertCount(2, $this->post->getComments());
-        self::assertFalse($this->post->getComments()->contains($value));
-        self::assertTrue($this->post->getComments()->contains($value1));
-        self::assertTrue($this->post->getComments()->contains($value2));
-    }
-
     public function testGetLikePost(): void
     {
         $value = new LikePost();
