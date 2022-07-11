@@ -267,7 +267,7 @@ class PostController extends AbstractFOSRestController
         if (is_null($postParent->getMainPost())){
             $post->setMainPost($postParent);
         }else{
-            $post->setParentPost($postParent->getParentPost());
+            $post->setMainPost($postParent->getParentPost());
         }
 
         if (count($violations)) {

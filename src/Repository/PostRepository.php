@@ -58,10 +58,11 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id and lk2.likeBy = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike, count(distinct comment) as numberComment
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('p.author = ' . $userId)
             ->andWhere('p.mainPost is null')
             ->orderBy('p.createAt', 'desc')
@@ -82,11 +83,12 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike, count(distinct comment) as numberComment
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->innerJoin('App:Subscribe', 's', JOIN::WITH, 'u.id = s.subscriber')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('s.subscription= ?1')
             ->andWhere('p.mainPost is null')
             ->orderBy('p.createAt', $order)
@@ -106,10 +108,11 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike, count(distinct comment) as numberComment
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->Where('p.id = ?1')
             ->groupBy('p.id, u.id')
             ->setParameter(1, $id);
@@ -143,11 +146,12 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
 //
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(lk.post) as numberLike
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike, count(distinct comment) as numberComment
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
-//            ->where('p.parentPost = ' . $idPost)
+            ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
+            ->where('p.parentPost = ' . $idPost)
             ->orderBy('p.createAt', $order)
             ->groupBy('p.id, u.id');
 
@@ -164,10 +168,11 @@ class PostRepository extends AbstractRepository
             ->where('lk2.post = p.id  and lk2.likeBy = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(lk.post) as numberLike
+            ->select('p.id as idPost, p.content, p.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, count(distinct lk.likeBy) as numberLike, count(distinct comment) as numberComment
             , case when (' . $subquery . ') = 1 then true else false end as like')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
+            ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('p.content LIKE ?1')
             ->andWhere('p.mainPost is null')
             ->orderBy('p.createAt', $order)
