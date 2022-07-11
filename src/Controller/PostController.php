@@ -286,4 +286,50 @@ class PostController extends AbstractFOSRestController
         return new JsonResponse(['id' => $post->getId()], Response::HTTP_CREATED);
     }
 
+    /**
+     * @Get(
+     *     path = "/{postParent}/comment",
+     *     name = "comment_show",
+     * )
+     * @Rest\View(StatusCode = 200)
+     * @Rest\QueryParam(
+     *     name="order",
+     *     requirements="asc|desc",
+     *     default="asc",
+     *     description="Sort order (asc or desc)"
+     * )
+     * @Rest\QueryParam(
+     *     name="limit",
+     *     requirements="\d+",
+     *     default="15",
+     *     description="Max number of movies per page."
+     * )
+     * @Rest\QueryParam(
+     *     name="offset",
+     *     requirements="\d+",
+     *     default="0",
+     *     description="The pagination offset"
+     * )
+     * @Rest\QueryParam(
+     *     name="current_page",
+     *     requirements="\d+",
+     *     default="1",
+     *     description="The current page"
+     * )
+     */
+    public function getComment(Request $request, ParamFetcherInterface $paramFetcher)
+    {
+        $idPostParent = $request->attributes->get('_route_params')['postParent'];
+
+        $posts =  $this->doctrine->getRepository(Post::class)->getCommentByPost(
+            $idPostParent,
+            $this->security->getUser()->getId(),
+            $paramFetcher->get('order'),
+            $paramFetcher->get('limit'),
+            $paramFetcher->get('offset'),
+            $paramFetcher->get('current_page')
+        );
+        return ['posts' => $posts];
+    }
+
 }

@@ -397,8 +397,8 @@ class PostTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post',
-            '{"content": "Ceci est un test", "postParent": ' . $post->getId() . '}',
+            '/api/post/'. $post->getId() . '/comment',
+            '{"content": "Ceci est un test"}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -413,11 +413,11 @@ class PostTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/post',
-            '{"content": "Ceci est un test", "postParent": ' . $post->getId() . '}',
+            '/api/post/'. $post->getId() . '/comment',
+            '{"content": "Ceci est un test"}',
             [],
             false
         );
-        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }
