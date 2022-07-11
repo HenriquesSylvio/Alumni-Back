@@ -137,12 +137,12 @@ class Post
         return $this;
     }
 
-    public function getMainPost(): Post
+    public function getMainPost(): ?self
     {
         return $this->mainPost;
     }
 
-    public function setMainPost(?Post $mainPost): self
+    public function setMainPost(?self $mainPost): self
     {
         $this->mainPost = $mainPost;
 
