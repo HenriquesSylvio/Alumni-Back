@@ -10,3 +10,7 @@ when@prod:
     framework:
         router:
             strict_requirements: null
+
+_swagger-ui:
+    resource: '@HBSwaggerUiBundle/Resources/config/routing.yml'
+    prefix: /docs

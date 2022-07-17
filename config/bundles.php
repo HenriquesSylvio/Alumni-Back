@@ -14,4 +14,5 @@ return [
     JMS\SerializerBundle\JMSSerializerBundle::class => ['all' => true],
     BabDev\PagerfantaBundle\BabDevPagerfantaBundle::class => ['all' => true],
     Nelmio\CorsBundle\NelmioCorsBundle::class => ['all' => true],
+    HarmBandstra\SwaggerUiBundle\HBSwaggerUiBundle::class => ['dev' => true]
 ];
