@@ -26,12 +26,12 @@ class FacultyTest extends AbstractEndPoint
         $this->faculty->setName('Test');
     }
 
-    public function testaddFaculty_AdminConnect(): void
+    public function testaddFaculty_CreatedResult(): void
     {
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/faculty/create',
-            '{"name": "TestDev"}',
+            '/api/faculty',
+            '{"Name": "TestDev"}',
             [],
             true,
             true
@@ -39,12 +39,24 @@ class FacultyTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
+    public function testaddFaculty_NotIdenticate(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/faculty',
+            '{"Name": "TestDev"}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
     public function testaddFaculty_NotAdminConnect(): void
     {
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
-            '/api/faculty/create',
-            '{"name": "TestDev"}',
+            '/api/faculty',
+            '{"Name": "TestDev"}',
             [],
             true,
             false
