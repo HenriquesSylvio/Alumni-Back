@@ -50,10 +50,16 @@ class EventRepository extends AbstractRepository
         }
     }
 
-    public function search($term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($activeUserId, $term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
     {
+
+        $subquery  = $this->createQueryBuilder('e2')
+            ->select('count(distinct p.participant)')
+            ->from('App:Participate', 'p')
+            ->where('p.event = e.id  and p.participant = ' . $activeUserId);
+
         $qb = $this->createQueryBuilder('e')
-            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture')
+            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, case when (' . $subquery . ') = 1 then true else false end as participate')
             ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
@@ -68,6 +74,7 @@ class EventRepository extends AbstractRepository
 
         $qb->orderBy('e.date', $order);
 
+//        dd($qb->getQuery());
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);

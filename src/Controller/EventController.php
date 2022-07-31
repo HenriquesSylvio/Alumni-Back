@@ -120,6 +120,7 @@ class EventController extends AbstractFOSRestController
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
         $events =  $this->doctrine->getRepository(Event::class)->search(
+            $this->security->getUser()->getId(),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('past'),
