@@ -210,4 +210,17 @@ class EventController extends AbstractFOSRestController
         $participant =  $this->doctrine->getRepository(Participate::class)->searchAllParticipant($id);
         return ['participant' => $participant];
     }
+
+    /**
+     * @Get(
+     *     path = "/date",
+     * )
+     *  @Rest\View()
+     */
+    public function getAllDateEvent()
+    {
+        $dates =  $this->doctrine->getRepository(Event::class)->allDate();
+//        dd($dates);
+        return ['dates' => $dates];
+    }
 }

@@ -149,6 +149,7 @@ class EventTest extends AbstractEndPoint
             '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y") . '"}',
             []
         );
+        dd(date("d/m/Y"));
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 

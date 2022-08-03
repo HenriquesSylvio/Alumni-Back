@@ -80,6 +80,17 @@ class EventRepository extends AbstractRepository
         return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
+    public function allDate()
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('distinct e.date')
+            ->orderBy('e.date', 'asc');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
     // /**
     //  * @return Event[] Returns an array of Event objects
     //  */

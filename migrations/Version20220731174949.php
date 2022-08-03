@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220710124705 extends AbstractMigration
+final class Version20220731174949 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -37,9 +37,10 @@ final class Version20220710124705 extends AbstractMigration
         $this->addSql('CREATE TABLE participate (event_id INT NOT NULL, participant_id INT NOT NULL, PRIMARY KEY(event_id, participant_id))');
         $this->addSql('CREATE INDEX IDX_D02B13871F7E88B ON participate (event_id)');
         $this->addSql('CREATE INDEX IDX_D02B1389D1C3019 ON participate (participant_id)');
-        $this->addSql('CREATE TABLE post (id INT NOT NULL, author_id INT NOT NULL, main_post_id INT DEFAULT NULL, content TEXT NOT NULL, create_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE post (id INT NOT NULL, author_id INT NOT NULL, main_post_id INT DEFAULT NULL, parent_post_id INT DEFAULT NULL, content TEXT NOT NULL, create_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DF675F31B ON post (author_id)');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DBFC2AAC5 ON post (main_post_id)');
+        $this->addSql('CREATE INDEX IDX_5A8A6C8D39C1776A ON post (parent_post_id)');
         $this->addSql('CREATE TABLE subscribe (subscription_id INT NOT NULL, subscriber_id INT NOT NULL, PRIMARY KEY(subscription_id, subscriber_id))');
         $this->addSql('CREATE INDEX IDX_68B95F3E9A1887DC ON subscribe (subscription_id)');
         $this->addSql('CREATE INDEX IDX_68B95F3E7808B1AD ON subscribe (subscriber_id)');
@@ -55,6 +56,7 @@ final class Version20220710124705 extends AbstractMigration
         $this->addSql('ALTER TABLE participate ADD CONSTRAINT FK_D02B1389D1C3019 FOREIGN KEY (participant_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE post ADD CONSTRAINT FK_5A8A6C8DF675F31B FOREIGN KEY (author_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE post ADD CONSTRAINT FK_5A8A6C8DBFC2AAC5 FOREIGN KEY (main_post_id) REFERENCES post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE post ADD CONSTRAINT FK_5A8A6C8D39C1776A FOREIGN KEY (parent_post_id) REFERENCES post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE subscribe ADD CONSTRAINT FK_68B95F3E9A1887DC FOREIGN KEY (subscription_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE subscribe ADD CONSTRAINT FK_68B95F3E7808B1AD FOREIGN KEY (subscriber_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT FK_8D93D649680CAB68 FOREIGN KEY (faculty_id) REFERENCES faculty (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -68,6 +70,7 @@ final class Version20220710124705 extends AbstractMigration
         $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D649680CAB68');
         $this->addSql('ALTER TABLE like_post DROP CONSTRAINT FK_83FFB0F34B89032C');
         $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8DBFC2AAC5');
+        $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8D39C1776A');
         $this->addSql('ALTER TABLE event DROP CONSTRAINT FK_3BAE0AA7F675F31B');
         $this->addSql('ALTER TABLE like_post DROP CONSTRAINT FK_83FFB0F31D8309E3');
         $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307FA45BB98C');
