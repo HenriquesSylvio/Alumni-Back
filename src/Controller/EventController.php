@@ -115,6 +115,10 @@ class EventController extends AbstractFOSRestController
      *     default="1",
      *     description="The current page"
      * )
+     * * @Rest\QueryParam(
+     *     name="date",
+     *     description="searching date"
+     * )
      * @Rest\View()
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
@@ -123,7 +127,7 @@ class EventController extends AbstractFOSRestController
             $this->security->getUser()->getId(),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
-            $paramFetcher->get('past'),
+            $paramFetcher->get('date'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
@@ -220,7 +224,6 @@ class EventController extends AbstractFOSRestController
     public function getAllDateEvent()
     {
         $dates =  $this->doctrine->getRepository(Event::class)->allDate();
-//        dd($dates);
         return ['dates' => $dates];
     }
 }

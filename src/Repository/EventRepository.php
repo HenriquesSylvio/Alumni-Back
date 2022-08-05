@@ -50,7 +50,7 @@ class EventRepository extends AbstractRepository
         }
     }
 
-    public function search($activeUserId, $term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($activeUserId, $term = "", $order = 'ASC', $date, $limit = 20, $offset = 0, $currentPage = 1)
     {
 
         $subquery  = $this->createQueryBuilder('e2')
@@ -64,12 +64,21 @@ class EventRepository extends AbstractRepository
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
             ->setParameter(1, '%' . $term . '%');
-        if ($past){
-            $qb->andWhere('e.date < :date')
-            ->setParameter('date', date("Y-m-d"));
-        }else{
-            $qb->andWhere('e.date >= :date')
-                ->setParameter('date', date("Y-m-d"));
+//        if ($past){
+//            $qb->andWhere('e.date < :date')
+//            ->setParameter('date', date("Y-m-d"));
+//        }else{
+//            $qb->andWhere('e.date >= :date')
+//                ->setParameter('date', date("Y-m-d"));
+//        }
+        if ($date){
+//            dd(date("Y-m-d"),  date("Y-m-d", strtotime($date)));
+            $from = new \DateTime(date("Y-m-d", strtotime($date))." 00:00:00");
+            $to   = new \DateTime(date("Y-m-d", strtotime($date))." 23:59:59");
+            $qb->andWhere('e.date BETWEEN :from AND :to')
+                ->setParameter('from', $from )
+                ->setParameter('to', $to);
+//                ->setParameter('date', '%' . date("Y-m-d", strtotime($date)) . '%');
         }
 
         $qb->orderBy('e.date', $order);
