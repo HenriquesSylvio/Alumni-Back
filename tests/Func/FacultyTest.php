@@ -4,6 +4,7 @@ namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\Event;
+use App\Entity\Faculty;
 use App\Entity\Participate;
 use App\Entity\Post;
 use App\Entity\User;
@@ -105,7 +106,7 @@ class FacultyTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/faculty'. $faculty->getId(),
+            '/api/faculty/'. $faculty->getId(),
             '',
             [],
             true,
@@ -123,12 +124,12 @@ class FacultyTest extends AbstractEndPoint
 
         $response = $this->getResponseFromRequest(
             Request::METHOD_DELETE,
-            '/api/faculty' . $faculty->getId(),
+            '/api/faculty/' . $faculty->getId(),
             '',
             [],
             true,
             true
         );
-        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }

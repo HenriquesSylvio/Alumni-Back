@@ -42,7 +42,7 @@ class FacultyRepository extends ServiceEntityRepository
     public function allFaculty()
     {
         $qb = $this->createQueryBuilder('f')
-            ->select('f.name')
+            ->select('f.id, f.name')
             ->orderBy('f.name', 'asc');
 
         $query = $qb->getQuery();

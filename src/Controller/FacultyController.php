@@ -63,4 +63,20 @@ class FacultyController extends AbstractFOSRestController
 //        dd($faculty);
         return ['faculty' => $faculty];
     }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "faculty_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteTag(Faculty $faculty)
+    {
+        $em = $this->doctrine->getManager();
+        $em->remove($faculty);
+        $em->flush();
+        return ;
+    }
 }
