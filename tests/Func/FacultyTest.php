@@ -77,4 +77,58 @@ class FacultyTest extends AbstractEndPoint
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
+
+    public function testdeleteFaculty_NotIdenticate(): void
+    {
+
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/faculty/' . $faculty->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteFaculty_NotAdminConnect(): void
+    {
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/faculty'. $faculty->getId(),
+            '',
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testdeleteFaculty_AdminConnect(): void
+    {
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/faculty' . $faculty->getId(),
+            '',
+            [],
+            true,
+            true
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
 }
