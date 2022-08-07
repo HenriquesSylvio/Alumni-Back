@@ -183,6 +183,6 @@ class FacultyTest extends AbstractEndPoint
             true,
             true
         );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 }
