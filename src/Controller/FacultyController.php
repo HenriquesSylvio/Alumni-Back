@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * @Route("api/faculty")
@@ -32,8 +33,15 @@ class FacultyController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("faculty", converter="fos_rest.request_body")
      */
-    public function addFaculty(Faculty $faculty)
+    public function addFaculty(Faculty $faculty, ConstraintViolationList $violations)
     {
+        if (count($violations)) {
+            foreach($violations as $error)
+            {
+                $errorArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse(['erreur' => $errorArray], Response::HTTP_BAD_REQUEST);
+        }
         $em = $this->doctrine->getManager();
 
         $em->persist($faculty);
