@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\ConstraintViolationList;
+use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
  * @Route("api/faculty")
@@ -48,5 +49,18 @@ class FacultyController extends AbstractFOSRestController
         $em->flush();
 
         return new JsonResponse(['id' => $faculty->getId()], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Get(
+     *     name = "faculty_show"
+     * )
+     * @Rest\View(StatusCode = 200)
+     */
+    public function getFaculty()
+    {
+        $faculty =  $this->doctrine->getRepository(Faculty::class)->allFaculty();
+//        dd($faculty);
+        return ['faculty' => $faculty];
     }
 }

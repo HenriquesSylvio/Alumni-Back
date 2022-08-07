@@ -66,18 +66,6 @@ class FacultyTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
-    public function testgetFaculty_NotIdenticate(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/faculty',
-            '',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
     public function testgetFaculty_OkObjectResult(): void
     {
         $response = $this->getResponseFromRequest(
@@ -85,7 +73,7 @@ class FacultyTest extends AbstractEndPoint
             '/api/faculty',
             '',
             [],
-            true
+            false
         );
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }

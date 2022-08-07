@@ -56,7 +56,8 @@ security:
         - { path: ^/api/user/acceptUser, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: PATCH}
         - { path: ^/api/user/waitingValidation, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN] }
         - { path: ^/api/tag, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: [POST, DELETE] }
-        - { path: ^/api/faculty, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN]}
+        - { path: ^/api/faculty, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN], methods: POST}
+        - { path: ^/api/faculty, roles: PUBLIC_ACCESS, methods: GET}
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 
