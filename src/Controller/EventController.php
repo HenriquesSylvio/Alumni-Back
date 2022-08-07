@@ -166,7 +166,7 @@ class EventController extends AbstractFOSRestController
      */
     public function addParticipation(Participate $participate)
     {
-        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        if(strtotime(date_format($participate->getEvent()->getDate(), 'Y-m-d')) < strtotime(date('Y-m-d')))
         {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas participer à un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
         }

@@ -44,7 +44,7 @@ class RegisterTest extends AbstractEndPoint
 //        $faculty = $this->doctrine->getRepository(Faculty::class)->findBy();
         $faculty = $this->entityManager
             ->getRepository(Faculty::class)
-            ->findOneBy(['Name' => 'Autre'])
+            ->findOneBy(['name' => 'Autre'])
         ;
 
         return sprintf($this->userPayload, $faker->email, $faker->userName, $faculty->getId());

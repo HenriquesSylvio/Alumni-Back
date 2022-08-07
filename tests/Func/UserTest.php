@@ -142,6 +142,7 @@ class UserTest extends AbstractEndPoint
             "",
             []
         );
+//        dd($response);
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 

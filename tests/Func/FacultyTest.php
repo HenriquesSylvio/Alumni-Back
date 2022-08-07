@@ -33,7 +33,7 @@ class FacultyTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/faculty',
-            "",
+            '{"name": "Ceci est un test"}',
             [],
             false
         );
@@ -45,7 +45,7 @@ class FacultyTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/faculty',
-            "",
+            '{"name": "Ceci est un test"}',
             [],
             true,
             false
@@ -58,12 +58,12 @@ class FacultyTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/faculty',
-            "",
+            '{"name": "Ceci est un test"}',
             [],
             true,
             true
         );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
 }

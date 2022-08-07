@@ -149,7 +149,6 @@ class EventTest extends AbstractEndPoint
             '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y") . '"}',
             []
         );
-        dd(date("d/m/Y"));
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
@@ -198,6 +197,7 @@ class EventTest extends AbstractEndPoint
             ->getRepository(Event::class)
             ->findOneBy(['author' => $user->getId()])
         ;
+//        dd(strtotime(date_format($event->getDate(), 'Y-m-d')) < strtotime(date('Y-m-d')));
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event/participate',
@@ -249,6 +249,7 @@ class EventTest extends AbstractEndPoint
             ->getRepository(Event::class)
             ->findOneBy(['date' => new \DateTime("2022-7-9")])
         ;
+
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event/participate',
