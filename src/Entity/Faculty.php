@@ -31,6 +31,11 @@ class Faculty
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Job::class, mappedBy="author", orphanRemoval=true)
+     */
+    private $jobs;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -77,6 +82,36 @@ class Faculty
             // set the owning side to null (unless already changed)
             if ($user->getFaculty() === $this) {
                 $user->setFaculty(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Job>
+     */
+    public function getJobs(): Collection
+    {
+        return $this->jobs;
+    }
+
+    public function addJob(Job $job): self
+    {
+        if (!$this->jobs->contains($job)) {
+            $this->jobs[] = $job;
+            $job->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJob(Job $job): self
+    {
+        if ($this->jobs->removeElement($job)) {
+            // set the owning side to null (unless already changed)
+            if ($job->getAuthor() === $this) {
+                $job->setAuthor(null);
             }
         }
 
