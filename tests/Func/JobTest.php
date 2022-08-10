@@ -3,6 +3,7 @@
 namespace App\Tests\Func;
 
 use App\DataFixtures\AppFixtures;
+use App\Entity\Faculty;
 use App\Entity\Job;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,12 +27,6 @@ class JobTest extends AbstractEndPoint
             ->get('doctrine')
             ->getManager();
 
-        $this->job = New Job();
-        $this->job->setTitle("Titre test");
-        $this->job->setDescription("Ceci est un test");
-        $this->job->setCity("Rouen");
-        $this->job->setCompany("Normandie Web School");
-        $this->job->setCompensation("2000€ net par mois");
     }
     public function testgetJob_OkObjectResult(): void
     {
@@ -209,7 +204,7 @@ class JobTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/job',
-            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois"}',
+            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
             []
         );
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
@@ -220,7 +215,7 @@ class JobTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/job',
-            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois"}',
+            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
             [],
             false
         );
