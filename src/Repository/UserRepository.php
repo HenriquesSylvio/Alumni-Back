@@ -81,6 +81,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
             }
             $qb->setParameter(1, $term);
         }
+        $qb->andwhere("u.acceptAccount = true");
 
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
