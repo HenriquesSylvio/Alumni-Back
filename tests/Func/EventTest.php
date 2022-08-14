@@ -60,87 +60,6 @@ class EventTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testdeleteEvent_NoContentResult(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/' . $event->getId(),
-            "",
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeleteEvent_AdminConnect(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/' . $event->getId(),
-            "",
-            [],
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeleteEvent_NotAdminConnect(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/' . $event->getId(),
-            "",
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testdeleteEvent_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $event = $this->entityManager
-            ->getRepository(Event::class)
-            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/event/' . $event->getId(),
-            "",
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
     public function testaddEvent_CreatedResult(): void
     {
         $response = $this->getResponseFromRequest(
@@ -351,6 +270,87 @@ class EventTest extends AbstractEndPoint
         );
 
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeleteEvent_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/' . $event->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeleteEvent_AdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/' . $event->getId(),
+            "",
+            [],
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeleteEvent_NotAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/' . $event->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteEvent_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $event = $this->entityManager
+            ->getRepository(Event::class)
+            ->findOneBy(['description' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/event/' . $event->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
 //
