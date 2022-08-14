@@ -179,7 +179,7 @@ class JobTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testdeletePost_NotIdenticate(): void
+    public function testdeleteJob_NotIdenticate(): void
     {
         $user = $this->entityManager
             ->getRepository(User::class)
