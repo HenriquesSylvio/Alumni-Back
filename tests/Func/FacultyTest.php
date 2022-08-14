@@ -11,7 +11,6 @@ use App\Entity\User;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
 
 class FacultyTest extends AbstractEndPoint
 {
@@ -79,6 +78,60 @@ class FacultyTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
+    public function testupdateFaculty_NotIdenticate(): void
+    {
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PUT,
+            '/api/faculty/' . $faculty->getId(),
+            '{"name": "Ceci est un test"}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testupdateFaculty_NotAdminConnect(): void
+    {
+
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PUT,
+            '/api/faculty/'. $faculty->getId(),
+            '{"name": "Ceci est un test"}',
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+    }
+
+    public function testupdateFaculty_AdminConnect(): void
+    {
+        $faculty = $this->entityManager
+            ->getRepository(Faculty::class)
+            ->findOneBy(['name' => 'Ceci est un test'])
+        ;
+
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_PUT,
+            '/api/faculty/' . $faculty->getId(),
+            '{"name": "Ceci est un test"}',
+            [],
+            true,
+            true
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
     public function testdeleteFaculty_NotIdenticate(): void
     {
 
@@ -131,58 +184,5 @@ class FacultyTest extends AbstractEndPoint
             true
         );
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testupdateFaculty_NotIdenticate(): void
-    {
-        $faculty = $this->entityManager
-            ->getRepository(Faculty::class)
-            ->findOneBy(['name' => 'Ceci est un test'])
-        ;
-
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/faculty/' . $faculty->getId(),
-            '{"name": "Ceci est un test"}',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testupdateFaculty_NotAdminConnect(): void
-    {
-        $faculty = $this->entityManager
-            ->getRepository(Faculty::class)
-            ->findOneBy(['name' => 'Ceci est un test'])
-        ;
-
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/faculty/'. $faculty->getId(),
-            '{"name": "Ceci est un test"}',
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-    }
-
-    public function testupdateFaculty_AdminConnect(): void
-    {
-        $faculty = $this->entityManager
-            ->getRepository(Faculty::class)
-            ->findOneBy(['name' => 'Ceci est un test'])
-        ;
-
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_PUT,
-            '/api/faculty/' . $faculty->getId(),
-            '{"name": "Ceci est un test"}',
-            [],
-            true,
-            true
-        );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 }
