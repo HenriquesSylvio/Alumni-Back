@@ -69,7 +69,7 @@ class MessageRepository extends AbstractRepository
             ->innerJoin('App:User', 'u', JOIN::WITH, 'm.sentBy = u.id')
             ->Where('m.sentBy = ?1 And m.receivedBy = ?2')
             ->orWhere('m.receivedBy = ?1 And m.sentBy = ?2')
-            ->orderBy('m.id', 'DESC')
+//            ->orderBy('m.id', 'DESC')
             ->setParameter(1, $activeUser)
             ->setParameter(2, $idOtherUser);
 
