@@ -298,6 +298,45 @@ class PostTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
+    public function testdeleteLikePost_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $likePost->getPost()->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteLikePost_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $likePost->getPost()->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testdeletePost_NoContentResult(): void
     {
         $user = $this->entityManager
@@ -379,44 +418,5 @@ class PostTest extends AbstractEndPoint
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testdeleteLikePost_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $likePost = $this->entityManager
-            ->getRepository(LikePost::class)
-            ->findOneBy(['likeBy' => $user->getId()])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $likePost->getPost()->getId(),
-            '',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testdeleteLikePost_NoContentResult(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $likePost = $this->entityManager
-            ->getRepository(LikePost::class)
-            ->findOneBy(['likeBy' => $user->getId()])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $likePost->getPost()->getId(),
-            '',
-            []
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }
