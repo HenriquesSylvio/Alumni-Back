@@ -118,89 +118,6 @@ class PostTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testdeletePost_NoContentResult(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/' . $post->getId(),
-            "",
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeletePost_AdminConnect(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'user@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/' . $post->getId(),
-            "",
-            [],
-            true,
-            true
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testdeletePost_NotAdminConnect(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/' . $post->getId(),
-            "",
-            [],
-            true,
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testdeletePost_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $post = $this->entityManager
-            ->getRepository(Post::class)
-            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/' . $post->getId(),
-            "",
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
     public function testaddPost_CreatedResult(): void
     {
         $response = $this->getResponseFromRequest(
@@ -292,46 +209,6 @@ class PostTest extends AbstractEndPoint
 //        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
 //    }
 
-    public function testdeleteLikePost_NotIdenticate(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $likePost = $this->entityManager
-            ->getRepository(LikePost::class)
-            ->findOneBy(['likeBy' => $user->getId()])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $likePost->getPost()->getId(),
-            '',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testdeleteLikePost_NoContentResult(): void
-    {
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => 'admin@outlook.fr'])
-        ;
-        $likePost = $this->entityManager
-            ->getRepository(LikePost::class)
-            ->findOneBy(['likeBy' => $user->getId()])
-        ;
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_DELETE,
-            '/api/post/like/' . $likePost->getPost()->getId(),
-            '',
-            []
-        );
-        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-
     public function testgetFeed_NotIdenticate(): void
     {
         $response = $this->getResponseFromRequest(
@@ -419,5 +296,127 @@ class PostTest extends AbstractEndPoint
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeletePost_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/' . $post->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeletePost_AdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'user@outlook.fr'])
+        ;
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/' . $post->getId(),
+            "",
+            [],
+            true,
+            true
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testdeletePost_NotAdminConnect(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/' . $post->getId(),
+            "",
+            [],
+            true,
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeletePost_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $post = $this->entityManager
+            ->getRepository(Post::class)
+            ->findOneBy(['content' => 'Ceci est un test', 'author' => $user])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/' . $post->getId(),
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteLikePost_NotIdenticate(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $likePost->getPost()->getId(),
+            '',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testdeleteLikePost_NoContentResult(): void
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'admin@outlook.fr'])
+        ;
+        $likePost = $this->entityManager
+            ->getRepository(LikePost::class)
+            ->findOneBy(['likeBy' => $user->getId()])
+        ;
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_DELETE,
+            '/api/post/like/' . $likePost->getPost()->getId(),
+            '',
+            []
+        );
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }

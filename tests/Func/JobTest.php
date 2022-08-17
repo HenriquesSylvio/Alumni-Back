@@ -212,7 +212,7 @@ class JobTest extends AbstractEndPoint
             ->findOneBy(['email' => 'admin@outlook.fr'])
         ;
         $job = $this->entityManager
-            ->getRepository(Post::class)
+            ->getRepository(Job::class)
             ->findOneBy(['title' => 'Titre test', 'author' => $user])
         ;
         $response = $this->getResponseFromRequest(
