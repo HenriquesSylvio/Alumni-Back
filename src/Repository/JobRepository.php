@@ -44,7 +44,7 @@ class JobRepository extends AbstractRepository
 
     public function searchById(string $id)
     {
-        $qb = $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('j')
             ->select('j.id as idPost, j.title, j.desriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
             ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
@@ -61,7 +61,7 @@ class JobRepository extends AbstractRepository
     public function search($term, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
     {
 
-        $qb = $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('j')
             ->select('j.id as idPost, j.title, j.descriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
             ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
@@ -78,7 +78,7 @@ class JobRepository extends AbstractRepository
 
     public function searchByUser(int $userId)
     {
-        $qb = $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('j')
             ->select('j.id as idPost, j.title, j.descriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
             ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
@@ -88,6 +88,21 @@ class JobRepository extends AbstractRepository
         $query = $qb->getQuery();
 
         return $query->execute();
+    }
+
+    public function feed($order = 'desc', $limit = 3, $offset = 0, $currentPage = 1)
+    {
+
+        $qb = $this->createQueryBuilder('j')
+            ->select('j.id as idPost, j.title, j.descriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
+            ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
+            ->orderBy('p.createAt', $order)
+            ->groupBy('j.id, u.id');
+
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
     }
 
 }
