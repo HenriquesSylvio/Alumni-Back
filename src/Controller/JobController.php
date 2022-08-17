@@ -23,7 +23,7 @@ use App\Representation\Paginer;
 /**
  * @Route("api/job")
  */
-class PostController extends AbstractFOSRestController
+class JobController extends AbstractFOSRestController
 {
 
     /**
@@ -46,7 +46,7 @@ class PostController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("job", converter="fos_rest.request_body")
      */
-    public function addPost(Job $job, ConstraintViolationList $violations)
+    public function addJob(Job $job, ConstraintViolationList $violations)
     {
         $job->setAuthor($this->security->getUser());
         $job->setCreateAt(new \DateTime(date("d-m-Y")));
@@ -67,5 +67,18 @@ class PostController extends AbstractFOSRestController
         return new JsonResponse(['id' => $job->getId()], Response::HTTP_CREATED);
     }
 
-
+    /**
+     * @Get(
+     *     path = "/{id}",
+     *     name = "job_show_id",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getJob})
+     */
+    public function getJobById(Request $request)
+    {
+        $id = $request->attributes->get('_route_params')['id'];
+        $job = $this->doctrine->getRepository(Job::class)->searchById($id);
+        return $job;
+    }
 }

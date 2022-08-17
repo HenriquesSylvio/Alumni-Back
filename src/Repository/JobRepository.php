@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Faculty;
 use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +41,21 @@ class JobRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Job[] Returns an array of Job objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('j')
-//            ->andWhere('j.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('j.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function searchById(string $id)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('j.id as idPost, j.title, j.desriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
+            ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
+            ->Where('j.id = ?1')
+            ->groupBy('j.id, f.id')
+            ->setParameter(1, $id);
 
-//    public function findOneBySomeField($value): ?Job
-//    {
-//        return $this->createQueryBuilder('j')
-//            ->andWhere('j.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+
+
 }
