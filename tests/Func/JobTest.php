@@ -116,6 +116,53 @@ class JobTest extends AbstractEndPoint
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
+    public function testaddJob_CreatedResult(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/job',
+            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
+            []
+        );
+        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function testaddJob_NotIdenticate(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_POST,
+            '/api/job',
+            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+
+    public function testgetFeedJob_NotIdenticate(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/job/feed',
+            "",
+            [],
+            false
+        );
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testgetFeedJob_OkObjectResult(): void
+    {
+        $response = $this->getResponseFromRequest(
+            Request::METHOD_GET,
+            '/api/job/feed',
+            "",
+            []
+        );
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
     public function testdeleteJob_NoContentResult(): void
     {
         $user = $this->entityManager
@@ -197,52 +244,5 @@ class JobTest extends AbstractEndPoint
             false
         );
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testaddJob_CreatedResult(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_POST,
-            '/api/job',
-            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
-            []
-        );
-        self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-    }
-
-    public function testaddJob_NotIdenticate(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_POST,
-            '/api/job',
-            '{"title": "Titre test", "description": "Ceci est un test", "city": "Rouen", "company": "Normandie Web School", "compensation": "2000€ net par mois", "faculty_id": "1"}',
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-
-    public function testgetFeedJob_NotIdenticate(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/job/feed',
-            "",
-            [],
-            false
-        );
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-    }
-
-    public function testgetFeedJob_OkObjectResult(): void
-    {
-        $response = $this->getResponseFromRequest(
-            Request::METHOD_GET,
-            '/api/job/feed',
-            "",
-            []
-        );
-        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 }
