@@ -62,15 +62,32 @@ class JobRepository extends AbstractRepository
     {
 
         $qb = $this->createQueryBuilder('p')
-            ->select('j.id as idPost, j.title, j.desriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
+            ->select('j.id as idPost, j.title, j.descriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
             ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
-            ->Where('j.id = ?1')
+            ->Where('j.title LIKE ?1')
+            ->orWhere('j.descriptions LIKE ?1')
+            ->orWhere('j.city LIKE ?1')
+            ->orWhere('j.company LIKE ?1')
             ->groupBy('j.id, f.id')
             ->setParameter(1, '%'.$term.'%');
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
+    }
+
+    public function searchByUser(int $userId)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('j.id as idPost, j.title, j.descriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
+            ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
+            ->Where('p.author = ' . $userId)
+            ->groupBy('j.id, u.id');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
     }
 
 }

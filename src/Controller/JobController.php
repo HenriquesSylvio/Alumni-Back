@@ -128,4 +128,19 @@ class JobController extends AbstractFOSRestController
         );
         return new Paginer($jobs);
     }
+
+    /**
+     * @Get(
+     *     path = "/user/{id}",
+     *     name = "job_user_show",
+     *     requirements = {"id"="\d+"}
+     * )
+     * @Rest\View(serializerGroups={"getJob"})
+     */
+    public function getJobsByUser(Request $request)
+    {
+        $idAuthor = $request->attributes->get('_route_params')['id'];
+        $jobs = $this->doctrine->getRepository(Job::class)->searchByUser($idAuthor, $this->security->getUser()->getId());
+        return ['jobs' => $jobs];
+    }
 }
