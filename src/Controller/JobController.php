@@ -143,4 +143,25 @@ class JobController extends AbstractFOSRestController
         $jobs = $this->doctrine->getRepository(Job::class)->searchByUser($idAuthor, $this->security->getUser()->getId());
         return ['jobs' => $jobs];
     }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete(
+     *     path = "/{id}",
+     *     name = "job_delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     */
+    public function deleteJob(Job $job)
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            if($job->getAuthor() !== $this->security->getUser()) {
+                return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
+            }
+        }
+        $em = $this->doctrine->getManager();
+        $em->remove($job);
+        $em->flush();
+        return ;
+    }
 }
