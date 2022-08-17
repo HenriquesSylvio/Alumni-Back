@@ -73,7 +73,7 @@ class JobController extends AbstractFOSRestController
      *     name = "job_show_id",
      *     requirements = {"id"="\d+"}
      * )
-     * @Rest\View(serializerGroups={"getJob})
+     * @Rest\View(serializerGroups={"getJob"})
      */
     public function getJobById(Request $request)
     {
