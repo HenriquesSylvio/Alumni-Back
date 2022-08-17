@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Faculty;
 use App\Entity\Job;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,7 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Job[]    findAll()
  * @method Job[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class JobRepository extends ServiceEntityRepository
+class JobRepository extends AbstractRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -57,5 +58,19 @@ class JobRepository extends ServiceEntityRepository
         return $query->execute();
     }
 
+    public function search($term, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    {
+
+        $qb = $this->createQueryBuilder('p')
+            ->select('j.id as idPost, j.title, j.desriptions, j.city, j.company, , j.compensation, j.createAt, u.id as idUser, u.firstName, u.lastName, u.biography, u.urlProfilePicture, f.id as idFaculty, f.name')
+            ->innerJoin('App:User', 'u', JOIN::WITH, 'j.author = u.id')
+            ->innerJoin('App:Faculty', 'u', JOIN::WITH, 'j.faculty = f.id')
+            ->Where('j.id = ?1')
+            ->groupBy('j.id, f.id')
+            ->setParameter(1, '%'.$term.'%');
+        $query = $qb->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_ARRAY);
+        return $this->paginate($query, $limit, $offset, $currentPage);
+    }
 
 }
