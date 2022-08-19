@@ -167,12 +167,12 @@ class Job
         return $this;
     }
 
-    public function getFaculty(): ?User
+    public function getFaculty(): ?Faculty
     {
         return $this->faculty;
     }
 
-    public function setFaculty(?UserInterface $faculty): self
+    public function setFaculty(?Faculty $faculty): self
     {
         $this->faculty = $faculty;
 
