@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Event;
 use App\Entity\Faculty;
+use App\Entity\Job;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -78,6 +79,17 @@ class AppFixtures extends Fixture
         $user->setUrlProfilePicture('test');
         $manager->persist($event);
 
+        $job = new Job();
+        $job->setTitle('Ceci est un titre test');
+        $job->setDescription('Ceci est un test');
+        $job->setCity('Rouen');
+        $job->setCompany('Normandie Web School');
+        $job->setAuthor($user);
+        $job->setCreateAt(new \DateTime(date("d-m-Y")));
+        $job->setCompensation('2000€ net/mois');
+        $job->setFaculty($faculty);
+        $manager->persist($job);
+
         $user = new User();
         $user->setEmail('admin@outlook.fr');
         $user->setUsername('admin');
@@ -95,6 +107,17 @@ class AppFixtures extends Fixture
         $postPrincipal->setCreateAt(new \DateTime(2022-4-21));
         $postPrincipal->setAuthor($user);
         $manager->persist($postPrincipal);
+
+        $jobPrincipal = new Job();
+        $jobPrincipal->setTitle('Ceci est un titre test');
+        $jobPrincipal->setDescription('Ceci est un test');
+        $jobPrincipal->setCity('Rouen');
+        $jobPrincipal->setCompany('Normandie Web School');
+        $jobPrincipal->setAuthor($user);
+        $jobPrincipal->setCreateAt(new \DateTime(date("d-m-Y")));
+        $jobPrincipal->setCompensation('2000€ net/mois');
+        $jobPrincipal->setFaculty($faculty1);
+        $manager->persist($jobPrincipal);
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
@@ -207,6 +230,16 @@ class AppFixtures extends Fixture
             $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
+            $job = new Job();
+            $job->setTitle('Titre test');
+            $job->setDescription('Ceci est un test');
+            $job->setCity('Rouen');
+            $job->setCompany('Normandie Web School');
+            $job->setAuthor($user);
+            $job->setCreateAt(new \DateTime(date("d-m-Y")));
+            $job->setCompensation('2000€ net/mois');
+            $job->setFaculty($facultyArray[rand(0, count($facultyArray) - 1)]);
+            $manager->persist($job);
         }
         $manager->flush();
     }
