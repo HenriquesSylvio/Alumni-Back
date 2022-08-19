@@ -56,8 +56,11 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function searchUserWaitingValidation()
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('u')
-            ->where('u.acceptAccount = false');
+            ->select('u.id, u.email, u.lastName, u.firstName, u.promo, faculty.name as faculty_label')
+            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+            ->where('u.acceptAccount = false')
+            ->orderBy('u.lastName')
+            ->addOrderBy('u.firstName');
 
         $query = $qb->getQuery();
 

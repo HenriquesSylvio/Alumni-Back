@@ -117,16 +117,19 @@ class PostRepository extends AbstractRepository
             ->groupBy('p.id, u.id')
             ->setParameter(1, $id);
 
-//        $qb = $this->createQueryBuilder('p')
-//            ->select('p,count(lk.likeBy) as numberComment')
-//            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.author = u.id')
-//            ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
-//            ->leftJoin('App:Comment', 'c', JOIN::WITH, 'p.id = c.post')
-//            ->Where('p.id = 94')
-//            ->groupBy('p.id')->distinct();
+        $query = $qb->getQuery();
+        return $query->execute();
+    }
+
+    public function deleteComment(string $id)
+    {
+
+        $qb = $this->createQueryBuilder('p')
+            ->delete('App:Post', 'p2')
+            ->where('p2.mainPost = ?1 or p2.parentPost = ?1')
+            ->setParameter(1, $id);;
 
         $query = $qb->getQuery();
-//dd($query);
         return $query->execute();
     }
 //SELECT distinct p, count(lk) as numberLike, count(c) as test, case  when (select count(*) From public.like_post Where lk.post_id = 974

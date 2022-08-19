@@ -182,6 +182,7 @@ class PostController extends AbstractFOSRestController
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }
         }
+        $this->doctrine->getRepository(Post::class)->deleteComment($post->getId());
         $em = $this->doctrine->getManager();
         $em->remove($post);
         $em->flush();
