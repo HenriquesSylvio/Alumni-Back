@@ -109,7 +109,7 @@ class AppFixtures extends Fixture
             $comment->setContent('Ceci est un test');
             $comment->setCreateAt(new \DateTime(date("d-m-Y")));
             $comment->setAuthor($user);
-            $comment->setMainPost($post);
+            $comment->setMainPost($postPrincipal);
             $comment->setParentPost($postPrincipal);
             $manager->persist($comment);
         }

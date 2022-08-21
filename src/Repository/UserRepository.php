@@ -56,7 +56,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function searchUserWaitingValidation()
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('u.id, u.email, u.lastName, u.firstName, u.promo, faculty.name as faculty_label')
+            ->select('u.id, u.lastName, u.firstName, u.promo, faculty.name as faculty_label')
             ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
             ->where('u.acceptAccount = false')
             ->orderBy('u.lastName')
@@ -89,6 +89,62 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
+    }
+
+    public function searchAdminUser($arrayRole)
+    {
+//        $roles = ['ROLE_ADMIN'];
+//        $qb    = $this->createQueryBuilder('u')
+//            ->select('u.id, u.email, u.lastName, u.firstName, u.promo, faculty.name as faculty_label')
+//            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//            ->where('u.acceptAccount = false')
+//            ->orderBy('u.lastName')
+//            ->addOrderBy('u.firstName');
+//
+//        $orStatements = $qb->expr()->orX();
+//        foreach ($roles as $role) {
+//            $orStatements->add(
+//                $qb->expr()
+//                    ->like('u.roles', $qb->expr()
+//                        ->literal('%"' . $role . '"%'))
+//            );
+//        }
+//
+//        $qb->andWhere($orStatements);
+//        dd($qb->getQuery()->execute());
+//        $users = $qb->getQuery()->getResult();
+//
+//                $qb = $this->createQueryBuilder('u')
+//                    ->select('u.id, u.email, u.lastName, u.firstName, u.promo, faculty.name as faculty_label')
+//                    ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//                    ->where('u.acceptAccount = false')
+//                    ->orderBy('u.lastName')
+//                    ->addOrderBy('u.firstName');
+//
+//        $query = $qb->getQuery();
+//
+//        return $query->execute();
+
+//        $entityManager = $this->getEntityManager();
+//
+//        $query = $entityManager->createQuery(
+//            "SELECT u.roles
+//            FROM App\Entity\User u
+//            where u.roles = {}"
+//        );
+//
+//        // returns an array of Product objects
+//        return $query->getResult();
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'Select id, last_name, first_name From "user" Where roles::text Like :price';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['price' => '%ROLE_ADMIN%']);
+
+        // returns an array of arrays (i.e. a raw data set)
+//        dd($stmt->fetchAllAssociative());
+        return $resultSet->fetchAllAssociative();
+
     }
 
     // /**

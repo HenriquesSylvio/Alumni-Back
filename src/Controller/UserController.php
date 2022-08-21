@@ -316,6 +316,21 @@ class UserController extends AbstractFOSRestController
     }
 
     /**
+     * @Get(
+     *     path = "/admin",
+     *     name = "admin_show",
+     * )
+     * @Rest\View(StatusCode = 200)
+     */
+    public function GetRoleAdminUser()
+    {
+        $arrayRole = ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"];
+        $users =  $this->doctrine->getRepository(User::class)->searchAdminUser($arrayRole);
+        return ['users' => $users];
+    }
+
+
+    /**
      * @Rest\View(StatusCode = 200)
      * @Rest\Put(
      *     path = "/edit",
