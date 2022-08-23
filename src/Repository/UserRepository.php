@@ -41,7 +41,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
     public function searchById(string $id, string $activeUserId){
 
         $qb = $this->createQueryBuilder('u')
-            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe')
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
             ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
             ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
             ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
@@ -67,10 +67,10 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         return $query->execute();
     }
 
-    public function search($term, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($term, string $activeUserId, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('u')
-            ->select("u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, faculty.name as faculty_label")
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, faculty.name as faculty_label, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
             ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id');
         if (!is_null($term)){
             $qb->where("DIFFERENCE(u.firstName, ?1) = 4")

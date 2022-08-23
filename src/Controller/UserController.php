@@ -153,6 +153,7 @@ class UserController extends AbstractFOSRestController
     {
         $users = $this->doctrine->getRepository(User::class)->search(
             $paramFetcher->get('keyword'),
+            $this->security->getUser()->getId(),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
