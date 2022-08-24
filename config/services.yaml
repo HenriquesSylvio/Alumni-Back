@@ -34,3 +34,5 @@ doctrine:
             string_functions:
                 # Match agains should have the path to the SOUNDEX class created in the previous step
                 DIFFERENCE: App\Extensions\Doctrine\DifferenceFunction
+                JSON_GET_TEXT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonGetText
+                JSON_CONTAINS : Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains

@@ -182,6 +182,7 @@ class PostController extends AbstractFOSRestController
                 return new JsonResponse(['erreur' => 'Vous n\'êtes pas autorisé a faire cette action'], Response::HTTP_UNAUTHORIZED);
             }
         }
+        $this->doctrine->getRepository(Post::class)->deleteComment($post->getId());
         $em = $this->doctrine->getManager();
         $em->remove($post);
         $em->flush();
@@ -257,11 +258,14 @@ class PostController extends AbstractFOSRestController
      */
     public function addComment(Post $post, ConstraintViolationList $violations, Request $request)
     {
+        $date = new \DateTime();
         $idPostParent = $request->attributes->get('_route_params')['postParent'];
         $postParent = $this->doctrine->getRepository(Post::class)->find($idPostParent);
 
         $post->setAuthor($this->security->getUser());
-        $post->setCreateAt(new \DateTime(date("d-m-Y")));
+//        $message->setSentBy($this->security->getUser());
+        $post->setCreateAt($date->setTimestamp(time()));
+//        $post->setCreateAt(new \DateTime(date('d/m/Y H:i')));
         $post->setParentPost($postParent);
 
         if (is_null($postParent->getMainPost())){
