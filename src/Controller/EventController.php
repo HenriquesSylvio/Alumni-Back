@@ -189,7 +189,8 @@ class EventController extends AbstractFOSRestController
      */
     public function deleteParticipation(Participate $participate)
     {
-        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+//        dd(strtotime(date_format($participate->getEvent()->getDate(), 'Y-m-d')) < strtotime(date('Y-m-d')));
+        if(strtotime(date_format($participate->getEvent()->getDate(), 'Y-m-d')) < strtotime(date('Y-m-d')))
         {
             return new JsonResponse(['erreur' => 'Vous ne pouvez vous retirer des participants d\'un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
         }

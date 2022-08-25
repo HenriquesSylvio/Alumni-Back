@@ -351,7 +351,7 @@ class EventTest extends AbstractEndPoint
             '',
             []
         );
-
+//        dd($response);
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
