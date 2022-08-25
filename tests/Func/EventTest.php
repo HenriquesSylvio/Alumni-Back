@@ -143,12 +143,14 @@ class EventTest extends AbstractEndPoint
 
     public function testaddEvent_CreatedResult(): void
     {
+        $date = new \DateTime();
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event',
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y") . '"}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y H:i") . '"}',
             []
         );
+//        $comment->setCreateAt($date->setTimestamp(time()));
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     }
 
@@ -157,7 +159,7 @@ class EventTest extends AbstractEndPoint
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
             '/api/event',
-            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d-m-Y") . '"}',
+            '{"title": "Ceci est un test", "description": "Ceci est un test", "date" : "' . date("d/m/Y H:i") . '"}',
             [],
             false
         );

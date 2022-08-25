@@ -25,6 +25,9 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager) : void
     {
+        $date = new \DateTime();
+//        $message->setSentBy($this->security->getUser());
+//        $message->setCreateAt($date->setTimestamp(time()));
         $faculty = new Faculty();
         $faculty->setName('Développement web');
         $manager->persist($faculty);
@@ -63,7 +66,7 @@ class AppFixtures extends Fixture
 
         $post = new Post();
         $post->setContent('Ceci est un test');
-        $post->setCreateAt(new \DateTime(date("d-m-Y")));
+        $post->setCreateAt($date->setTimestamp(time()));
         $post->setAuthor($user);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
@@ -99,7 +102,7 @@ class AppFixtures extends Fixture
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(date("d-m-Y")));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
             $manager->persist($post);
         }
@@ -107,7 +110,7 @@ class AppFixtures extends Fixture
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
             $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
             $comment->setMainPost($postPrincipal);
             $comment->setParentPost($postPrincipal);
@@ -139,7 +142,7 @@ class AppFixtures extends Fixture
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(date("d-m-Y")));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
             $manager->persist($post);
         }
@@ -147,7 +150,7 @@ class AppFixtures extends Fixture
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
             $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
             $comment->setMainPost($postPrincipal);
             $comment->setParentPost($postPrincipal);
@@ -187,7 +190,7 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(date("d-m-Y")));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
             $manager->persist($post);
             $likePost = new LikePost();
@@ -196,7 +199,7 @@ class AppFixtures extends Fixture
             $manager->persist($likePost);
             $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(date("d-m-Y")));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
             $comment->setMainPost($postPrincipal);
             $comment->setParentPost($postPrincipal);

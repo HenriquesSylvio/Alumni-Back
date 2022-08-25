@@ -40,6 +40,7 @@ class FacultyController extends AbstractFOSRestController
      */
     public function addFaculty(Faculty $faculty, ConstraintViolationList $violations)
     {
+//        dd($faculty);
         if (count($violations)) {
             foreach($violations as $error)
             {

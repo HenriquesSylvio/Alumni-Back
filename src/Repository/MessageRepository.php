@@ -71,7 +71,9 @@ class MessageRepository extends AbstractRepository
             ->orWhere('m.receivedBy = ?1 And m.sentBy = ?2')
 //            ->orderBy('m.id', 'DESC')
             ->setParameter(1, $activeUser)
-            ->setParameter(2, $idOtherUser);
+            ->setParameter(2, $idOtherUser)
+            ->orderBy("m.createAt")
+            ->addOrderBy("m.id");
 
         return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
 //        return  $qb->getQuery()->getOneOrNullResult();
