@@ -2,11 +2,10 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Comment;
 use App\Entity\Event;
+use App\Entity\Faculty;
 use App\Entity\LikePost;
 use App\Entity\Post;
-use App\Entity\Tag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -15,7 +14,7 @@ use Faker;
 
 class AppFixtures extends Fixture
 {
-    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'promo' => '2017'];
+    const DEFAULT_USER = ['email' => 'test@test.fr', 'password' => 'password', 'first_name' => 'test', 'last_name' => 'test', 'promo' => '2017', 'faculty_id' => '1'];
 
     private UserPasswordHasherInterface  $passwordHasher;
 
@@ -26,6 +25,30 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager) : void
     {
+        $date = new \DateTime();
+//        $message->setSentBy($this->security->getUser());
+//        $message->setCreateAt($date->setTimestamp(time()));
+        $faculty = new Faculty();
+        $faculty->setName('Développement web');
+        $manager->persist($faculty);
+
+        $faculty1 = new Faculty();
+        $faculty1->setName('Communication Graphique');
+        $manager->persist($faculty1);
+
+        $faculty2 = new Faculty();
+        $faculty2->setName('Web Marketing');
+        $manager->persist($faculty2);
+
+        $faculty3 = new Faculty();
+        $faculty3->setName('Community Management');
+        $manager->persist($faculty3);
+
+        $faculty4 = new Faculty();
+        $faculty4->setName('Autre');
+        $manager->persist($faculty4);
+
+        $facultyArray = array($faculty, $faculty1, $faculty2, $faculty3);
 
         $user = new User();
         $user->setEmail('henriques.sylvio@outlook.fr');
@@ -38,18 +61,13 @@ class AppFixtures extends Fixture
         $user->setAcceptAccount(true);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
+        $user->setFaculty($faculty4);
         $manager->persist($user);
-
-        $tag = new Tag();
-        $tag->setLabel('Offre d\'emploi');
-        $manager->persist($tag);
 
         $post = new Post();
         $post->setContent('Ceci est un test');
-        $post->setCreateAt(new \DateTime(2022-4-21));
+        $post->setCreateAt($date->setTimestamp(time()));
         $post->setAuthor($user);
-        $post->setTag($tag);
-        $post->setTitle('Ceci est un test');
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
         $manager->persist($post);
@@ -57,7 +75,7 @@ class AppFixtures extends Fixture
         $event = new Event();
         $event->setTitle('Ceci est un test');
         $event->setDescription('Ceci est un test');
-        $event->setDate(new \DateTime(2022-4-21));
+        $event->setDate(new \DateTime("2022-7-9"));
         $event->setAuthor($user);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
@@ -72,32 +90,30 @@ class AppFixtures extends Fixture
         $user->setFirstname('admin');
         $user->setPromo(2017);
         $user->setAcceptAccount(true);
+        $user->setFaculty($faculty4);
         $manager->persist($user);
 
         $postPrincipal = new Post();
         $postPrincipal->setContent('Ceci est un test');
         $postPrincipal->setCreateAt(new \DateTime(2022-4-21));
         $postPrincipal->setAuthor($user);
-        $postPrincipal->setTag($tag);
-        $postPrincipal->setTitle('Ceci est un test');
         $manager->persist($postPrincipal);
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
         }
 
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
-            $comment->setPost($post);
+            $comment->setMainPost($postPrincipal);
+            $comment->setParentPost($postPrincipal);
             $manager->persist($comment);
         }
 
@@ -105,7 +121,7 @@ class AppFixtures extends Fixture
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(date('d-m-Y')));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
@@ -119,33 +135,33 @@ class AppFixtures extends Fixture
         $user->setFirstname('Sylvio');
         $user->setPromo(2017);
         $user->setAcceptAccount(true);
+        $user->setFaculty($faculty);
         $manager->persist($user);
 
 
         for($nbPosts = 1; $nbPosts <= 30; $nbPosts++){
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
         }
 
         for($nbComments = 1; $nbComments <= 30; $nbComments++){
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
-            $comment->setPost($post);
-            $manager->persist($comment);
+            $comment->setMainPost($postPrincipal);
+            $comment->setParentPost($postPrincipal);
+            $manager->persist($post);
         }
 
         for($nbEvent = 1; $nbEvent <= 30; $nbEvent++){
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(2022-4-21));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
@@ -161,9 +177,11 @@ class AppFixtures extends Fixture
             {
                 $user->setRoles(['ROLE_ADMIN']);
                 $user->setAcceptAccount(true);
+                $user->setFaculty($faculty4);
             } else {
                 $user->setRoles(['ROLE_USER']);
                 $user->setAcceptAccount(false);
+                $user->setFaculty($facultyArray[rand(0, count($facultyArray) - 1)]);
             }
             $user->setPassword($this->passwordHasher->hashPassword($user, '54875487'));
             $user->setLastName($faker->lastName);
@@ -172,29 +190,27 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $post = new Post();
             $post->setContent('Ceci est un test');
-            $post->setCreateAt(new \DateTime(2022-4-21));
+            $post->setCreateAt($date->setTimestamp(time()));
             $post->setAuthor($user);
-            $post->setTag($tag);
-            $post->setTitle('Ceci est un test');
             $manager->persist($post);
             $likePost = new LikePost();
             $likePost->setUsers($user);
             $likePost->setPost($postPrincipal);
             $manager->persist($likePost);
-            $comment = new Comment();
+            $comment = new Post();
             $comment->setContent('Ceci est un test');
-            $comment->setCreateAt(new \DateTime(2022-4-21));
+            $comment->setCreateAt($date->setTimestamp(time()));
             $comment->setAuthor($user);
-            $comment->setPost($postPrincipal);
+            $comment->setMainPost($postPrincipal);
+            $comment->setParentPost($postPrincipal);
             $manager->persist($comment);
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime(2022-4-21));
+            $event->setDate(new \DateTime("2022-7-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
-
         $manager->flush();
     }
 }

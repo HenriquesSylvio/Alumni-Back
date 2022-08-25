@@ -26,7 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $id;
 
@@ -73,7 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     message="Votre prénom ne peut pas contenir de chiffre"
      * , groups={"editUser", "register"}
      * )
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $firstName;
 
@@ -86,19 +86,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     message="Votre nom ne peut pas contenir de chiffre"
      * , groups={"editUser", "register"}
      * )
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $lastName;
     
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $biography;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $urlProfilePicture;
 
@@ -106,11 +106,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", orphanRemoval=true)
      */
     private $posts;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
-     */
-    private $comments;
 
     /**
      * @ORM\OneToMany(targetEntity=LikePost::class, mappedBy="likeBy", orphanRemoval=true)
@@ -151,14 +146,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="L'année de la promo est obligatoire", groups={"register"})
-     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getComment", "getEvent")
+     * @Serializer\Groups("getUser", "getParticipation", "getSubscriber", "getPost", "getEvent")
      */
     private $promo;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Faculty::class, inversedBy="Users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $faculty;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->likePosts = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->participates = new ArrayCollection();
@@ -301,36 +301,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($post->getAuthor() === $this) {
                 $post->setAuthor(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Comment>
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
-
-    public function addComment(Comment $comment): self
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getAuthor() === $this) {
-                $comment->setAuthor(null);
             }
         }
 
@@ -526,6 +496,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getFaculty(): ?Faculty
+    {
+        return $this->faculty;
+    }
+
+    public function setFaculty(?Faculty $faculty): self
+    {
+        $this->faculty = $faculty;
 
         return $this;
     }

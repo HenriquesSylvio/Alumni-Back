@@ -43,8 +43,10 @@ class MessageController extends AbstractFOSRestController
      */
     public function sendMessage(Message $message, ConstraintViolationList $violations)
     {
+        $date = new \DateTime();
         $message->setSentBy($this->security->getUser());
-        $message->setCreateAt(new \DateTime(date("d-m-Y")));
+        $message->setCreateAt($date->setTimestamp(time()));
+        //        $message->setCreateAt(new \DateTime(date('d/m/Y H:i')));
         if (count($violations)) {
             foreach($violations as $error)
             {

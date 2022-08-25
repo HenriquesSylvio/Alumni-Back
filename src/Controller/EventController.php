@@ -115,14 +115,19 @@ class EventController extends AbstractFOSRestController
      *     default="1",
      *     description="The current page"
      * )
+     * * @Rest\QueryParam(
+     *     name="date",
+     *     description="searching date"
+     * )
      * @Rest\View()
      */
     public function getEvents(ParamFetcherInterface $paramFetcher)
     {
         $events =  $this->doctrine->getRepository(Event::class)->search(
+            $this->security->getUser()->getId(),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
-            $paramFetcher->get('past'),
+            $paramFetcher->get('date'),
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
@@ -161,7 +166,7 @@ class EventController extends AbstractFOSRestController
      */
     public function addParticipation(Participate $participate)
     {
-        if(date_format($participate->getEvent()->getDate(), 'd-m-Y') < date('d-m-Y') )
+        if(strtotime(date_format($participate->getEvent()->getDate(), 'Y-m-d')) < strtotime(date('Y-m-d')))
         {
             return new JsonResponse(['erreur' => 'Vous ne pouvez pas participer à un événement déjà passé.'], Response::HTTP_UNAUTHORIZED);
         }
@@ -208,5 +213,17 @@ class EventController extends AbstractFOSRestController
         $id = $request->attributes->get('_route_params')['id'];
         $participant =  $this->doctrine->getRepository(Participate::class)->searchAllParticipant($id);
         return ['participant' => $participant];
+    }
+
+    /**
+     * @Get(
+     *     path = "/date",
+     * )
+     *  @Rest\View()
+     */
+    public function getAllDateEvent()
+    {
+        $dates =  $this->doctrine->getRepository(Event::class)->allDate();
+        return ['dates' => $dates];
     }
 }

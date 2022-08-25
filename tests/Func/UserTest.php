@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Security;
 
 class UserTest extends AbstractEndPoint
 {
-    private string $userPayload = '{"id : 2 ,email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "promo": "2017"}';
+    private string $userPayload = '{"id : 2 ,email": "%s", "password": "S-t5S-t5", "first_name": "test", "last_name": "test", "promo": "2017", "faculty_id": "1"}';
     /**
      * @var \Doctrine\ORM\EntityManager
      */
@@ -142,6 +142,7 @@ class UserTest extends AbstractEndPoint
             "",
             []
         );
+//        dd($response);
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 

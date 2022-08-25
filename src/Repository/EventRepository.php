@@ -50,27 +50,54 @@ class EventRepository extends AbstractRepository
         }
     }
 
-    public function search($term = "", $order = 'asc', $past = false, $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($activeUserId, $term = "", $order = 'ASC', $date, $limit = 20, $offset = 0, $currentPage = 1)
     {
+
+        $subquery  = $this->createQueryBuilder('e2')
+            ->select('count(distinct p.participant)')
+            ->from('App:Participate', 'p')
+            ->where('p.event = e.id  and p.participant = ' . $activeUserId);
+
         $qb = $this->createQueryBuilder('e')
-            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture')
+            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, case when (' . $subquery . ') = 1 then true else false end as participate')
             ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
             ->setParameter(1, '%' . $term . '%');
-        if ($past){
-            $qb->andWhere('e.date < :date')
-            ->setParameter('date', date("Y-m-d"));
-        }else{
-            $qb->andWhere('e.date >= :date')
-                ->setParameter('date', date("Y-m-d"));
+//        if ($past){
+//            $qb->andWhere('e.date < :date')
+//            ->setParameter('date', date("Y-m-d"));
+//        }else{
+//            $qb->andWhere('e.date >= :date')
+//                ->setParameter('date', date("Y-m-d"));
+//        }
+        if ($date){
+//            dd(date("Y-m-d"),  date("Y-m-d", strtotime($date)));
+            $from = new \DateTime(date("Y-m-d", strtotime($date))." 00:00:00");
+            $to   = new \DateTime(date("Y-m-d", strtotime($date))." 23:59:59");
+            $qb->andWhere('e.date BETWEEN :from AND :to')
+                ->setParameter('from', $from )
+                ->setParameter('to', $to);
+//                ->setParameter('date', '%' . date("Y-m-d", strtotime($date)) . '%');
         }
 
         $qb->orderBy('e.date', $order);
 
+//        dd($qb->getQuery());
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $this->paginate($query, $limit, $offset, $currentPage);
+    }
+
+    public function allDate()
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('distinct e.date')
+            ->orderBy('e.date', 'asc');
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
     }
 
     // /**

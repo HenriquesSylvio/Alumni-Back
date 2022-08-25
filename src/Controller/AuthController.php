@@ -19,6 +19,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 /**
  * @Route("api")
@@ -65,7 +67,7 @@ class AuthController extends AbstractFOSRestController
      * @Rest\View(StatusCode = 201)
      * @ParamConverter("user", converter="fos_rest.request_body")
      */
-    public function registerUser(User $user, ManagerRegistry $doctrine,ValidatorInterface $validator)
+    public function registerUser(User $user, ManagerRegistry $doctrine,ValidatorInterface $validator, MailerInterface $mailer)
     {
 
         $errors = $validator->validate($user,null,  ['register']);
@@ -91,6 +93,16 @@ class AuthController extends AbstractFOSRestController
 
         $em->persist($user);
         $em->flush();
+
+        $message = '<p>L\'utilisateur '. $user->getFirstName() .' '. $user->getLastName() .' dont l\'adresse e-mail est '. $user->getEmail() .'souhaite s\'inscrire veuillez vérifier ces informations et l\'accepter ou le refuser</p>';
+        //Email envoyé à un admin pour validation.
+        $email = (new Email())
+            ->from('noreply@normandiewebschool.fr')
+            ->to('AlumniNWS2022@gmail.com')
+            ->subject('Un nouvel Alumni s\'est inscrit')
+            ->html($message);
+
+        $mailer->send($email);
 
         return new JsonResponse(['email' => $user->getEmail()], Response::HTTP_CREATED);
     }
