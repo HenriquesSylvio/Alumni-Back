@@ -75,7 +75,7 @@ class AppFixtures extends Fixture
         $event = new Event();
         $event->setTitle('Ceci est un test');
         $event->setDescription('Ceci est un test');
-        $event->setDate(new \DateTime("2022-7-9"));
+        $event->setDate(new \DateTime("2022-10-9"));
         $event->setAuthor($user);
         $user->setBiography('test');
         $user->setUrlProfilePicture('test');
@@ -121,7 +121,7 @@ class AppFixtures extends Fixture
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime("2022-7-9"));
+            $event->setDate(new \DateTime("2022-10-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
@@ -207,7 +207,7 @@ class AppFixtures extends Fixture
             $event = new Event();
             $event->setTitle('Ceci est un test');
             $event->setDescription('Ceci est un test');
-            $event->setDate(new \DateTime("2022-7-9"));
+            $event->setDate(new \DateTime("2022-10-9"));
             $event->setAuthor($user);
             $manager->persist($event);
         }
