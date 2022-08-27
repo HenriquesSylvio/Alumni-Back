@@ -51,14 +51,35 @@ class ParticipateRepository extends ServiceEntityRepository
     public function searchAllParticipant($idEvent)
     {
 
+//        $qb = $this->createQueryBuilder('p')
+//            ->select('u.id, u.firstName, u.lastName, u.urlProfilePicture, u.promo, faculty.name as faculty_label')
+////            ->innerJoin('App:User', 'u', JOIN::WITH, 's.subscription = u.id')
+//            ->innerJoin('App:User', 'u', JOIN::WITH, 'p.participant = u.id')
+//            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//            ->innerJoin('App:Event', 'e', JOIN::WITH, 'e.id = p.event')
+//            ->where('e.id = ' . $idEvent);
         $qb = $this->createQueryBuilder('p')
-            ->select('u')
+            ->select('u.id, u.firstName, u.lastName, u.urlProfilePicture, u.promo, faculty.name as faculty_label')
             ->innerJoin('App:User', 'u', JOIN::WITH, 'p.participant = u.id')
-            ->where('p.event = ' . $idEvent);
-
+            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+            ->innerJoin('App:Event', 'e', JOIN::WITH, 'e.id = p.event')
+            ->where('e.id = ' . $idEvent);
         $query = $qb->getQuery();
 
         return $query->execute();
+
+//        $qb = $this->createQueryBuilder('p')
+//            ->select('p')
+//            ->where('p.event = ' . $idEvent);
+//        $query = $qb->getQuery();
+//
+//        return $query->execute();
+
+//        $qb = $this->createQueryBuilder('s')
+//            ->select('u.id, u.firstName, u.lastName, u.urlProfilePicture, u.promo, faculty.name as faculty_label')
+//            ->innerJoin('App:User', 'u', JOIN::WITH, 's.subscription = u.id')
+//            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//            ->where('s.subscriber = ' . $idUser);
 
 //        $qb = $this->createQueryBuilder('p')
 //            ->select('p, count(c) as numberComment, count(lk.post) as numberLike')

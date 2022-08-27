@@ -40,17 +40,30 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
 
     public function searchById(string $id, string $activeUserId){
 
+//        $qb = $this->createQueryBuilder('u')
+//            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
+//            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//            ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
+//            ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
+//            ->Where('u.id = ' . $id)
+//            ->groupBy('u.id, follower.subscription, faculty.name');
+//        //dd($qb->getQuery());
+//        $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+//        return $query;
+//        return $query->execute();
+
         $qb = $this->createQueryBuilder('u')
-            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower2.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
             ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
             ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
             ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
+            ->leftJoin('App:Subscribe', 'follower2', JOIN::WITH, 'u.id = follower2.subscriber and ' . $activeUserId . ' = follower2.subscription')
             ->Where('u.id = ' . $id)
-            ->groupBy('u.id, follower.subscription, faculty.name');
+//            ->andWhere($activeUserId . ' = follower2.subscription')
+            ->groupBy('u.id, faculty.name, follower2.subscription');
         //dd($qb->getQuery());
         $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $query;
-        return $query->execute();
     }
 
     public function searchUserWaitingValidation()
@@ -67,7 +80,7 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
         return $query->execute();
     }
 
-    public function search($term, string $activeUserId, $order = 'asc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($term, string $activeUserId, $order = 'asc', $limit = 20, $currentPage = 1)
     {
         $qb = $this->createQueryBuilder('u')
             ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, faculty.name as faculty_label, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
@@ -85,10 +98,11 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
             $qb->setParameter(1, $term);
         }
         $qb->andwhere("u.acceptAccount = true");
-
+        $qb->orderBy("u.lastName", $order)
+            ->addOrderBy("u.firstName", $order);
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
+        return $this->paginate($query, $limit, $currentPage);
     }
 
     public function searchAdminUser($arrayRole)
