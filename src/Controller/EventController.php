@@ -104,12 +104,6 @@ class EventController extends AbstractFOSRestController
      *     description="Max number of movies per page."
      * )
      * @Rest\QueryParam(
-     *     name="offset",
-     *     requirements="\d+",
-     *     default="0",
-     *     description="The pagination offset"
-     * )
-     * @Rest\QueryParam(
      *     name="current_page",
      *     requirements="\d+",
      *     default="1",
@@ -125,11 +119,10 @@ class EventController extends AbstractFOSRestController
     {
         $events =  $this->doctrine->getRepository(Event::class)->search(
             $this->security->getUser()->getId(),
+            $paramFetcher->get('date'),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
-            $paramFetcher->get('date'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
         );
         return new Paginer($events);

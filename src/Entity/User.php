@@ -17,8 +17,8 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email", message="Cet email est déjà utilisé")
- * @UniqueEntity("username", message="Ce nom d'utilisateur est déjà utilisé")
+ * @UniqueEntity("email", message="Cet email est déjà utilisé", groups={"register"})
+ * @UniqueEntity("username", message="Ce nom d'utilisateur est déjà utilisé", groups={"register"})
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

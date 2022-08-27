@@ -127,12 +127,6 @@ class PostController extends AbstractFOSRestController
      *     description="Max number of movies per page."
      * )
      * @Rest\QueryParam(
-     *     name="offset",
-     *     requirements="\d+",
-     *     default="0",
-     *     description="The pagination offset"
-     * )
-     * @Rest\QueryParam(
      *     name="current_page",
      *     requirements="\d+",
      *     default="1",
@@ -146,7 +140,6 @@ class PostController extends AbstractFOSRestController
             $this->security->getUser()->getId(),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
         );
         return new Paginer($posts);
@@ -223,12 +216,6 @@ class PostController extends AbstractFOSRestController
      *     description="Max number of movies per page."
      * )
      * @Rest\QueryParam(
-     *     name="offset",
-     *     requirements="\d+",
-     *     default="0",
-     *     description="The pagination offset"
-     * )
-     * @Rest\QueryParam(
      *     name="current_page",
      *     requirements="\d+",
      *     default="1",
@@ -242,7 +229,6 @@ class PostController extends AbstractFOSRestController
             $this->security->getUser()->getId(),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
         );
         return ['posts' => $posts];
@@ -309,12 +295,6 @@ class PostController extends AbstractFOSRestController
      *     description="Max number of movies per page."
      * )
      * @Rest\QueryParam(
-     *     name="offset",
-     *     requirements="\d+",
-     *     default="0",
-     *     description="The pagination offset"
-     * )
-     * @Rest\QueryParam(
      *     name="current_page",
      *     requirements="\d+",
      *     default="1",
@@ -330,7 +310,6 @@ class PostController extends AbstractFOSRestController
             $this->security->getUser()->getId(),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
-            $paramFetcher->get('offset'),
             $paramFetcher->get('current_page')
         );
         return ['posts' => $posts];

@@ -57,6 +57,7 @@ class MessageRepository extends AbstractRepository
             ->where('not u.id = ?1')
             ->andWhere('(m.sentBy = ?1 Or m.receivedBy = ?1)')
             ->andWhere($qb->expr()->in('m.id',$subquery))
+            ->orderBy('m.createAt')
             ->setParameter(1, $userId);
 
         return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);

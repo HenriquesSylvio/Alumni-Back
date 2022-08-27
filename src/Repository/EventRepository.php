@@ -50,7 +50,7 @@ class EventRepository extends AbstractRepository
         }
     }
 
-    public function search($activeUserId, $term = "", $order = 'ASC', $date, $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($activeUserId, $date, $term = "", $order = 'asc', $limit = 20, $currentPage = 1)
     {
 
         $subquery  = $this->createQueryBuilder('e2')
@@ -59,11 +59,13 @@ class EventRepository extends AbstractRepository
             ->where('p.event = e.id  and p.participant = ' . $activeUserId);
 
         $qb = $this->createQueryBuilder('e')
-            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, case when (' . $subquery . ') = 1 then true else false end as participate')
+            ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, case when (' . $subquery . ') = 1 then true else false end as participate, count(p2.participant) as numberParticipant')
             ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
+            ->leftJoin('App:Participate', 'p2', JOIN::WITH, 'p2.participant = u.id')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
-            ->setParameter(1, '%' . $term . '%');
+            ->setParameter(1, '%' . $term . '%')
+            ->groupBy('e.id, u.id');
 //        if ($past){
 //            $qb->andWhere('e.date < :date')
 //            ->setParameter('date', date("Y-m-d"));
@@ -86,7 +88,7 @@ class EventRepository extends AbstractRepository
 //        dd($qb->getQuery());
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
+        return $this->paginate($query, $limit, $currentPage);
     }
 
     public function allDate()

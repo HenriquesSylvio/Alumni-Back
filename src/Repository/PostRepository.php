@@ -74,7 +74,7 @@ class PostRepository extends AbstractRepository
     }
 
 
-    public function feed($idUser, $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function feed($idUser, $activeUserId, $order = 'desc', $limit = 20, $currentPage = 1)
     {
 
         $subquery  = $this->createQueryBuilder('p2')
@@ -97,7 +97,7 @@ class PostRepository extends AbstractRepository
 
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
+        return $this->paginate($query, $limit, $currentPage);
     }
 
     public function searchById(string $id, int $activeUserId)
@@ -141,7 +141,7 @@ class PostRepository extends AbstractRepository
 //Group by ( p.*, likes, lk.like_by_id)
 
 
-    public function getCommentByPost($idPost, $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function getCommentByPost($idPost, $activeUserId, $order = 'desc', $limit = 2, $currentPage = 1)
     {
         $subquery  = $this->createQueryBuilder('p2')
             ->select('count(distinct lk2.likeBy)')
@@ -160,10 +160,10 @@ class PostRepository extends AbstractRepository
 
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
+        return $this->paginate($query, $limit, $currentPage);
     }
 
-    public function search($term, int $activeUserId, $order = 'desc', $limit = 20, $offset = 0, $currentPage = 1)
+    public function search($term, int $activeUserId, $order = 'desc', $limit = 20, $currentPage = 1)
     {
         $subquery  = $this->createQueryBuilder('p2')
             ->select('count(distinct lk2.likeBy)')
@@ -183,7 +183,7 @@ class PostRepository extends AbstractRepository
             ->setParameter(1, '%'.$term.'%');
         $query = $qb->getQuery()
             ->getResult(AbstractQuery::HYDRATE_ARRAY);
-        return $this->paginate($query, $limit, $offset, $currentPage);
+        return $this->paginate($query, $limit, $currentPage);
     }
 
     // /**
