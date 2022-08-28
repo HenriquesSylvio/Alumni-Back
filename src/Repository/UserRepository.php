@@ -53,17 +53,26 @@ class UserRepository extends AbstractRepository implements PasswordUpgraderInter
 //        return $query->execute();
 
         $qb = $this->createQueryBuilder('u')
-            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(follower.subscription) as followerNumber, count(following.subscriber) as followingNumber, case when follower2.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
+            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(distinct follower.subscription) as followerNumber, count(distinct following.subscriber) as followingNumber, count(distinct p) as nbPosts, case when follower2.subscription = ' . $activeUserId . ' then true else false end as subcribe, case when u.id = ' . $activeUserId . ' then true else false end as myProfile')
             ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
             ->leftJoin('App:Subscribe', 'follower', JOIN::WITH, 'u.id = follower.subscriber')
             ->leftJoin('App:Subscribe', 'following', JOIN::WITH, 'u.id = following.subscription')
             ->leftJoin('App:Subscribe', 'follower2', JOIN::WITH, 'u.id = follower2.subscriber and ' . $activeUserId . ' = follower2.subscription')
-            ->Where('u.id = ' . $id)
-//            ->andWhere($activeUserId . ' = follower2.subscription')
+            ->leftJoin('App:Post', 'p', JOIN::WITH, 'u.id = p.author and p.mainPost is null')
+            ->where('u.id = ' . $id)
+//            ->andWhere('p.mainPost is null')
             ->groupBy('u.id, faculty.name, follower2.subscription');
-        //dd($qb->getQuery());
         $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
         return $query;
+
+//        $qb = $this->createQueryBuilder('u')
+//            ->select('u.id, u.firstName, u.lastName, u.biography, u.urlProfilePicture, u.promo, u.acceptAccount, faculty.name as faculty_label, count(p.id) as nbPosts')
+//            ->innerJoin('App:Faculty', 'faculty', JOIN::WITH, 'u.faculty = faculty.id')
+//            ->leftJoin('App:Post', 'p', JOIN::WITH, 'u.id = p.author')
+//            ->Where('u.id = ' . $id)
+//            ->groupBy('u.id, faculty.name');
+//        $query = $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+//        return $query;
     }
 
     public function searchUserWaitingValidation()

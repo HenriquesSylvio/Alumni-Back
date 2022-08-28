@@ -61,7 +61,7 @@ class EventRepository extends AbstractRepository
         $qb = $this->createQueryBuilder('e')
             ->select('e.id as idEvent, e.title, e.description, e.date, u.id as idUser, u.firstName, u.lastName, u.urlProfilePicture, case when (' . $subquery . ') = 1 then true else false end as participate, count(p2.participant) as numberParticipant')
             ->InnerJoin('App:User', 'u', JOIN::WITH, 'u.id = e.author')
-            ->leftJoin('App:Participate', 'p2', JOIN::WITH, 'p2.participant = u.id')
+            ->leftJoin('App:Participate', 'p2', JOIN::WITH, 'p2.participant = u.id and p2.event = e.id')
             ->where('e.title LIKE ?1')
             ->orWhere('e.description LIKE ?1')
             ->setParameter(1, '%' . $term . '%')

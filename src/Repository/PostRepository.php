@@ -91,7 +91,7 @@ class PostRepository extends AbstractRepository
             ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('s.subscription= ?1')
             ->andWhere('p.mainPost is null')
-            ->orderBy('p.createAt', $order)
+            ->orderBy('p.createAt', 'desc')
             ->groupBy('p.id, u.id')
             ->setParameter(1, $idUser);
 
@@ -155,7 +155,7 @@ class PostRepository extends AbstractRepository
             ->leftJoin('App:LikePost', 'lk', JOIN::WITH, 'p.id = lk.post')
             ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('p.parentPost = ' . $idPost)
-            ->orderBy('p.createAt', $order)
+            ->orderBy('p.createAt', 'desc')
             ->groupBy('p.id, u.id');
 
         $query = $qb->getQuery()
@@ -178,7 +178,7 @@ class PostRepository extends AbstractRepository
             ->leftJoin('App:Post', 'comment', JOIN::WITH, 'comment.parentPost = p.id')
             ->where('p.content LIKE ?1')
             ->andWhere('p.mainPost is null')
-            ->orderBy('p.createAt', $order)
+            ->orderBy('p.createAt', 'desc')
             ->groupBy('p.id, u.id')
             ->setParameter(1, '%'.$term.'%');
         $query = $qb->getQuery()
