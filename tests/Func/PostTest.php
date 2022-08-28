@@ -341,6 +341,7 @@ class PostTest extends AbstractEndPoint
             [],
             false
         );
+
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 

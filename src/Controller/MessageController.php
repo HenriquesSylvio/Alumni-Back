@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use DateTimeZone;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,8 +45,9 @@ class MessageController extends AbstractFOSRestController
     public function sendMessage(Message $message, ConstraintViolationList $violations)
     {
         $date = new \DateTime();
+        $date = $date->setTimezone(new DateTimeZone('Europe/Paris'));
         $message->setSentBy($this->security->getUser());
-        $message->setCreateAt($date->setTimestamp(time()));
+        $message->setCreateAt($date);
         //        $message->setCreateAt(new \DateTime(date('d/m/Y H:i')));
         if (count($violations)) {
             foreach($violations as $error)

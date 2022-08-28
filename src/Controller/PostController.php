@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\LikePost;
 use App\Entity\Post;
 use App\Entity\User;
+use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Request\ParamFetcher;
@@ -245,12 +246,14 @@ class PostController extends AbstractFOSRestController
     public function addComment(Post $post, ConstraintViolationList $violations, Request $request)
     {
         $date = new \DateTime();
+        $date = $date->setTimezone(new DateTimeZone('Europe/Paris'));
+//        dd($date);
         $idPostParent = $request->attributes->get('_route_params')['postParent'];
         $postParent = $this->doctrine->getRepository(Post::class)->find($idPostParent);
 
         $post->setAuthor($this->security->getUser());
 //        $message->setSentBy($this->security->getUser());
-        $post->setCreateAt($date->setTimestamp(time()));
+        $post->setCreateAt($date);
 //        $post->setCreateAt(new \DateTime(date('d/m/Y H:i')));
         $post->setParentPost($postParent);
 
